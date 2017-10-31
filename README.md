@@ -1,8 +1,9 @@
 dnscl - This program analyzes DNS queries
 ----
 
+FUNCTIONS
 dnscl_domain(...)
-    Returns a list of cllent IP addresses that queried a domain name
+    Returns a list of client IP addresses that queried a domain name
     
 dnscl_ipaddress(...)
     Returns a list of domain names queried by a client IP address
