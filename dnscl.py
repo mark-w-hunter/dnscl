@@ -37,8 +37,8 @@ def dnscl_ipaddress(ip_address):
             if "query:" in line:
                 fields = (line.strip().split(" "))
                 if len(fields) > 12:
-                    my_list.append(fields[9])  # field containing domain name
-                    line_count = line_count + 1
+                    my_list.append(fields[10])  # field containing domain name
+                    line_count += 1
 
     my_set = sorted(set(my_list))
     my_dict = dict([(dname, len(list(dcount))) for dname, dcount in
@@ -67,11 +67,11 @@ def dnscl_domain(domain_name):
             if "query:" in line:
                 fields = (line.strip().split(" "))
                 if domain_name in fields[9] and len(fields) > 12:
-                    ip_address = fields[6].split("#")  # field containing ip
+                    ip_address = fields[7].split("#")  # field containing ip
                     my_list.append(ip_address[0])
                     if domain_name != "":
-                        my_domain_list.append(fields[9])
-                    line_count = line_count + 1
+                        my_domain_list.append(fields[10])
+                    line_count += 1
 
     my_set = sorted(set(my_list))
     my_domain_set = sorted(set(my_domain_list))
@@ -84,7 +84,7 @@ def dnscl_domain(domain_name):
 
     for query_count, ip_address in my_dict_view:
         print(query_count, "\t", ip_address)
-   
+
     if domain_name != "":
         print("\ndomain names: ")
 
@@ -99,7 +99,7 @@ def menu():
     """ Prints main menu """
     print("\n")
     print("Enter 0 to exit")
-    print("Enter 1 to searh ip address")
+    print("Enter 1 to search ip address")
     print("Enter 2 to search domain name")
 
 
