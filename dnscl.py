@@ -146,6 +146,7 @@ elif sys.argv[1] == "ip" and len(sys.argv) == 3:
         dnscl_ipaddress(wildcard)
     else:
         dnscl_ipaddress(sys.argv[2])
+
 elif sys.argv[1] == "domain" and len(sys.argv) == 3:
     if sys.argv[2] == "any":
         wildcard = ""
