@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # Copyright (c) 2017 Mark W. Hunter <marcus.w.hunter@gmail.com>
-# Version: 0.25
+# Version: 0.26
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -39,12 +39,11 @@ def dnscl_ipaddress(ip_address):
     line_count = 0
     ip_address_search = ip_address + "#"
     for line in open(FILENAME):
-        if ip_address_search in line:
-            if "query:" in line:
-                fields = (line.strip().split(" "))
-                if len(fields) > 12:
-                    my_list.append(fields[10])  # field containing domain name
-                    line_count = line_count + 1
+        if ip_address_search in line and "query:" in line:
+            fields = (line.strip().split(" "))
+            if len(fields) > 12:
+                my_list.append(fields[9])  # field containing domain name
+                line_count = line_count + 1
 
     my_set = sorted(set(my_list))
     my_dict = dict([(dname, len(list(dcount))) for dname, dcount in
@@ -75,15 +74,14 @@ def dnscl_domain(domain_name):
     line_count = 0
 
     for line in open(FILENAME):
-        if domain_name in line:
-            if "query:" in line:
-                fields = (line.strip().split(" "))
-                if domain_name in fields[10] and len(fields) > 12:
-                    ip_address = fields[7].split("#")  # field containing ip
-                    my_list.append(ip_address[0])
-                    if domain_name != "":
-                        my_domain_list.append(fields[10])
-                    line_count = line_count + 1
+        if domain_name in line and "query:" in line:
+            fields = (line.strip().split(" "))
+            if domain_name in fields[9] and len(fields) > 12:
+                ip_address = fields[6].split("#")  # field containing ip
+                my_list.append(ip_address[0])
+                if domain_name != "":
+                    my_domain_list.append(fields[10])
+                line_count = line_count + 1
 
     my_set = sorted(set(my_list))
     my_domain_set = sorted(set(my_domain_list))
@@ -118,6 +116,7 @@ def menu():
     print("Enter 0 to exit")
     print("Enter 1 to search ip address")
     print("Enter 2 to search domain name")
+
 
 if len(sys.argv) < 3:
     while True:
@@ -156,4 +155,3 @@ elif sys.argv[1] == "domain" and len(sys.argv) == 3:
 
 else:
     print("Error, try again.")
-
