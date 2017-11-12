@@ -13,7 +13,7 @@ dnscl_ipaddress(ip)
 menu(...)
     Prints main menu
 
-### usage
+## usage
 
 1. Set syslog path/filename
 
