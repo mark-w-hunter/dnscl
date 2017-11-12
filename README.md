@@ -1,11 +1,13 @@
 dnscl - This program analyzes DNS queries
 ----
 
-FUNCTIONS
-dnscl_domain(...)
+functions
+----
+
+dnscl_domain(domain)
     Returns a list of client IP addresses that queried a domain name
     
-dnscl_ipaddress(...)
+dnscl_ipaddress(ip)
     Returns a list of domain names queried by a client IP address
     
 menu(...)
@@ -22,3 +24,8 @@ usage
 
 4. Run ./dnscl.py or python3 dnscl.py
 
+5. Run from command-line, examples:
+   ./dnscl.py ip 10.0.0.45
+   ./dnscl.py domain www.foo.org
+   ./dnscl.py ip --all
+   ./dnscl.py domain --all

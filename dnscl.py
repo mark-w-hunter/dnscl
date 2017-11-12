@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-
+#
 # Copyright (c) 2017 Mark W. Hunter <marcus.w.hunter@gmail.com>
-# Version: 0.26
+# Version: 0.27
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -19,7 +19,7 @@
 # Free Software Foundation           Voice:  +1-617-542-5942
 # 51 Franklin Street, Fifth Floor    Fax:    +1-617-542-2652
 # Boston, MA  02110-1301,  USA       gnu@gnu.org
-
+#
 
 """ This program analyzes DNS queries from syslog input """
 
