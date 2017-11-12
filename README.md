@@ -1,8 +1,8 @@
-dnscl - This program analyzes DNS queries
-----
+# dnscl
+ 
+This program analyzes DNS query data from syslog file input
 
-functions
-----
+## functions
 
 dnscl_domain(domain)
     Returns a list of client IP addresses that queried a domain name
@@ -13,8 +13,7 @@ dnscl_ipaddress(ip)
 menu(...)
     Prints main menu
 
-usage
-----
+### usage
 
 1. Set syslog path/filename
 
@@ -25,7 +24,9 @@ usage
 4. Run ./dnscl.py or python3 dnscl.py
 
 5. Run from command-line, examples:
+```
    ./dnscl.py ip 10.0.0.45
    ./dnscl.py domain www.foo.org
    ./dnscl.py ip --all
    ./dnscl.py domain --all
+```
