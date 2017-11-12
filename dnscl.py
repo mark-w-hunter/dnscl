@@ -126,7 +126,7 @@ if len(sys.argv) < 3:
             int(CHOICE)
         except ValueError:
             print("Invalid input, exiting.")
-            break 
+            break
 
         if int(CHOICE) == 0:
             break
@@ -140,16 +140,16 @@ if len(sys.argv) < 3:
             print("Invalid choice, try again")
 
 elif sys.argv[1] == "ip" and len(sys.argv) == 3:
-    if sys.argv[2] == "any":
-        wildcard = ""
-        dnscl_ipaddress(wildcard)
+    if sys.argv[2] == "--all":
+        WILDCARD = ""
+        dnscl_ipaddress(WILDCARD)
     else:
         dnscl_ipaddress(sys.argv[2])
 
 elif sys.argv[1] == "domain" and len(sys.argv) == 3:
-    if sys.argv[2] == "any":
-        wildcard = ""
-        dnscl_domain(wildcard)
+    if sys.argv[2] == "--all":
+        WILDCARD = ""
+        dnscl_domain(WILDCARD)
     else:
         dnscl_domain(sys.argv[2])
 
