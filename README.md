@@ -34,7 +34,7 @@ Step 5: Run dnscl.py directly using command-line arguments.
 
 Search for all domain names queried by 10.0.0.45
 ```
-   ./dnscl.py ip 10.0.0.45
+./dnscl.py ip 10.0.0.45
 ```
 Search for all IP addresses that queried www.foo.org
 ```   
