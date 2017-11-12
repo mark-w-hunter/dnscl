@@ -27,7 +27,7 @@ import sys
 from itertools import groupby
 import timeit
 
-FILENAME = "/var/log/syslog"  # path to syslog file
+FILENAME = "/var/log/messages"  # path to syslog file
 
 
 def dnscl_ipaddress(ip_address):
@@ -43,7 +43,7 @@ def dnscl_ipaddress(ip_address):
             fields = (line.strip().split(" "))
             if len(fields) > 12:
                 my_list.append(fields[9])  # field containing domain name
-                line_count = line_count + 1
+                line_count += 1
 
     my_set = sorted(set(my_list))
     my_dict = dict([(dname, len(list(dcount))) for dname, dcount in
@@ -81,7 +81,7 @@ def dnscl_domain(domain_name):
                 my_list.append(ip_address[0])
                 if domain_name != "":
                     my_domain_list.append(fields[10])
-                line_count = line_count + 1
+                line_count += 1
 
     my_set = sorted(set(my_list))
     my_domain_set = sorted(set(my_domain_list))
