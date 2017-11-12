@@ -66,7 +66,7 @@ def dnscl_ipaddress(ip_address):
 
 def dnscl_domain(domain_name):
 
-    """ Returns cllent IP addresses that queried a domain name """
+    """ Returns client IP addresses that queried a domain name """
 
     start_time = timeit.default_timer()
     my_list = []
