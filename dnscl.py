@@ -38,7 +38,7 @@ def dnscl_ipaddress(ip_address):
     my_list = []
     line_count = 0
     ip_address_search = ip_address + "#"
-    for line in open(FILENAME):
+    for line in open(FILENAME, encoding="ISO-8859-1"):
         if ip_address_search in line and "query:" in line:
             fields = (line.strip().split(" "))
             if len(fields) > 12:
@@ -73,14 +73,14 @@ def dnscl_domain(domain_name):
     my_domain_list = []
     line_count = 0
 
-    for line in open(FILENAME):
+    for line in open(FILENAME, encoding="ISO-8859-1"):
         if domain_name in line and "query:" in line:
             fields = (line.strip().split(" "))
             if domain_name in fields[9] and len(fields) > 12:
                 ip_address = fields[6].split("#")  # field containing ip
                 my_list.append(ip_address[0])
                 if domain_name != "":
-                    my_domain_list.append(fields[10])
+                    my_domain_list.append(fields[9])
                 line_count += 1
 
     my_set = sorted(set(my_list))
