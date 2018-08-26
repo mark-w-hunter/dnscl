@@ -5,6 +5,7 @@ pipeline {
         stage('build') {
             steps {
                 sh 'python --version'
+                sh 'uname -a'
             }
         }
     }
