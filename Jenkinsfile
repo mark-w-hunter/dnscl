@@ -1,3 +1,7 @@
+properties([
+	scmpoll_spec: "H/5 * * * *"
+])
+
 pipeline {
     agent any 
 
