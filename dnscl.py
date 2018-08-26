@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2017 Mark W. Hunter <marcus.w.hunter@gmail.com>
-# Version: 0.27
+# Copyright (c) 2018 Mark W. Hunter <marcus.w.hunter@gmail.com>
+# Version: 0.28
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
