@@ -14,6 +14,7 @@ pipeline {
             steps {
                 sh 'python --version'
                 sh 'uname -a'
+                sh 'hostname'
             }
         }
     }
