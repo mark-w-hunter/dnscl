@@ -23,7 +23,6 @@
 
 """ This program analyzes DNS queries from syslog input """
 import sys
-import os
 from itertools import groupby
 import timeit
 
@@ -177,7 +176,7 @@ def dnscl_rpz_domain(domain_rpz_name):
 
 def menu():
     """ Prints main menu """
-    os.system('figlet "Dnscl"')
+    print("\nDnscl Main Menu:\n")
     print("Enter 0 to exit")
     print("Enter 1 to search ip address")
     print("Enter 2 to search domain name")
