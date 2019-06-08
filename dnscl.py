@@ -1,25 +1,30 @@
 #!/usr/bin/env python3
+
+# dnscl: Analyzes DNS query data from syslog file input
+# version: 0.30
+# https://github.com/mark-w-hunter/dnscl
 #
-# Copyright (c) 2019 Mark W. Hunter <marcus.w.hunter@gmail.com>
-# Version: 0.29
+# The MIT License (MIT)
 #
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of
-# the License, or (at your option) any later version.
+# Copyright (c) 2019 Mark W. Hunter
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, contact:
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
 #
-# Free Software Foundation           Voice:  +1-617-542-5942
-# 51 Franklin Street, Fifth Floor    Fax:    +1-617-542-2652
-# Boston, MA  02110-1301,  USA       gnu@gnu.org
-#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 """ This program analyzes DNS queries from syslog input """
 import sys
@@ -46,14 +51,13 @@ def dnscl_ipaddress(ip_address):
     my_set = sorted(set(my_list))
     my_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(sorted(my_list))]
     my_list_final.sort(reverse=True)
+    elapsed_time = timeit.default_timer() - start_time
 
     print(ip_address, "total queries are", line_count)
     print("queries: ")
 
     for query_count, domain_name in my_list_final:
         print(query_count, "\t", domain_name)
-
-    elapsed_time = timeit.default_timer() - start_time
 
     print("\nSummary: Searched", ip_address, "and found", line_count,
           "queries for", len(my_set), "domain names.")
@@ -82,6 +86,7 @@ def dnscl_domain(domain_name):
     my_domain_set = sorted(set(my_domain_list))
     my_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(sorted(my_list))]
     my_list_final.sort(reverse=True)
+    elapsed_time = timeit.default_timer() - start_time
 
     print(domain_name, "total queries are", line_count)
     print("ip addresses: ")
@@ -94,8 +99,6 @@ def dnscl_domain(domain_name):
 
         for domain_names_found in my_domain_set:
             print(domain_names_found)
-
-    elapsed_time = timeit.default_timer() - start_time
 
     print("\nSummary: Searched", domain_name, "and found", line_count,
           "queries from", len(my_set), "clients.")
@@ -119,14 +122,13 @@ def dnscl_rpz(ip_address):
     my_set = sorted(set(my_list))
     my_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(sorted(my_list))]
     my_list_final.sort(reverse=True)
+    elapsed_time = timeit.default_timer() - start_time
 
     print(ip_address, "total queries are", line_count)
     print("queries: ")
 
     for query_count, domain_name in my_list_final:
         print(query_count, "\t", domain_name)
-
-    elapsed_time = timeit.default_timer() - start_time
 
     print("\nSummary: Searched", ip_address, "and found", line_count,
           "queries for", len(my_set), "rpz names.")
@@ -154,6 +156,7 @@ def dnscl_rpz_domain(domain_rpz_name):
     my_domain_set = sorted(set(my_domain_list))
     my_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(sorted(my_list))]
     my_list_final.sort(reverse=True)
+    elapsed_time = timeit.default_timer() - start_time
 
     print(domain_rpz_name, "total queries are", line_count)
     print("ip addresses: ")
@@ -166,8 +169,6 @@ def dnscl_rpz_domain(domain_rpz_name):
 
         for domain_names_found in my_domain_set:
             print(domain_names_found)
-
-    elapsed_time = timeit.default_timer() - start_time
 
     print("\nSummary: Searched", domain_rpz_name, "and found", line_count,
           "queries from", len(my_set), "clients.")
