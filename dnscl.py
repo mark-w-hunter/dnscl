@@ -149,7 +149,7 @@ def dnscl_rpz_domain(domain_rpz_name):
                     ip_address = fields[5].split("#")  # field containing ip
                     my_list.append(ip_address[0])
                     if domain_rpz_name != "":
-                        my_domain_list.append(fields[11])
+                        my_domain_list.append(fields[11]) # field containing rpz domain name
                     line_count = line_count + 1
 
     my_set = sorted(set(my_list))
