@@ -30,6 +30,7 @@
 import sys
 from itertools import groupby
 import timeit
+import os
 
 FILENAME = "/var/log/messages"  # path to syslog file
 
