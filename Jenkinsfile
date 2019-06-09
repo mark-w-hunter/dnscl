@@ -13,8 +13,7 @@ pipeline {
         stage('build') {
             steps {
                 sh 'python --version'
-                sh 'uname -a'
-                sh 'hostname'
+                sh 'pylint dnscl.py'
             }
         }
     }
