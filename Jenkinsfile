@@ -12,9 +12,17 @@ pipeline {
     stages {
         stage('build') {
             steps {
-                sh 'python --version'
                 sh 'pylint dnscl.py'
             }
+        }
+    }
+    
+    post {
+        success {
+          setBuildStatus("Build succeeded", "SUCCESS");
+        }
+        failure {
+            setBuildStatus("Build failed", "FAILURE");
         }
     }
 }
