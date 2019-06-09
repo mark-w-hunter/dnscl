@@ -49,4 +49,3 @@ Return a list of all domain names queried by any IP address
 Return a list of all IP addresses that queried any domain name
 ```
 ./dnscl.py domain --all 
-```
