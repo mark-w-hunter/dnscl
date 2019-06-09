@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# dnscl: Analyzes DNS query data from syslog file input
+# dnscl: Analyze BIND DNS query data from syslog file input
 # version: 0.30
 # https://github.com/mark-w-hunter/dnscl
 #

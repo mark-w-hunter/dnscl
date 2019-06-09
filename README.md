@@ -1,6 +1,6 @@
 # dnscl
  
-This program analyzes DNS query data from syslog file input
+This program analyzes BIND DNS query data from syslog file input
 
 ## functions
 
