@@ -31,6 +31,7 @@ import sys
 from itertools import groupby
 import timeit
 
+VERSION = "0.33"
 FILENAME = "/var/log/messages"  # path to syslog file
 
 
@@ -185,7 +186,7 @@ def menu():
     print("Enter 4 to search rpz domain name")
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3:
+    if len(sys.argv) < 2:
         while True:
             menu()
             CHOICE = input(">> ")
@@ -228,5 +229,7 @@ if __name__ == "__main__":
             dnscl_rpz(WILDCARD)
         else:
             dnscl_rpz_domain(sys.argv[2])
+    elif sys.argv[1] == "--version":
+        print("Dnscl version:", VERSION)
     else:
         print("Error, try again.")
