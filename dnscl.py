@@ -230,6 +230,6 @@ if __name__ == "__main__":
         else:
             dnscl_rpz_domain(sys.argv[2])
     elif sys.argv[1] == "--version":
-        print("Dnscl version:", VERSION)
+        print("dnscl version:", VERSION)
     else:
         print("Error, try again.")
