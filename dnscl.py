@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # dnscl: Analyze BIND DNS query data from syslog file input
-# version: 0.32
+# version: 0.33
 # https://github.com/mark-w-hunter/dnscl
 #
 # The MIT License (MIT)
