@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 # dnscl: Analyze BIND DNS query data from syslog file input
-# version: 0.32
+# author: Mark W. Hunter
+# version: 0.34
 # https://github.com/mark-w-hunter/dnscl
 #
 # The MIT License (MIT)
@@ -31,6 +32,7 @@ import sys
 from itertools import groupby
 import timeit
 
+VERSION = "0.34"
 FILENAME = "/var/log/messages"  # path to syslog file
 
 
@@ -46,7 +48,7 @@ def dnscl_ipaddress(ip_address):
                 fields = (line.strip().split(" "))
                 if len(fields) > 12:
                     my_list.append(fields[8])  # field containing domain name
-                    line_count = line_count + 1
+                    line_count += 1
 
     my_set = sorted(set(my_list))
     my_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(sorted(my_list))]
@@ -80,7 +82,7 @@ def dnscl_domain(domain_name):
                     my_list.append(ip_address[0])
                     if domain_name != "":
                         my_domain_list.append(fields[8]) # field containing domain name
-                    line_count = line_count + 1
+                    line_count += 1
 
     my_set = sorted(set(my_list))
     my_domain_set = sorted(set(my_domain_list))
@@ -113,11 +115,11 @@ def dnscl_rpz(ip_address):
     ip_address_search = ip_address + "#"
     for line in open(FILENAME):
         if ip_address_search in line:
-            if "rpz" in line and "SOA" not in line:
+            if "QNAME" in line and "SOA" not in line:
                 fields = (line.strip().split(" "))
                 if len(fields) > 11:
                     my_list.append(fields[11])  # field containing rpz domain name
-                    line_count = line_count + 1
+                    line_count += 1
 
     my_set = sorted(set(my_list))
     my_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(sorted(my_list))]
@@ -135,7 +137,7 @@ def dnscl_rpz(ip_address):
     print("Query time:", str(round(elapsed_time, 2)), "seconds")
 
 def dnscl_rpz_domain(domain_rpz_name):
-    """ Returns cllent IP addresses that queried a rpz domain name """
+    """ Returns client IP addresses that queried a rpz domain name """
     start_time = timeit.default_timer()
     my_list = []
     my_domain_list = []
@@ -143,14 +145,14 @@ def dnscl_rpz_domain(domain_rpz_name):
 
     for line in open(FILENAME):
         if domain_rpz_name in line:
-            if "rpz" in line and "SOA" not in line:
+            if "QNAME" in line and "SOA" not in line:
                 fields = (line.strip().split(" "))
                 if domain_rpz_name in fields[11] and len(fields) > 11:
                     ip_address = fields[5].split("#")  # field containing ip
                     my_list.append(ip_address[0])
                     if domain_rpz_name != "":
-                        my_domain_list.append(fields[11]) # field containing rpz domain name
-                    line_count = line_count + 1
+                        my_domain_list.append(fields[11])  # field containing rpz domain name
+                    line_count += 1
 
     my_set = sorted(set(my_list))
     my_domain_set = sorted(set(my_domain_list))
@@ -185,10 +187,14 @@ def menu():
     print("Enter 4 to search rpz domain name")
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3:
+    if len(sys.argv) < 2:
         while True:
             menu()
-            CHOICE = input(">> ")
+            CHOICE = input("=> ")
+            while not CHOICE.isdigit():
+                print("Invalid input, try again.")
+                menu()
+                CHOICE = input("=> ")
             try:
                 int(CHOICE)
             except ValueError:
@@ -228,5 +234,7 @@ if __name__ == "__main__":
             dnscl_rpz(WILDCARD)
         else:
             dnscl_rpz_domain(sys.argv[2])
+    elif sys.argv[1] == "--version":
+        print("dnscl version:", VERSION)
     else:
         print("Error, try again.")

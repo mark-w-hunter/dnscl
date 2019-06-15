@@ -1,6 +1,6 @@
-# dnscl
+# Dnscl
 
-[![Build Status](http://jenkins.zentrader1618.com/buildStatus/icon?job=GitHub+-+mark-w-hunter%2Fdnscl%2Fmaster)](http://jenkins.zentrader1618.com/job/GitHub%20-%20mark-w-hunter/job/dnscl/job/master/)
+[![Build Status](http://jenkins.zentrader1618.com/buildStatus/icon?job=GitHub+-+mark-w-hunter%2Fdnscl%2Fmaster&style=plastic)](http://jenkins.zentrader1618.com/job/GitHub%20-%20mark-w-hunter/job/dnscl/job/master/)
  
 This program analyzes BIND DNS query data from syslog file input
 
@@ -12,6 +12,12 @@ dnscl_domain(domain)
 dnscl_ipaddress(ip)
     Returns a list of domain names queried by a client IP address
     
+dnscl_rpz(ip_address)
+    Returns rpz names queried by a client IP address
+    
+dnscl_rpz_domain(domain_rpz_name)
+    Returns cllent IP addresses that queried a rpz domain name
+
 menu(...)
     Prints main menu
 
@@ -49,3 +55,7 @@ Return a list of all domain names queried by any IP address
 Return a list of all IP addresses that queried any domain name
 ```
 ./dnscl.py domain --all 
+```
+Search for all rpz names queried
+```
+./dnscl.py rpz --all
