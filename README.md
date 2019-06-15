@@ -56,6 +56,6 @@ Return a list of all IP addresses that queried any domain name
 ```
 ./dnscl.py domain --all 
 ```
-Search for all response policy zone (rpz) names queried
+Search for all rpz names queried
 ```
 ./dnscl.py rpz --all
