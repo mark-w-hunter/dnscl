@@ -137,6 +137,7 @@ def dnscl_rpz(ip_address):
           "queries for", len(my_set), "rpz names.")
     print("Query time:", str(round(elapsed_time, 2)), "seconds")
 
+
 def dnscl_rpz_domain(domain_rpz_name):
     """ Returns client IP addresses that queried a rpz domain name """
     start_time = timeit.default_timer()
