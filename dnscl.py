@@ -32,6 +32,7 @@ import sys
 from itertools import groupby
 import timeit
 
+AUTHOR = "Mark W. Hunter"
 VERSION = "0.35"
 FILENAME = "/var/log/messages"  # path to syslog file
 
@@ -234,7 +235,19 @@ if __name__ == "__main__":
             dnscl_rpz(WILDCARD)
         else:
             dnscl_rpz_domain(sys.argv[2])
-    elif sys.argv[1] == "--version":
+    elif sys.argv[1] == "version" or sys.argv[1] == "--version":
         print("dnscl version:", VERSION)
+    elif sys.argv[1] == "help" or sys.argv[1] == "--help":
+        print("Usage: dnscl [OPTION] ...")
+        print("\nRun without options for interactive menu. Valid options include:")
+        print("\n  ip <IP_ADDRESS> \t\t Returns domain names queried by a client IP address")
+        print("  ip --all \t\t\t Returns all domain names queried by any client IP address")
+        print("  domain <DOMAIN>\t\t Returns cllent IP addresses that queried a domain")
+        print("  domain --all \t\t\t Returns all client IP addresses that queried any domain")
+        print("  rpz <RPZ_DOMAIN>\t\t Returns client IP addresses that queried a RPZ domain")
+        print("  rpz --all \t\t\t Returns all client IP addresses that queried any RPZ domain")
+        print("  version, --version\t\t Display version information and exit")
+        print("  help, --help\t\t\t Display this help text and exit\n")
+        print("dnscl", VERSION + ",", AUTHOR, "(c) 2019\n")
     else:
         print("Error, try again.")
