@@ -68,7 +68,7 @@ def dnscl_ipaddress(ip_address):
 
 
 def dnscl_domain(domain_name):
-    """ Returns cllent IP addresses that queried a domain name """
+    """ Returns client IP addresses that queried a domain name """
     start_time = timeit.default_timer()
     my_list = []
     my_domain_list = []
@@ -242,7 +242,7 @@ if __name__ == "__main__":
         print("\nRun without options for interactive menu. Valid options include:")
         print("\n  ip <IP_ADDRESS> \t\t Returns domain names queried by a client IP address")
         print("  ip --all \t\t\t Returns all domain names queried by any client IP address")
-        print("  domain <DOMAIN>\t\t Returns cllent IP addresses that queried a domain")
+        print("  domain <DOMAIN>\t\t Returns client IP addresses that queried a domain")
         print("  domain --all \t\t\t Returns all client IP addresses that queried any domain")
         print("  rpz <RPZ_DOMAIN>\t\t Returns client IP addresses that queried a RPZ domain")
         print("  rpz --all \t\t\t Returns all client IP addresses that queried any RPZ domain")
