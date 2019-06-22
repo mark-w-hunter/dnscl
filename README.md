@@ -18,7 +18,7 @@ dnscl_rpz(ip_address)
 dnscl_rpz_domain(domain_rpz_name)
     Returns cllent IP addresses that queried a rpz domain name
 
-menu(...)
+menu()
     Prints main menu
 
 ## usage
