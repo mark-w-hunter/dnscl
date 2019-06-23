@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+test build failure
 # dnscl: Analyze BIND DNS query data from syslog file input
 # author: Mark W. Hunter
 # version: 0.36
