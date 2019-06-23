@@ -2,7 +2,7 @@
 
 # dnscl: Analyze BIND DNS query data from syslog file input
 # author: Mark W. Hunter
-# version: 0.35
+# version: 0.36
 # https://github.com/mark-w-hunter/dnscl
 #
 # The MIT License (MIT)
@@ -33,7 +33,7 @@ from itertools import groupby
 import timeit
 
 AUTHOR = "Mark W. Hunter"
-VERSION = "0.35"
+VERSION = "0.36"
 FILENAME = "/var/log/messages"  # path to syslog file
 
 
