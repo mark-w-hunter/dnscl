@@ -78,11 +78,11 @@ def dnscl_domain(domain_name):
         if domain_name in line:
             if "query:" in line:
                 fields = (line.strip().split(" "))
-                if domain_name in fields[8] and len(fields) > 12: # field containing domain name
+                if domain_name in fields[8] and len(fields) > 12:  # field containing domain name
                     ip_address = fields[5].split("#")  # field containing ip
                     my_list.append(ip_address[0])
                     if domain_name != "":
-                        my_domain_list.append(fields[8]) # field containing domain name
+                        my_domain_list.append(fields[8])  # field containing domain name
                     line_count += 1
 
     my_set = sorted(set(my_list))
@@ -187,6 +187,7 @@ def menu():
     print("Enter 2 to search domain name")
     print("Enter 3 to search rpz ip address")
     print("Enter 4 to search rpz domain name")
+
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
