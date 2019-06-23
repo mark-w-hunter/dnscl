@@ -1,6 +1,6 @@
 # Dnscl
 
-[![Build Status](http://jenkins.zentrader1618.com/buildStatus/icon?job=GitHub+-+mark-w-hunter%2Fdnscl%2Fdevel&style=plastic)](http://jenkins.zentrader1618.com/job/GitHub%20-%20mark-w-hunter/job/dnscl/job/devel/)
+[![Build Status](http://jenkins.zentrader1618.com/buildStatus/icon?job=GitHub+-+mark-w-hunter%2Fdnscl%2Fmaster&style=plastic)](http://jenkins.zentrader1618.com/job/GitHub%20-%20mark-w-hunter/job/dnscl/job/master/)
  
 This program analyzes BIND DNS query data from syslog file input
 
