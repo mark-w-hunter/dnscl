@@ -2,7 +2,7 @@
 
 # dnscl: Analyze BIND DNS query data from syslog file input
 # author: Mark W. Hunter
-# version: 0.36
+# version: 0.37
 # https://github.com/mark-w-hunter/dnscl
 #
 # The MIT License (MIT)
@@ -33,7 +33,7 @@ from itertools import groupby
 import timeit
 
 AUTHOR = "Mark W. Hunter"
-VERSION = "0.36"
+VERSION = "0.37"
 FILENAME = "/var/log/messages"  # path to syslog file
 
 
@@ -78,11 +78,11 @@ def dnscl_domain(domain_name):
         if domain_name in line:
             if "query:" in line:
                 fields = (line.strip().split(" "))
-                if domain_name in fields[8] and len(fields) > 12: # field containing domain name
+                if domain_name in fields[8] and len(fields) > 12:  # field containing domain name
                     ip_address = fields[5].split("#")  # field containing ip
                     my_list.append(ip_address[0])
                     if domain_name != "":
-                        my_domain_list.append(fields[8]) # field containing domain name
+                        my_domain_list.append(fields[8])  # field containing domain name
                     line_count += 1
 
     my_set = sorted(set(my_list))
@@ -188,6 +188,7 @@ def menu():
     print("Enter 3 to search rpz ip address")
     print("Enter 4 to search rpz domain name")
 
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         while True:
@@ -236,9 +237,9 @@ if __name__ == "__main__":
             dnscl_rpz(WILDCARD)
         else:
             dnscl_rpz_domain(sys.argv[2])
-    elif sys.argv[1] == "version" or sys.argv[1] == "--version":
+    elif sys.argv[1] == "version" or sys.argv[1] == "-v":
         print("dnscl version:", VERSION)
-    elif sys.argv[1] == "help" or sys.argv[1] == "--help":
+    elif sys.argv[1] == "help" or sys.argv[1] == "-h":
         print("Usage: dnscl.py [OPTION] ...")
         print("\n  ip <ip_address> or --all\t Returns domains queried by an IP \
 address or all domains")
@@ -246,8 +247,8 @@ address or all domains")
 a domain or all IP addresses")
         print("  rpz <rpz_domain> or --all\t Returns IP addresses that queried \
 a RPZ domain or all RPZ domains")
-        print("  version, --version\t\t Display version information and exit")
-        print("  help, --help\t\t\t Display this help text and exit\n")
+        print("  version, -v\t\t\t Display version information and exit")
+        print("  help, -h\t\t\t Display this help text and exit\n")
         print("dnscl", VERSION + ",", AUTHOR, "(c) 2019\n")
     else:
         print("Error, try again.")
