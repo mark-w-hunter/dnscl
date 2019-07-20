@@ -1,6 +1,9 @@
 language: python
-os:
-  - linux
-  - osx
+dist: bionic
+python:
+  - "3.5"
+  - "3.6"
+  - "3.7"
+  - "3.8-dev"  # 3.8 development branch
 install: "pip install pylint"
 script: "pylint dnscl.py"
