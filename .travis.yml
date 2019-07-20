@@ -1,10 +1,6 @@
 language: python
-matrix:
-  include:
-    - os: linux
-      dist: xenial
-      dist: bionic
-      python: "3.6"
-      python: "3.7"
+os:
+  - linux
+  - osx
 install: "pip install pylint"
 script: "pylint dnscl.py"
