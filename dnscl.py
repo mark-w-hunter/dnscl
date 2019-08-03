@@ -52,7 +52,8 @@ def dnscl_ipaddress(ip_address):
                     line_count += 1
 
     domain_set = sorted(set(domain_list))
-    domain_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(sorted(domain_list))]
+    domain_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(
+        sorted(domain_list))]
     domain_list_final.sort(reverse=True)
     elapsed_time = timeit.default_timer() - start_time
 
@@ -158,7 +159,8 @@ def dnscl_rpz_domain(domain_rpz_name):
 
     rpz_ip_set = sorted(set(rpz_ip_list))
     rpz_domain_set = sorted(set(rpz_domain_list))
-    rpz_ip_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(sorted(rpz_ip_list))]
+    rpz_ip_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(
+        sorted(rpz_ip_list))]
     rpz_ip_list_final.sort(reverse=True)
     elapsed_time = timeit.default_timer() - start_time
 
