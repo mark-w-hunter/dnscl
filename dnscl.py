@@ -40,7 +40,7 @@ FILENAME = "/var/log/messages"  # path to syslog file
 def dnscl_ipaddress(ip_address):
     """ Returns domain names queried by a client IP address """
     start_time = timeit.default_timer()
-    my_list = []
+    domain_list = []
     line_count = 0
     ip_address_search = ip_address + "#"
     for line in open(FILENAME, encoding="UTF-8"):
@@ -48,30 +48,30 @@ def dnscl_ipaddress(ip_address):
             if "query:" in line:
                 fields = (line.strip().split(" "))
                 if len(fields) > 12:
-                    my_list.append(fields[8])  # field containing domain name
+                    domain_list.append(fields[8])  # field containing domain name
                     line_count += 1
 
-    my_set = sorted(set(my_list))
-    my_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(sorted(my_list))]
-    my_list_final.sort(reverse=True)
+    domain_set = sorted(set(domain_list))
+    domain_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(sorted(domain_list))]
+    domain_list_final.sort(reverse=True)
     elapsed_time = timeit.default_timer() - start_time
 
     print(ip_address, "total queries are", line_count)
     print("queries: ")
 
-    for query_count, domain_name in my_list_final:
+    for query_count, domain_name in domain_list_final:
         print(query_count, "\t", domain_name)
 
     print("\nSummary: Searched", ip_address, "and found", line_count,
-          "queries for", len(my_set), "domain names.")
+          "queries for", len(domain_set), "domain names.")
     print("Query time:", str(round(elapsed_time, 2)), "seconds")
 
 
 def dnscl_domain(domain_name):
     """ Returns client IP addresses that queried a domain name """
     start_time = timeit.default_timer()
-    my_list = []
-    my_domain_list = []
+    ip_list = []
+    domain_list = []
     line_count = 0
 
     for line in open(FILENAME, encoding="UTF-8"):
@@ -80,38 +80,38 @@ def dnscl_domain(domain_name):
                 fields = (line.strip().split(" "))
                 if domain_name in fields[8] and len(fields) > 12:  # field containing domain name
                     ip_address = fields[5].split("#")  # field containing ip
-                    my_list.append(ip_address[0])
+                    ip_list.append(ip_address[0])
                     if domain_name != "":
-                        my_domain_list.append(fields[8])  # field containing domain name
+                        domain_list.append(fields[8])  # field containing domain name
                     line_count += 1
 
-    my_set = sorted(set(my_list))
-    my_domain_set = sorted(set(my_domain_list))
-    my_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(sorted(my_list))]
-    my_list_final.sort(reverse=True)
+    ip_set = sorted(set(ip_list))
+    domain_set = sorted(set(domain_list))
+    ip_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(sorted(ip_list))]
+    ip_list_final.sort(reverse=True)
     elapsed_time = timeit.default_timer() - start_time
 
     print(domain_name, "total queries are", line_count)
     print("ip addresses: ")
 
-    for query_count, ip_address in my_list_final:
+    for query_count, ip_address in ip_list_final:
         print(query_count, "\t", ip_address)
 
     if domain_name != "":
         print("\ndomain names: ")
 
-        for domain_names_found in my_domain_set:
+        for domain_names_found in domain_set:
             print(domain_names_found)
 
     print("\nSummary: Searched", domain_name, "and found", line_count,
-          "queries from", len(my_set), "clients.")
+          "queries from", len(ip_set), "clients.")
     print("Query time:", str(round(elapsed_time, 2)), "seconds")
 
 
 def dnscl_rpz(ip_address):
     """ Returns rpz names queried by a client IP address """
     start_time = timeit.default_timer()
-    my_list = []
+    rpz_list = []
     line_count = 0
     ip_address_search = ip_address + "#"
     for line in open(FILENAME, encoding="UTF-8"):
@@ -119,30 +119,30 @@ def dnscl_rpz(ip_address):
             if "QNAME" in line and "SOA" not in line:
                 fields = (line.strip().split(" "))
                 if len(fields) > 11:
-                    my_list.append(fields[11])  # field containing rpz domain name
+                    rpz_list.append(fields[11])  # field containing rpz domain name
                     line_count += 1
 
-    my_set = sorted(set(my_list))
-    my_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(sorted(my_list))]
-    my_list_final.sort(reverse=True)
+    rpz_set = sorted(set(rpz_list))
+    rpz_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(sorted(rpz_list))]
+    rpz_list_final.sort(reverse=True)
     elapsed_time = timeit.default_timer() - start_time
 
     print(ip_address, "total queries are", line_count)
     print("queries: ")
 
-    for query_count, domain_name in my_list_final:
+    for query_count, domain_name in rpz_list_final:
         print(query_count, "\t", domain_name)
 
     print("\nSummary: Searched", ip_address, "and found", line_count,
-          "queries for", len(my_set), "rpz names.")
+          "queries for", len(rpz_set), "rpz names.")
     print("Query time:", str(round(elapsed_time, 2)), "seconds")
 
 
 def dnscl_rpz_domain(domain_rpz_name):
     """ Returns client IP addresses that queried a rpz domain name """
     start_time = timeit.default_timer()
-    my_list = []
-    my_domain_list = []
+    rpz_ip_list = []
+    rpz_domain_list = []
     line_count = 0
 
     for line in open(FILENAME, encoding="UTF-8"):
@@ -151,31 +151,31 @@ def dnscl_rpz_domain(domain_rpz_name):
                 fields = (line.strip().split(" "))
                 if domain_rpz_name in fields[11] and len(fields) > 11:
                     ip_address = fields[5].split("#")  # field containing ip
-                    my_list.append(ip_address[0])
+                    rpz_ip_list.append(ip_address[0])
                     if domain_rpz_name != "":
-                        my_domain_list.append(fields[11])  # field containing rpz domain name
+                        rpz_domain_list.append(fields[11])  # field containing rpz domain name
                     line_count += 1
 
-    my_set = sorted(set(my_list))
-    my_domain_set = sorted(set(my_domain_list))
-    my_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(sorted(my_list))]
-    my_list_final.sort(reverse=True)
+    rpz_ip_set = sorted(set(rpz_ip_list))
+    rpz_domain_set = sorted(set(rpz_domain_list))
+    rpz_ip_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(sorted(rpz_ip_list))]
+    rpz_ip_list_final.sort(reverse=True)
     elapsed_time = timeit.default_timer() - start_time
 
     print(domain_rpz_name, "total queries are", line_count)
     print("ip addresses: ")
 
-    for query_count, ip_address in my_list_final:
+    for query_count, ip_address in rpz_ip_list_final:
         print(query_count, "\t", ip_address)
 
     if domain_rpz_name != "":
         print("\nrpz names: ")
 
-        for domain_names_found in my_domain_set:
+        for domain_names_found in rpz_domain_set:
             print(domain_names_found)
 
     print("\nSummary: Searched", domain_rpz_name, "and found", line_count,
-          "queries from", len(my_set), "clients.")
+          "queries from", len(rpz_ip_set), "clients.")
     print("Query time:", str(round(elapsed_time, 2)), "seconds")
 
 
