@@ -43,7 +43,7 @@ def dnscl_ipaddress(ip_address):
     domain_list = []
     line_count = 0
     ip_address_search = ip_address + "#"
-    for line in open(FILENAME, encoding="UTF-8"):
+    for line in open(FILENAME, encoding="ISO-8859-1"):
         if ip_address_search in line:
             if "query:" in line:
                 fields = (line.strip().split(" "))
@@ -75,7 +75,7 @@ def dnscl_domain(domain_name):
     domain_list = []
     line_count = 0
 
-    for line in open(FILENAME, encoding="UTF-8"):
+    for line in open(FILENAME, encoding="ISO-8859-1"):
         if domain_name in line:
             if "query:" in line:
                 fields = (line.strip().split(" "))
@@ -115,7 +115,7 @@ def dnscl_rpz(ip_address):
     rpz_list = []
     line_count = 0
     ip_address_search = ip_address + "#"
-    for line in open(FILENAME, encoding="UTF-8"):
+    for line in open(FILENAME, encoding="ISO-8859-1"):
         if ip_address_search in line:
             if "QNAME" in line and "SOA" not in line:
                 fields = (line.strip().split(" "))
@@ -146,7 +146,7 @@ def dnscl_rpz_domain(domain_rpz_name):
     rpz_domain_list = []
     line_count = 0
 
-    for line in open(FILENAME, encoding="UTF-8"):
+    for line in open(FILENAME, encoding="ISO-8859-1"):
         if domain_rpz_name in line:
             if "QNAME" in line and "SOA" not in line:
                 fields = (line.strip().split(" "))
