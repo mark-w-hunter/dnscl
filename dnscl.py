@@ -205,9 +205,7 @@ if __name__ == "__main__":
             except ValueError:
                 print("Invalid input, exiting.")
                 break
-            if int(CHOICE) == 0:
-                break
-            elif int(CHOICE) == 1:
+            if int(CHOICE) == 1:
                 IP = input("ip address: ")
                 dnscl_ipaddress(IP)
             elif int(CHOICE) == 2:
@@ -221,6 +219,8 @@ if __name__ == "__main__":
                 dnscl_rpz_domain(DOMAIN)
             elif int(CHOICE) > 4:
                 print("Invalid choice, try again.")
+            elif int(CHOICE) == 0:
+                break
     elif sys.argv[1] == "ip" and len(sys.argv) == 3:
         if sys.argv[2] == "--all":
             WILDCARD = ""
