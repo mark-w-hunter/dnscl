@@ -7,16 +7,16 @@ This program analyzes BIND DNS query data from syslog file input
 
 ## functions
 
-dnscl_domain(domain)
+dnscl_domain(domain)  
     Returns a list of client IP addresses that queried a domain name
     
-dnscl_ipaddress(ip)
+dnscl_ipaddress(ip)  
     Returns a list of domain names queried by a client IP address
     
-dnscl_rpz(ip_address)
+dnscl_rpz(ip_address)  
     Returns rpz names queried by a client IP address
     
-dnscl_rpz_domain(domain_rpz_name)
+dnscl_rpz_domain(domain_rpz_name)  
     Returns cllent IP addresses that queried a rpz domain name
 
 menu()
