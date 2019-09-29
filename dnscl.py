@@ -219,7 +219,7 @@ if __name__ == "__main__":
                 dnscl_rpz_domain(DOMAIN)
             elif int(CHOICE) > 4:
                 print("Invalid choice, try again.")
-            elif int(CHOICE) == 0:
+            elif int(CHOICE) == 0:  # Exit program if input is 0
                 break
     elif sys.argv[1] == "ip" and len(sys.argv) == 3:
         if sys.argv[2] == "--all":
