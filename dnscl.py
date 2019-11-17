@@ -31,9 +31,10 @@
 import sys
 from itertools import groupby
 import timeit
+import re
 
 AUTHOR = "Mark W. Hunter"
-VERSION = "0.37"
+VERSION = "0.38"
 FILENAME = "/var/log/messages"  # path to syslog file
 
 
@@ -76,10 +77,10 @@ def dnscl_domain(domain_name):
     line_count = 0
 
     for line in open(FILENAME, encoding="ISO-8859-1"):
-        if domain_name in line:
+        if re.search(domain_name, line, re.IGNORECASE):
             if "query:" in line:
                 fields = (line.strip().split(" "))
-                if domain_name in fields[8] and len(fields) > 12:  # field containing domain name
+                if re.search(domain_name, fields[8], re.IGNORECASE) and len(fields) > 12:
                     ip_address = fields[5].split("#")  # field containing ip
                     ip_list.append(ip_address[0])
                     if domain_name != "":
@@ -147,10 +148,10 @@ def dnscl_rpz_domain(domain_rpz_name):
     line_count = 0
 
     for line in open(FILENAME, encoding="ISO-8859-1"):
-        if domain_rpz_name in line:
+        if re.search(domain_rpz_name, line, re.IGNORECASE):
             if "QNAME" in line and "SOA" not in line:
                 fields = (line.strip().split(" "))
-                if domain_rpz_name in fields[11] and len(fields) > 11:
+                if re.search(domain_rpz_name, line, re.IGNORECASE) and len(fields) > 11:
                     ip_address = fields[5].split("#")  # field containing ip
                     rpz_ip_list.append(ip_address[0])
                     if domain_rpz_name != "":
