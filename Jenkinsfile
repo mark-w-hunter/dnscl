@@ -4,7 +4,7 @@ properties([
 ])
 
 pipeline {
-    agent any 
+    agent any
     triggers {
         cron('H */4 * * *')
     }
