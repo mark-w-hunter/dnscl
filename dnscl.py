@@ -2,7 +2,7 @@
 
 # dnscl: Analyze BIND DNS query data from syslog file input
 # author: Mark W. Hunter
-# version: 0.37
+# version: 0.39
 # https://github.com/mark-w-hunter/dnscl
 #
 # The MIT License (MIT)
@@ -34,7 +34,7 @@ import timeit
 import re
 
 AUTHOR = "Mark W. Hunter"
-VERSION = "0.38"
+VERSION = "0.39"
 FILENAME = "/var/log/messages"  # path to syslog file
 
 
@@ -47,14 +47,15 @@ def dnscl_ipaddress(ip_address):
     for line in open(FILENAME, encoding="ISO-8859-1"):
         if ip_address_search in line:
             if "query:" in line:
-                fields = (line.strip().split(" "))
+                fields = line.strip().split(" ")
                 if len(fields) > 12:
                     domain_list.append(fields[8])  # field containing domain name
                     line_count += 1
 
     domain_set = sorted(set(domain_list))
-    domain_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(
-        sorted(domain_list))]
+    domain_list_final = [
+        (len(list(dcount)), dname) for dname, dcount in groupby(sorted(domain_list))
+    ]
     domain_list_final.sort(reverse=True)
     elapsed_time = timeit.default_timer() - start_time
 
@@ -64,8 +65,15 @@ def dnscl_ipaddress(ip_address):
     for query_count, domain_name in domain_list_final:
         print(query_count, "\t", domain_name)
 
-    print("\nSummary: Searched", ip_address, "and found", line_count,
-          "queries for", len(domain_set), "domain names.")
+    print(
+        "\nSummary: Searched",
+        ip_address,
+        "and found",
+        line_count,
+        "queries for",
+        len(domain_set),
+        "domain names.",
+    )
     print("Query time:", str(round(elapsed_time, 2)), "seconds")
 
 
@@ -79,8 +87,11 @@ def dnscl_domain(domain_name):
     for line in open(FILENAME, encoding="ISO-8859-1"):
         if re.search(domain_name, line, re.IGNORECASE):
             if "query:" in line:
-                fields = (line.strip().split(" "))
-                if re.search(domain_name, fields[8], re.IGNORECASE) and len(fields) > 12:
+                fields = line.strip().split(" ")
+                if (
+                    re.search(domain_name, fields[8], re.IGNORECASE)
+                    and len(fields) > 12
+                ):
                     ip_address = fields[5].split("#")  # field containing ip
                     ip_list.append(ip_address[0])
                     if domain_name != "":
@@ -89,7 +100,9 @@ def dnscl_domain(domain_name):
 
     ip_set = sorted(set(ip_list))
     domain_set = sorted(set(domain_list))
-    ip_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(sorted(ip_list))]
+    ip_list_final = [
+        (len(list(dcount)), dname) for dname, dcount in groupby(sorted(ip_list))
+    ]
     ip_list_final.sort(reverse=True)
     elapsed_time = timeit.default_timer() - start_time
 
@@ -105,8 +118,15 @@ def dnscl_domain(domain_name):
         for domain_names_found in domain_set:
             print(domain_names_found)
 
-    print("\nSummary: Searched", domain_name, "and found", line_count,
-          "queries from", len(ip_set), "clients.")
+    print(
+        "\nSummary: Searched",
+        domain_name,
+        "and found",
+        line_count,
+        "queries from",
+        len(ip_set),
+        "clients.",
+    )
     print("Query time:", str(round(elapsed_time, 2)), "seconds")
 
 
@@ -119,13 +139,15 @@ def dnscl_rpz(ip_address):
     for line in open(FILENAME, encoding="ISO-8859-1"):
         if ip_address_search in line:
             if "QNAME" in line and "SOA" not in line:
-                fields = (line.strip().split(" "))
+                fields = line.strip().split(" ")
                 if len(fields) > 11:
                     rpz_list.append(fields[11])  # field containing rpz domain name
                     line_count += 1
 
     rpz_set = sorted(set(rpz_list))
-    rpz_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(sorted(rpz_list))]
+    rpz_list_final = [
+        (len(list(dcount)), dname) for dname, dcount in groupby(sorted(rpz_list))
+    ]
     rpz_list_final.sort(reverse=True)
     elapsed_time = timeit.default_timer() - start_time
 
@@ -135,8 +157,15 @@ def dnscl_rpz(ip_address):
     for query_count, domain_name in rpz_list_final:
         print(query_count, "\t", domain_name)
 
-    print("\nSummary: Searched", ip_address, "and found", line_count,
-          "queries for", len(rpz_set), "rpz names.")
+    print(
+        "\nSummary: Searched",
+        ip_address,
+        "and found",
+        line_count,
+        "queries for",
+        len(rpz_set),
+        "rpz names.",
+    )
     print("Query time:", str(round(elapsed_time, 2)), "seconds")
 
 
@@ -150,18 +179,21 @@ def dnscl_rpz_domain(domain_rpz_name):
     for line in open(FILENAME, encoding="ISO-8859-1"):
         if re.search(domain_rpz_name, line, re.IGNORECASE):
             if "QNAME" in line and "SOA" not in line:
-                fields = (line.strip().split(" "))
+                fields = line.strip().split(" ")
                 if re.search(domain_rpz_name, line, re.IGNORECASE) and len(fields) > 11:
                     ip_address = fields[5].split("#")  # field containing ip
                     rpz_ip_list.append(ip_address[0])
                     if domain_rpz_name != "":
-                        rpz_domain_list.append(fields[11])  # field containing rpz domain name
+                        rpz_domain_list.append(
+                            fields[11]
+                        )  # field containing rpz domain name
                     line_count += 1
 
     rpz_ip_set = sorted(set(rpz_ip_list))
     rpz_domain_set = sorted(set(rpz_domain_list))
-    rpz_ip_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(
-        sorted(rpz_ip_list))]
+    rpz_ip_list_final = [
+        (len(list(dcount)), dname) for dname, dcount in groupby(sorted(rpz_ip_list))
+    ]
     rpz_ip_list_final.sort(reverse=True)
     elapsed_time = timeit.default_timer() - start_time
 
@@ -177,8 +209,15 @@ def dnscl_rpz_domain(domain_rpz_name):
         for domain_names_found in rpz_domain_set:
             print(domain_names_found)
 
-    print("\nSummary: Searched", domain_rpz_name, "and found", line_count,
-          "queries from", len(rpz_ip_set), "clients.")
+    print(
+        "\nSummary: Searched",
+        domain_rpz_name,
+        "and found",
+        line_count,
+        "queries from",
+        len(rpz_ip_set),
+        "clients.",
+    )
     print("Query time:", str(round(elapsed_time, 2)), "seconds")
 
 
@@ -244,12 +283,18 @@ if __name__ == "__main__":
         print("dnscl version:", VERSION)
     elif sys.argv[1] == "help" or sys.argv[1] == "-h":
         print("Usage: dnscl.py [OPTION] ...")
-        print("\n  ip <ip_address> or --all\t Returns domains queried by an IP \
-address or all domains")
-        print("  domain <domain> or --all\t Returns IP addresses that queried \
-a domain or all IP addresses")
-        print("  rpz <rpz_domain> or --all\t Returns IP addresses that queried \
-a RPZ domain or all RPZ domains")
+        print(
+            "\n  ip <ip_address> or --all\t Returns domains queried by an IP \
+address or all domains"
+        )
+        print(
+            "  domain <domain> or --all\t Returns IP addresses that queried \
+a domain or all IP addresses"
+        )
+        print(
+            "  rpz <rpz_domain> or --all\t Returns IP addresses that queried \
+a RPZ domain or all RPZ domains"
+        )
         print("  version, -v\t\t\t Display version information and exit")
         print("  help, -h\t\t\t Display this help text and exit\n")
         print("dnscl", VERSION + ",", AUTHOR, "(c) 2019\n")

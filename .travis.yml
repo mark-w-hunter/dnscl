@@ -4,5 +4,5 @@ python:
   - "3.6"
   - "3.7"
   - "3.8"
-install: "pip install pylint"
-script: "pylint dnscl.py"
+install: "pip install flake8"
+script: "flake8 --max-line-length=88 dnscl.py"
