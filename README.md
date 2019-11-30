@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/mark-w-hunter/dnscl.svg?branch=master)](https://travis-ci.com/mark-w-hunter/dnscl)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
- 
+
 This program analyzes BIND DNS query data from syslog file input
 
 ## functions
