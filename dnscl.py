@@ -27,7 +27,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-""" This program analyzes DNS queries from syslog input """
+"""This program analyzes DNS queries from syslog input"""
 import sys
 from itertools import groupby
 import timeit
@@ -39,7 +39,7 @@ FILENAME = "/var/log/messages"  # path to syslog file
 
 
 def dnscl_ipaddress(ip_address):
-    """ Returns domain names queried by a client IP address """
+    """Returns domain names queried by a client IP address"""
     start_time = timeit.default_timer()
     domain_list = []
     line_count = 0
@@ -78,7 +78,7 @@ def dnscl_ipaddress(ip_address):
 
 
 def dnscl_domain(domain_name):
-    """ Returns client IP addresses that queried a domain name """
+    """Returns client IP addresses that queried a domain name"""
     start_time = timeit.default_timer()
     ip_list = []
     domain_list = []
@@ -131,7 +131,7 @@ def dnscl_domain(domain_name):
 
 
 def dnscl_rpz(ip_address):
-    """ Returns rpz names queried by a client IP address """
+    """Returns rpz names queried by a client IP address"""
     start_time = timeit.default_timer()
     rpz_list = []
     line_count = 0
@@ -170,7 +170,7 @@ def dnscl_rpz(ip_address):
 
 
 def dnscl_rpz_domain(domain_rpz_name):
-    """ Returns client IP addresses that queried a rpz domain name """
+    """Returns client IP addresses that queried a rpz domain name"""
     start_time = timeit.default_timer()
     rpz_ip_list = []
     rpz_domain_list = []
@@ -222,8 +222,8 @@ def dnscl_rpz_domain(domain_rpz_name):
 
 
 def menu():
-    """ Prints main menu """
-    print("\nDnscl Main Menu:\n")
+    """Print menu"""
+    print("\nDnscl Menu:\n")
     print("Enter 0 to exit")
     print("Enter 1 to search ip address")
     print("Enter 2 to search domain name")
