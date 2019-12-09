@@ -49,7 +49,8 @@ def dnscl_ipaddress(ip_address):
             if "query:" in line:
                 fields = line.strip().split(" ")
                 if len(fields) > 12:
-                    domain_list.append(fields[8])  # field containing domain name
+                    # field containing domain name
+                    domain_list.append(fields[8])
                     line_count += 1
 
     domain_set = sorted(set(domain_list))
@@ -95,7 +96,8 @@ def dnscl_domain(domain_name):
                     ip_address = fields[5].split("#")  # field containing ip
                     ip_list.append(ip_address[0])
                     if domain_name != "":
-                        domain_list.append(fields[8])  # field containing domain name
+                        # field containing domain name
+                        domain_list.append(fields[8])
                     line_count += 1
 
     ip_set = sorted(set(ip_list))
@@ -141,7 +143,8 @@ def dnscl_rpz(ip_address):
             if "QNAME" in line and "SOA" not in line:
                 fields = line.strip().split(" ")
                 if len(fields) > 11:
-                    rpz_list.append(fields[11])  # field containing rpz domain name
+                    # field containing rpz domain name
+                    rpz_list.append(fields[11])
                     line_count += 1
 
     rpz_set = sorted(set(rpz_list))
