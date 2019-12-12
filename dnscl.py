@@ -2,7 +2,7 @@
 
 # dnscl: Analyze BIND DNS query data from syslog file input
 # author: Mark W. Hunter
-# version: 0.39
+# version: 0.40
 # https://github.com/mark-w-hunter/dnscl
 #
 # The MIT License (MIT)
@@ -34,7 +34,7 @@ import timeit
 import re
 
 AUTHOR = "Mark W. Hunter"
-VERSION = "0.39"
+VERSION = "0.40"
 FILENAME = "/var/log/messages"  # path to syslog file
 
 
@@ -282,9 +282,9 @@ if __name__ == "__main__":
             dnscl_rpz(WILDCARD)
         else:
             dnscl_rpz_domain(sys.argv[2])
-    elif sys.argv[1] == "version" or sys.argv[1] == "-v":
+    elif sys.argv[1] == "--version" or sys.argv[1] == "-v":
         print("dnscl version:", VERSION)
-    elif sys.argv[1] == "help" or sys.argv[1] == "-h":
+    elif sys.argv[1] == "--help" or sys.argv[1] == "-h":
         print("Usage: dnscl.py [OPTION] ...")
         print(
             "\n  ip <ip_address> or --all\t Returns domains queried by an IP \
@@ -298,8 +298,8 @@ a domain or all IP addresses"
             "  rpz <rpz_domain> or --all\t Returns IP addresses that queried \
 a RPZ domain or all RPZ domains"
         )
-        print("  version, -v\t\t\t Display version information and exit")
-        print("  help, -h\t\t\t Display this help text and exit\n")
+        print("  --version, -v\t\t\t Display version information and exit")
+        print("  --help, -h\t\t\t Display this help text and exit\n")
         print("dnscl", VERSION + ",", AUTHOR, "(c) 2019\n")
     else:
         print("Error, try again.")
