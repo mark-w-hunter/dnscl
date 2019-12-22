@@ -31,7 +31,6 @@
 import sys
 from itertools import groupby
 import timeit
-import re
 
 AUTHOR = "Mark W. Hunter"
 VERSION = "0.40"
@@ -86,13 +85,10 @@ def dnscl_domain(domain_name):
     line_count = 0
 
     for line in open(FILENAME, encoding="ISO-8859-1"):
-        if re.search(domain_name, line, re.IGNORECASE):
+        if domain_name.lower() in line.lower():
             if "query:" in line:
                 fields = line.strip().split(" ")
-                if (
-                    re.search(domain_name, fields[8], re.IGNORECASE)
-                    and len(fields) > 12
-                ):
+                if len(fields) > 12:
                     ip_address = fields[5].split("#")  # field containing ip
                     ip_list.append(ip_address[0])
                     if domain_name != "":
@@ -180,10 +176,10 @@ def dnscl_rpz_domain(domain_rpz_name):
     line_count = 0
 
     for line in open(FILENAME, encoding="ISO-8859-1"):
-        if re.search(domain_rpz_name, line, re.IGNORECASE):
+        if domain_rpz_name.lower() in line.lower():
             if "QNAME" in line and "SOA" not in line:
                 fields = line.strip().split(" ")
-                if re.search(domain_rpz_name, line, re.IGNORECASE) and len(fields) > 11:
+                if len(fields) > 11:
                     ip_address = fields[5].split("#")  # field containing ip
                     rpz_ip_list.append(ip_address[0])
                     if domain_rpz_name != "":
