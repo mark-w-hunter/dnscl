@@ -66,15 +66,10 @@ def dnscl_ipaddress(ip_address):
         print(query_count, "\t", domain_name)
 
     print(
-        "\nSummary: Searched",
-        ip_address,
-        "and found",
-        line_count,
-        "queries for",
-        len(domain_set),
-        "domain names.",
+        f"\nSummary: Searched {ip_address} and found {line_count}",
+        f"queries for {len(domain_set)} domain names.",
     )
-    print("Query time:", str(round(elapsed_time, 2)), "seconds")
+    print(f"Query time: {round(elapsed_time, 2)} seconds")
 
 
 def dnscl_domain(domain_name):
@@ -117,15 +112,10 @@ def dnscl_domain(domain_name):
             print(domain_names_found)
 
     print(
-        "\nSummary: Searched",
-        domain_name,
-        "and found",
-        line_count,
-        "queries from",
-        len(ip_set),
-        "clients.",
+        f"\nSummary: Searched {domain_name} and found {line_count}",
+        f"queries from {len(ip_set)} clients.",
     )
-    print("Query time:", str(round(elapsed_time, 2)), "seconds")
+    print(f"Query time: {round(elapsed_time, 2)} seconds")
 
 
 def dnscl_rpz(ip_address):
@@ -157,15 +147,10 @@ def dnscl_rpz(ip_address):
         print(query_count, "\t", domain_name)
 
     print(
-        "\nSummary: Searched",
-        ip_address,
-        "and found",
-        line_count,
-        "queries for",
-        len(rpz_set),
-        "rpz names.",
+        f"\nSummary: Searched {ip_address} and found {line_count}",
+        f"queries for {len(rpz_set)} rpz names.",
     )
-    print("Query time:", str(round(elapsed_time, 2)), "seconds")
+    print(f"Query time: {round(elapsed_time, 2)} seconds")
 
 
 def dnscl_rpz_domain(domain_rpz_name):
@@ -209,15 +194,10 @@ def dnscl_rpz_domain(domain_rpz_name):
             print(domain_names_found)
 
     print(
-        "\nSummary: Searched",
-        domain_rpz_name,
-        "and found",
-        line_count,
-        "queries from",
-        len(rpz_ip_set),
-        "clients.",
+        f"\nSummary: Searched {domain_rpz_name} and found {line_count}",
+        f"queries from {len(rpz_ip_set)} clients.",
     )
-    print("Query time:", str(round(elapsed_time, 2)), "seconds")
+    print(f"Query time: {round(elapsed_time, 2)} seconds")
 
 
 def menu():
