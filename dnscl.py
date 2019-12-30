@@ -2,7 +2,6 @@
 
 # dnscl: Analyze BIND DNS query data from syslog file input
 # author: Mark W. Hunter
-# version: 0.41
 # https://github.com/mark-w-hunter/dnscl
 #
 # The MIT License (MIT)
@@ -33,7 +32,7 @@ from itertools import groupby
 import timeit
 
 AUTHOR = "Mark W. Hunter"
-VERSION = "0.41"
+VERSION = "0.42"
 FILENAME = "/var/log/messages"  # path to syslog file
 
 
@@ -59,7 +58,7 @@ def dnscl_ipaddress(ip_address):
     domain_list_final.sort(reverse=True)
     elapsed_time = timeit.default_timer() - start_time
 
-    print(ip_address, "total queries are", line_count)
+    print(ip_address, "total queries:", line_count)
     print("queries: ")
 
     for query_count, domain_name in domain_list_final:
@@ -99,7 +98,7 @@ def dnscl_domain(domain_name):
     ip_list_final.sort(reverse=True)
     elapsed_time = timeit.default_timer() - start_time
 
-    print(domain_name, "total queries are", line_count)
+    print(domain_name, "total queries:", line_count)
     print("ip addresses: ")
 
     for query_count, ip_address in ip_list_final:
@@ -140,7 +139,7 @@ def dnscl_rpz(ip_address):
     rpz_list_final.sort(reverse=True)
     elapsed_time = timeit.default_timer() - start_time
 
-    print(ip_address, "total queries are", line_count)
+    print(ip_address, "total queries:", line_count)
     print("queries: ")
 
     for query_count, domain_name in rpz_list_final:
@@ -181,7 +180,7 @@ def dnscl_rpz_domain(domain_rpz_name):
     rpz_ip_list_final.sort(reverse=True)
     elapsed_time = timeit.default_timer() - start_time
 
-    print(domain_rpz_name, "total queries are", line_count)
+    print(domain_rpz_name, "total queries:", line_count)
     print("ip addresses: ")
 
     for query_count, ip_address in rpz_ip_list_final:
@@ -262,20 +261,21 @@ if __name__ == "__main__":
         print("dnscl version:", VERSION)
     elif sys.argv[1] == "--help" or sys.argv[1] == "-h":
         print("Usage: dnscl.py [OPTION] ...")
+        print("\nRun without options for interactive menu. Valid options include:")
         print(
-            "\n  ip <ip_address> or --all\t Returns domains queried by an IP \
+            "\nip <ip> or --all\t Returns domains queried by an IP \
 address or all domains"
         )
         print(
-            "  domain <domain> or --all\t Returns IP addresses that queried \
+            "domain <name> or --all\t Returns IP addresses that queried \
 a domain or all IP addresses"
         )
         print(
-            "  rpz <rpz_domain> or --all\t Returns IP addresses that queried \
+            "rpz <rpz> or --all\t Returns IP addresses that queried \
 a RPZ domain or all RPZ domains"
         )
-        print("  --version, -v\t\t\t Display version information and exit")
-        print("  --help, -h\t\t\t Display this help text and exit\n")
-        print("dnscl", VERSION + ",", AUTHOR, "(c) 2019\n")
+        print("--version, -v\t\t Display version information and exit")
+        print("--help, -h\t\t Display this help text and exit\n")
+        print(f"Dnscl {VERSION}, {AUTHOR} (c) 2019\n")
     else:
         print("Error, try again.")
