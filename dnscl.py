@@ -263,19 +263,19 @@ if __name__ == "__main__":
         print("Usage: dnscl.py [OPTION] ...")
         print("\nRun without options for interactive menu. Valid options include:")
         print(
-            "\n  ip <ip_address> or --all\t Returns domains queried by an IP \
+            "\nip <ip> or --all\t Returns domains queried by an IP \
 address or all domains"
         )
         print(
-            "  domain <domain> or --all\t Returns IP addresses that queried \
+            "domain <name> or --all\t Returns IP addresses that queried \
 a domain or all IP addresses"
         )
         print(
-            "  rpz <rpz_domain> or --all\t Returns IP addresses that queried \
+            "rpz <rpz> or --all\t Returns IP addresses that queried \
 a RPZ domain or all RPZ domains"
         )
-        print("  --version, -v\t\t\t Display version information and exit")
-        print("  --help, -h\t\t\t Display this help text and exit\n")
-        print("dnscl", VERSION + ",", AUTHOR, "(c) 2019\n")
+        print("--version, -v\t\t Display version information and exit")
+        print("--help, -h\t\t Display this help text and exit\n")
+        print(f"Dnscl {VERSION}, {AUTHOR} (c) 2019\n")
     else:
         print("Error, try again.")
