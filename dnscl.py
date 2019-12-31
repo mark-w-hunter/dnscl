@@ -266,10 +266,12 @@ if __name__ == "__main__":
             "\nip <ip> or --all\t Returns domains queried by an IP address or all domains"
         )
         print(
-            "domain <name> or --all\t Returns IP addresses that queried a domain or all IP addresses"
+            "domain <name> or --all\t Returns IP addresses that queried a domain or all "
+            "IP addresses"
         )
         print(
-            "rpz <rpz> or --all\t Returns IP addresses that queried a RPZ domain or all RPZ domains"
+            "rpz <rpz> or --all\t Returns IP addresses that queried a RPZ domain or all "
+            "RPZ domains"
         )
         print("--version, -v\t\t Display version information and exit")
         print("--help, -h\t\t Display this help text and exit\n")
