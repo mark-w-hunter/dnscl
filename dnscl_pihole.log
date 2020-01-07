@@ -223,9 +223,7 @@ if __name__ == "__main__":
             if int(CHOICE) == 1:
                 IP = input("ip address: ")
                 if IP != "":
-                    while not is_valid_ipv4_address(IP) and not is_valid_ipv6_address(
-                        IP
-                    ):
+                    while not is_valid_ipv4_address(IP) and not is_valid_ipv6_address(IP):
                         print("Invalid ip address, try again.")
                         IP = input("ip address: ")
                 dnscl_ipaddress(IP)
