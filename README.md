@@ -40,7 +40,7 @@ Step 1: Set path and filename to local Python 3 interpreter. Python 3.6 or highe
 
 Step 2: Set path and filename to local syslog file.
 
-Step 3: Run dnscl.py using text menu interface or command line options.
+Step 3: Run dnscl.py using text menu interface.
 
 ```bash
 ./dnscl.py
@@ -50,7 +50,7 @@ Step 3: Run dnscl.py using text menu interface or command line options.
 python3 dnscl.py
 ```
 
-Step 5: Run dnscl.py directly using command-line arguments.
+Step 4: Run dnscl.py directly using command-line arguments.
 
 ### Examples
 
@@ -63,7 +63,6 @@ Search for all domain names queried by 10.0.0.45
 Search for all IP addresses that queried www.foo.org
 
 ```bash
-
 ./dnscl.py domain www.foo.org
 ```
 
