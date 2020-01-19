@@ -19,44 +19,74 @@ dnscl_rpz(ip_address)
 dnscl_rpz_domain(domain_rpz_name)
     Returns cllent IP addresses that queried a rpz domain name
 
+dnscl_record_ip(ip_address)
+    Returns record types queried by a client IP address
+
+dnscl_record_domain(domain_name)
+    Returns record types for a queried domain name
+
+dnscl_record_type(record_type)
+    Returns domain names of a particular record type
+
+find_field(fields, field_index, field_type)
+    Find and return requested field value
+
 menu()
     Prints main menu
 
 ## usage
 
-Step 1: Set path and filename to local syslog file.
+Step 1: Set path and filename to local Python 3 interpreter. Python 3.6 or higher required.
 
-Step 2: Set field number for domain name.
+Step 2: Set path and filename to local syslog file.
 
-Step 3: Set field number for IP address.
+Step 3: Run dnscl.py using text menu interface or command line options.
 
-Step 4: Run dnscl.py using text menu interface:
-```
+```bash
 ./dnscl.py
 ```
-```
+
+```bash
 python3 dnscl.py
 ```
+
 Step 5: Run dnscl.py directly using command-line arguments.
 
-### Examples:
+### Examples
 
 Search for all domain names queried by 10.0.0.45
-```
+
+```bash
 ./dnscl.py ip 10.0.0.45
 ```
+
 Search for all IP addresses that queried www.foo.org
-```
+
+```bash
+
 ./dnscl.py domain www.foo.org
 ```
+
 Return a list of all domain names queried by any IP address
-```
+
+```bash
 ./dnscl.py ip --all
 ```
+
 Return a list of all IP addresses that queried any domain name
-```
+
+```bash
 ./dnscl.py domain --all
 ```
+
 Search for all rpz names queried
-```
+
+```bash
 ./dnscl.py rpz --all
+```
+
+Display help
+
+```bash
+./dnscl.py --help
+```

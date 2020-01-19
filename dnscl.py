@@ -30,9 +30,11 @@
 import sys
 from itertools import groupby
 import timeit
+# from pyfiglet import print_figlet
 
 AUTHOR = "Mark W. Hunter"
 VERSION = "0.42"
+# FILENAME = "/var/log/syslog"  # path to syslog file
 FILENAME = "/var/log/messages"  # path to syslog file
 
 
@@ -43,22 +45,23 @@ def dnscl_ipaddress(ip_address):
     line_count = 0
     ip_address_search = ip_address + "#"
     for line in open(FILENAME, encoding="ISO-8859-1"):
+        field_index = 0
         if ip_address_search in line:
-            if "query:" in line:
-                fields = line.strip().split(" ")
+            if "named" in line and "query:" in line:
+                fields = (line.strip().split(" "))
                 if len(fields) > 12:
-                    # field containing domain name
-                    domain_list.append(fields[8])
+                    domain_list.append(
+                        find_field(fields, field_index, "domain")
+                    )  # find domain field
                     line_count += 1
 
     domain_set = sorted(set(domain_list))
-    domain_list_final = [
-        (len(list(dcount)), dname) for dname, dcount in groupby(sorted(domain_list))
-    ]
+    domain_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(
+        sorted(domain_list))]
     domain_list_final.sort(reverse=True)
     elapsed_time = timeit.default_timer() - start_time
 
-    print(ip_address, "total queries:", line_count)
+    print(f"{ip_address} total queries: {line_count}")
     print("queries: ")
 
     for query_count, domain_name in domain_list_final:
@@ -79,26 +82,28 @@ def dnscl_domain(domain_name):
     line_count = 0
 
     for line in open(FILENAME, encoding="ISO-8859-1"):
-        if domain_name.lower() in line.lower():
-            if "query:" in line:
-                fields = line.strip().split(" ")
-                if len(fields) > 12:
-                    ip_address = fields[5].split("#")  # field containing ip
-                    ip_list.append(ip_address[0])
-                    if domain_name != "":
-                        # field containing domain name
-                        domain_list.append(fields[8])
-                    line_count += 1
+        field_index = 0
+        if domain_name.lower() in line.lower() and "query:" in line:
+            fields = (line.strip().split(" "))
+            ip_address = find_field(
+                fields, field_index, "ip_address"
+            ).split("#")  # find field containing ip address
+            ip_list.append(ip_address[0])
+            if domain_name != "" and domain_name.lower() in find_field(
+                    fields, field_index, "domain"
+            ):
+                domain_list.append(
+                    find_field(fields, field_index, "domain")
+                )  # find field containing domain name
+            line_count += 1
 
     ip_set = sorted(set(ip_list))
     domain_set = sorted(set(domain_list))
-    ip_list_final = [
-        (len(list(dcount)), dname) for dname, dcount in groupby(sorted(ip_list))
-    ]
+    ip_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(sorted(ip_list))]
     ip_list_final.sort(reverse=True)
     elapsed_time = timeit.default_timer() - start_time
 
-    print(domain_name, "total queries:", line_count)
+    print(f"{domain_name} total queries: {line_count}")
     print("ip addresses: ")
 
     for query_count, ip_address in ip_list_final:
@@ -106,14 +111,17 @@ def dnscl_domain(domain_name):
 
     if domain_name != "":
         print("\ndomain names: ")
-
         for domain_names_found in domain_set:
             print(domain_names_found)
-
-    print(
-        f"\nSummary: Searched {domain_name} and found {line_count}",
-        f"queries from {len(ip_set)} clients.",
-    )
+        print(
+            f"\nSummary: Searched {domain_name} and found {line_count}",
+            f"queries for {len(domain_set)} domain names from {len(ip_set)} clients.",
+        )
+    else:
+        print(
+            f"\nSummary: Searched {domain_name} and found {line_count}",
+            f"queries from {len(ip_set)} clients."
+        )
     print(f"Query time: {round(elapsed_time, 2)} seconds")
 
 
@@ -124,22 +132,22 @@ def dnscl_rpz(ip_address):
     line_count = 0
     ip_address_search = ip_address + "#"
     for line in open(FILENAME, encoding="ISO-8859-1"):
+        field_index = 0
         if ip_address_search in line:
             if "QNAME" in line and "SOA" not in line:
-                fields = line.strip().split(" ")
+                fields = (line.strip().split(" "))
                 if len(fields) > 11:
-                    # field containing rpz domain name
-                    rpz_list.append(fields[11])
+                    rpz_list.append(
+                        find_field(fields, field_index, "rpz_domain")
+                    )  # find field containing rpz domain name
                     line_count += 1
 
     rpz_set = sorted(set(rpz_list))
-    rpz_list_final = [
-        (len(list(dcount)), dname) for dname, dcount in groupby(sorted(rpz_list))
-    ]
+    rpz_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(sorted(rpz_list))]
     rpz_list_final.sort(reverse=True)
     elapsed_time = timeit.default_timer() - start_time
 
-    print(ip_address, "total queries:", line_count)
+    print(f"{ip_address} total queries: {line_count}")
     print("queries: ")
 
     for query_count, domain_name in rpz_list_final:
@@ -160,27 +168,29 @@ def dnscl_rpz_domain(domain_rpz_name):
     line_count = 0
 
     for line in open(FILENAME, encoding="ISO-8859-1"):
-        if domain_rpz_name.lower() in line.lower():
+        field_index = 0
+        if domain_rpz_name in line:
             if "QNAME" in line and "SOA" not in line:
-                fields = line.strip().split(" ")
-                if len(fields) > 11:
-                    ip_address = fields[5].split("#")  # field containing ip
+                fields = (line.strip().split(" "))
+                if domain_rpz_name.lower() in line.lower() and len(fields) > 11:
+                    ip_address = find_field(
+                        fields, field_index, "rpz_ip"
+                    ).split("#")  # find field containing rpz ip
                     rpz_ip_list.append(ip_address[0])
                     if domain_rpz_name != "":
                         rpz_domain_list.append(
-                            fields[11]
-                        )  # field containing rpz domain name
+                            find_field(fields, field_index, "rpz_domain")
+                        )  # find field containing rpz domain name
                     line_count += 1
 
     rpz_ip_set = sorted(set(rpz_ip_list))
     rpz_domain_set = sorted(set(rpz_domain_list))
-    rpz_ip_list_final = [
-        (len(list(dcount)), dname) for dname, dcount in groupby(sorted(rpz_ip_list))
-    ]
+    rpz_ip_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(
+        sorted(rpz_ip_list))]
     rpz_ip_list_final.sort(reverse=True)
     elapsed_time = timeit.default_timer() - start_time
 
-    print(domain_rpz_name, "total queries:", line_count)
+    print(f"{domain_rpz_name} total queries: {line_count}")
     print("ip addresses: ")
 
     for query_count, ip_address in rpz_ip_list_final:
@@ -199,14 +209,198 @@ def dnscl_rpz_domain(domain_rpz_name):
     print(f"Query time: {round(elapsed_time, 2)} seconds")
 
 
+def dnscl_record_ip(ip_address):
+    """Returns record types queried by a client IP address"""
+    start_time = timeit.default_timer()
+    record_list = []
+    domain_list = []
+    line_count = 0
+    ip_address_search = ip_address + "#"
+    for line in open(FILENAME, encoding="ISO-8859-1"):
+        field_index = 0
+        if ip_address_search in line:
+            if "query:" in line:
+                fields = (line.strip().split(" "))
+                if len(fields) > 12:
+                    record_list.append(
+                        find_field(
+                            fields, field_index, "record_type"
+                        ))  # find field containing record type
+                    domain_list.append(
+                        find_field(fields, field_index, "domain")
+                    )  # find `field containing domain name
+                    line_count += 1
+
+    record_list_final = [(
+        len(list(dcount)), dname) for dname, dcount in groupby(sorted(record_list))]
+    record_list_final.sort(reverse=True)
+    elapsed_time = timeit.default_timer() - start_time
+
+    print(f"{ip_address} total queries: {line_count}")
+    print("queries: ")
+
+    for query_count, record_type in record_list_final:
+        print(query_count, "\t", record_type)
+
+    if ip_address != "":
+        print("\ndomain names: ")
+        for domain_names_found in sorted(set(domain_list)):
+            print(domain_names_found)
+
+    print(
+        f"\nSummary: Searched {ip_address} and found {line_count}",
+        f"queries with {len(set(record_list))} record types for {len(set(domain_list))}",
+        f"domains.",
+    )
+    print(f"Query time: {round(elapsed_time, 2)} seconds")
+
+
+def dnscl_record_domain(domain_name):
+    """Returns record types for a queried domain name"""
+    start_time = timeit.default_timer()
+    ip_list = []
+    domain_list = []
+    record_list = []
+    line_count = 0
+
+    for line in open(FILENAME, encoding="ISO-8859-1"):
+        field_index = 0
+        fields = (line.strip().split(" "))
+        if domain_name.lower() in line.lower() and "query:" in line:
+            ip_address = find_field(
+                fields, field_index, "ip_address"
+            ).split("#")  # find field containing ip
+            ip_list.append(ip_address[0])
+            record_list.append(
+                find_field(fields, field_index, "record_type")
+            )  # find field containing record type
+            if domain_name != "":
+                domain_list.append(
+                    find_field(fields, field_index, "domain")
+                )  # find field containing domain name
+            line_count += 1
+
+    record_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(
+        sorted(record_list))]
+    record_list_final.sort(reverse=True)
+    elapsed_time = timeit.default_timer() - start_time
+
+    print(f"{domain_name} total queries: {line_count}")
+    print("record types: ")
+
+    for query_count, record_type in record_list_final:
+        print(query_count, "\t", record_type)
+
+    if domain_name != "":
+        print("\ndomain names: ")
+        for domain_names_found in sorted(set(domain_list)):
+            print(domain_names_found)
+
+        print("\nip addresses: ")
+        for ip_addresses_found in sorted(set(ip_list)):
+            print(ip_addresses_found)
+
+    print(
+        f"\nSummary: Searched {domain_name} and found {line_count}",
+        f"queries for {len(set(record_list))} record types from {len(set(ip_list))} clients.",
+    )
+    print(f"Query time: {round(elapsed_time, 2)} seconds")
+
+
+def dnscl_record_type(record_type):
+    """Returns domain names of a particular record type"""
+    start_time = timeit.default_timer()
+    record_domain_list = []
+    record_ip_list = []
+    line_count = 0
+
+    for line in open(FILENAME, encoding="ISO-8859-1"):
+        field_index = 0
+        if "query:" in line:
+            fields = (line.strip().split(" "))
+            if record_type.upper() in find_field(
+                fields, field_index, "record_type"
+            ):  # find field containing record type
+                record_domain_list.append(
+                    find_field(fields, field_index, "domain")
+                )  # find field containing domain name
+                ip_address = find_field(
+                    fields, field_index, "ip_address"
+                ).split("#")  # find field containing ip
+                record_ip_list.append(ip_address[0])
+                line_count += 1
+
+    record_domain_list_final = [(len(list(dcount)), dname) for dname, dcount in groupby(
+        sorted(record_domain_list))]
+    record_domain_list_final.sort(reverse=True)
+    elapsed_time = timeit.default_timer() - start_time
+
+    print(f"record type {record_type.upper()} total queries: {line_count}")
+    print("queries: ")
+
+    for query_count, domain_name in record_domain_list_final:
+        print(query_count, "\t", domain_name)
+
+    print("\nip addresses: ")
+    for ip_addresses_found in set(record_ip_list):
+        print(ip_addresses_found)
+
+    print(
+        f"\nSummary: Searched record type {record_type.upper()} and found",
+        f"{line_count} queries for",
+        f"{len(set(record_domain_list))} domains from",
+        f"{len(set(record_ip_list))} clients.",
+    )
+    print("Query time:", str(round(elapsed_time, 2)), "seconds")
+
+
+def find_field(fields, field_index, field_type):
+    """Find and return requested field value"""
+    if field_type == "domain":
+        for field in fields:
+            if field == "query:":
+                field_value = fields[field_index + 1]  # find domain field
+                return field_value.lower()
+            field_index += 1
+    elif field_type == "ip_address":
+        for field in fields:
+            if field == "query:":
+                field_value = fields[field_index - 2]  # find ip field
+                return field_value
+            field_index += 1
+    elif field_type == "rpz_domain":
+        for field in fields:
+            if field == "QNAME":
+                field_value = fields[field_index + 3]  # find rpz domain field
+                return field_value
+            field_index += 1
+    elif field_type == "rpz_ip":
+        for field in fields:
+            if field == "QNAME":
+                field_value = fields[field_index - 3]  # find rpz domain field
+                return field_value
+            field_index += 1
+    elif field_type == "record_type":
+        for field in fields:
+            if field == "query:":
+                field_value = fields[field_index + 3]  # find record type
+                return field_value
+            field_index += 1
+    return field_value
+
+
 def menu():
-    """Print menu"""
+    """Prints main menu"""
     print("\nDnscl Menu:\n")
+    # print_figlet("Dnscl", font="ogre", colors="BLUE")
     print("Enter 0 to exit")
-    print("Enter 1 to search ip address")
-    print("Enter 2 to search domain name")
-    print("Enter 3 to search rpz ip address")
-    print("Enter 4 to search rpz domain name")
+    print("Enter 1 to search ip")
+    print("Enter 2 to search domain")
+    print("Enter 3 to search rpz ip")
+    print("Enter 4 to search rpz domain")
+    print("Enter 5 to search ip by record type")
+    print("Enter 6 to search domain by record type")
+    print("Enter 7 to search record type details")
 
 
 if __name__ == "__main__":
@@ -218,11 +412,6 @@ if __name__ == "__main__":
                 print("Invalid input, try again.")
                 menu()
                 CHOICE = input("=> ")
-            try:
-                int(CHOICE)
-            except ValueError:
-                print("Invalid input, exiting.")
-                break
             if int(CHOICE) == 1:
                 IP = input("ip address: ")
                 dnscl_ipaddress(IP)
@@ -235,46 +424,56 @@ if __name__ == "__main__":
             elif int(CHOICE) == 4:
                 DOMAIN = input("rpz domain name: ")
                 dnscl_rpz_domain(DOMAIN)
-            elif int(CHOICE) > 4:
+            elif int(CHOICE) == 5:
+                IP = input("ip address: ")
+                dnscl_record_ip(IP)
+            elif int(CHOICE) == 6:
+                DOMAIN = input("domain: ")
+                dnscl_record_domain(DOMAIN)
+            elif int(CHOICE) == 7:
+                TYPE = input("record type: ")
+                dnscl_record_type(TYPE)
+            elif int(CHOICE) > 7:
                 print("Invalid choice, try again.")
-            elif int(CHOICE) == 0:  # Exit program if input is 0
+            elif int(CHOICE) == 0:
                 break
     elif sys.argv[1] == "ip" and len(sys.argv) == 3:
-        if sys.argv[2] == "--all":
+        if sys.argv[2] == "--all" or sys.argv[2] == "-a":
             WILDCARD = ""
             dnscl_ipaddress(WILDCARD)
         else:
             dnscl_ipaddress(sys.argv[2])
     elif sys.argv[1] == "domain" and len(sys.argv) == 3:
-        if sys.argv[2] == "--all":
+        if sys.argv[2] == "--all" or sys.argv[2] == "-a":
             WILDCARD = ""
             dnscl_domain(WILDCARD)
         else:
             dnscl_domain(sys.argv[2])
     elif sys.argv[1] == "rpz" and len(sys.argv) == 3:
-        if sys.argv[2] == "--all":
+        if sys.argv[2] == "--all" or sys.argv[2] == "-a":
             WILDCARD = ""
             dnscl_rpz(WILDCARD)
         else:
             dnscl_rpz_domain(sys.argv[2])
     elif sys.argv[1] == "--version" or sys.argv[1] == "-v":
-        print("dnscl version:", VERSION)
+        print(f"Dnscl version: {VERSION}")
     elif sys.argv[1] == "--help" or sys.argv[1] == "-h":
         print("Usage: dnscl.py [OPTION] ...")
         print("\nRun without options for interactive menu. Valid options include:")
         print(
-            "\nip <ip> or --all\t Returns domains queried by an IP address or all domains"
+            "\n  ip <ip_address> or --all, -a\t Returns domains queried by an IP",
+            "address or all domains",
         )
         print(
-            "domain <name> or --all\t Returns IP addresses that queried a domain or all "
-            "IP addresses"
+            "  domain <domain> or --all, -a\t Returns IP addresses that queried",
+            "a domain or all IP addresses",
         )
         print(
-            "rpz <rpz> or --all\t Returns IP addresses that queried a RPZ domain or all "
-            "RPZ domains"
+            "  rpz <rpz_domain> or --all, -a\t Returns IP addresses that queried",
+            "a RPZ domain or all RPZ domains",
         )
-        print("--version, -v\t\t Display version information and exit")
-        print("--help, -h\t\t Display this help text and exit\n")
-        print(f"Dnscl {VERSION}, {AUTHOR} (c) 2019\n")
+        print("  --version, -v\t\t\t Display version information and exit")
+        print("  --help, -h\t\t\t Display this help text and exit\n")
+        print(f"Dnscl {VERSION}, {AUTHOR} (c) 2020")
     else:
         print("Error, try again.")
