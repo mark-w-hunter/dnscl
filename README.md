@@ -36,39 +36,56 @@ menu()
 
 ## usage
 
-Step 1: Set path and filename to local syslog file.
+Step 1: Set path and filename to local Python 3 interpreter. Python 3.6 or higher required.
 
-Step 2: Set field number for domain name.
+Step 2: Set path and filename to local syslog file.
 
-Step 3: Set field number for IP address.
+Step 3: Run dnscl.py using text menu interface.
 
-Step 4: Run dnscl.py using text menu interface:
-```
+```bash
 ./dnscl.py
 ```
-```
+
+```bash
 python3 dnscl.py
 ```
-Step 5: Run dnscl.py directly using command-line arguments.
 
-### Examples:
+Step 4: Run dnscl.py directly using command-line arguments.
+
+### Examples
 
 Search for all domain names queried by 10.0.0.45
-```
+
+```bash
 ./dnscl.py ip 10.0.0.45
 ```
+
 Search for all IP addresses that queried www.foo.org
-```
+
+```bash
 ./dnscl.py domain www.foo.org
 ```
+
 Return a list of all domain names queried by any IP address
-```
+
+```bash
 ./dnscl.py ip --all
 ```
+
 Return a list of all IP addresses that queried any domain name
-```
+
+```bash
 ./dnscl.py domain --all
 ```
+
 Search for all rpz names queried
-```
+
+```bash
 ./dnscl.py rpz --all
+```
+
+Display help
+
+```bash
+./dnscl.py --help
+```
