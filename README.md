@@ -19,6 +19,18 @@ dnscl_rpz(ip_address)
 dnscl_rpz_domain(domain_rpz_name)
     Returns cllent IP addresses that queried a rpz domain name
 
+dnscl_record_ip(ip_address)
+    Returns record types queried by a client IP address
+
+dnscl_record_domain(domain_name)
+    Returns record types for a queried domain name
+
+dnscl_record_type(record_type)
+    Returns domain names of a particular record type
+
+find_field(fields, field_index, field_type)
+    Find and return requested field value
+
 menu()
     Prints main menu
 
