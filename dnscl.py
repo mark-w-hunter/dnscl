@@ -6,7 +6,7 @@
 #
 # The MIT License (MIT)
 #
-# Copyright (c) 2019 Mark W. Hunter
+# Copyright (c) 2020 Mark W. Hunter
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,7 @@ import timeit
 # from pyfiglet import print_figlet
 
 AUTHOR = "Mark W. Hunter"
-VERSION = "0.42"
+VERSION = "0.43"
 # FILENAME = "/var/log/syslog"  # path to syslog file
 FILENAME = "/var/log/messages"  # path to syslog file
 
