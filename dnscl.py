@@ -6,7 +6,7 @@
 #
 # The MIT License (MIT)
 #
-# Copyright (c) 2019 Mark W. Hunter
+# Copyright (c) 2020 Mark W. Hunter
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,7 @@ import timeit
 # from pyfiglet import print_figlet
 
 AUTHOR = "Mark W. Hunter"
-VERSION = "0.42"
+VERSION = "0.43"
 # FILENAME = "/var/log/syslog"  # path to syslog file
 FILENAME = "/var/log/messages"  # path to syslog file
 
@@ -48,7 +48,7 @@ def dnscl_ipaddress(ip_address):
         field_index = 0
         if ip_address_search in line:
             if "named" in line and "query:" in line:
-                fields = (line.strip().split(" "))
+                fields = line.strip().split(" ")
                 if len(fields) > 12:
                     domain_list.append(
                         find_field(fields, field_index, "domain")
@@ -86,7 +86,7 @@ def dnscl_domain(domain_name):
     for line in open(FILENAME, encoding="ISO-8859-1"):
         field_index = 0
         if domain_name.lower() in line.lower() and "query:" in line:
-            fields = (line.strip().split(" "))
+            fields = line.strip().split(" ")
             ip_address = find_field(
                 fields, field_index, "ip_address"
             ).split("#")  # find field containing ip address
@@ -140,7 +140,7 @@ def dnscl_rpz(ip_address):
         field_index = 0
         if ip_address_search in line:
             if "QNAME" in line and "SOA" not in line:
-                fields = (line.strip().split(" "))
+                fields = line.strip().split(" ")
                 if len(fields) > 11:
                     rpz_list.append(
                         find_field(fields, field_index, "rpz_domain")
@@ -179,7 +179,7 @@ def dnscl_rpz_domain(domain_rpz_name):
         field_index = 0
         if domain_rpz_name in line:
             if "QNAME" in line and "SOA" not in line:
-                fields = (line.strip().split(" "))
+                fields = line.strip().split(" ")
                 if domain_rpz_name.lower() in line.lower() and len(fields) > 11:
                     ip_address = find_field(
                         fields, field_index, "rpz_ip"
@@ -230,7 +230,7 @@ def dnscl_record_ip(ip_address):
         field_index = 0
         if ip_address_search in line:
             if "query:" in line:
-                fields = (line.strip().split(" "))
+                fields = line.strip().split(" ")
                 if len(fields) > 12:
                     record_list.append(
                         find_field(
@@ -277,7 +277,7 @@ def dnscl_record_domain(domain_name):
 
     for line in open(FILENAME, encoding="ISO-8859-1"):
         field_index = 0
-        fields = (line.strip().split(" "))
+        fields = line.strip().split(" ")
         if domain_name.lower() in line.lower() and "query:" in line:
             ip_address = find_field(
                 fields, field_index, "ip_address"
@@ -331,7 +331,7 @@ def dnscl_record_type(record_type):
     for line in open(FILENAME, encoding="ISO-8859-1"):
         field_index = 0
         if "query:" in line:
-            fields = (line.strip().split(" "))
+            fields = line.strip().split(" ")
             if record_type.upper() in find_field(
                 fields, field_index, "record_type"
             ):  # find field containing record type
