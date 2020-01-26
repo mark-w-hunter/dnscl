@@ -34,8 +34,8 @@ import timeit
 
 AUTHOR = "Mark W. Hunter"
 VERSION = "0.43"
-# FILENAME = "/var/log/syslog"  # path to syslog file
-FILENAME = "/var/log/messages"  # path to syslog file
+FILENAME = "/var/log/syslog"  # path to syslog file
+# FILENAME = "/var/log/messages"  # path to syslog file
 
 
 def dnscl_ipaddress(ip_address):
