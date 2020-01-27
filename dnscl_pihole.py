@@ -33,7 +33,7 @@ import timeit
 import socket
 
 AUTHOR = "Mark W. Hunter"
-VERSION = "0.40-pihole"
+VERSION = "0.41-pihole"
 FILENAME = "/var/log/pihole.log"  # path to pihole log file
 
 
@@ -107,14 +107,17 @@ def dnscl_domain(domain_name):
 
     if domain_name != "":
         print("\ndomain names: ")
-
         for domain_names_found in sorted(set(my_domain_list)):
             print(domain_names_found)
-
-    print(
-        f"\nSummary: Searched {domain_name} and found {line_count}",
-        f"queries from {unique_clients} clients.",
-    )
+        print(
+            f"\nSummary: Searched {domain_name} and found {line_count}",
+            f"queries for {len(set(my_domain_list))} domain names from {unique_clients} clients.",
+        )
+    else:
+        print(
+            f"\nSummary: Searched {domain_name} and found {line_count}",
+            f"queries from {unique_clients} clients.",
+        )
     print(f"Query time: {round(elapsed_time, 2)} seconds")
 
 
@@ -183,23 +186,25 @@ def find_field(fields, field_index, field_type):
         for field in fields:
             if "query[" in field:
                 field_value = fields[field_index + 1]  # find domain field
+                return field_value
             field_index += 1
     elif field_type == "ip_address":
         for field in fields:
             if "query[" in field:
                 field_value = fields[field_index + 3]  # find ip field
+                return field_value
             field_index += 1
     elif field_type == "block_domain":
         for field in fields:
             if "0.0.0.0" in field:
                 field_value = fields[field_index - 2]  # find domain field
+                return field_value
             field_index += 1
-    return field_value
 
 
 def menu():
     """ Prints main menu """
-    print("\nDnscl Menu (pihole version)\n")
+    print("\nDnscl Menu (Pi-hole version)\n")
     print("Enter 0 to exit")
     print("Enter 1 to search ip address")
     print("Enter 2 to search domain name")
