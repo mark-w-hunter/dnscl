@@ -107,14 +107,17 @@ def dnscl_domain(domain_name):
 
     if domain_name != "":
         print("\ndomain names: ")
-
         for domain_names_found in sorted(set(my_domain_list)):
             print(domain_names_found)
-
-    print(
-        f"\nSummary: Searched {domain_name} and found {line_count}",
-        f"queries from {unique_clients} clients.",
-    )
+        print(
+            f"\nSummary: Searched {domain_name} and found {line_count}",
+            f"queries for {len(set(my_domain_list))} domain names from {unique_clients} clients.",
+        )
+    else:
+        print(
+            f"\nSummary: Searched {domain_name} and found {line_count}",
+            f"queries from {unique_clients} clients.",
+        )
     print(f"Query time: {round(elapsed_time, 2)} seconds")
 
 
