@@ -33,7 +33,7 @@ import timeit
 import socket
 
 AUTHOR = "Mark W. Hunter"
-VERSION = "0.40-pihole"
+VERSION = "0.41-pihole"
 FILENAME = "/var/log/pihole.log"  # path to pihole log file
 
 
@@ -183,18 +183,20 @@ def find_field(fields, field_index, field_type):
         for field in fields:
             if "query[" in field:
                 field_value = fields[field_index + 1]  # find domain field
+                return field_value
             field_index += 1
     elif field_type == "ip_address":
         for field in fields:
             if "query[" in field:
                 field_value = fields[field_index + 3]  # find ip field
+                return field_value
             field_index += 1
     elif field_type == "block_domain":
         for field in fields:
             if "0.0.0.0" in field:
                 field_value = fields[field_index - 2]  # find domain field
+                return field_value
             field_index += 1
-    return field_value
 
 
 def menu():
