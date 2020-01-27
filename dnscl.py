@@ -402,7 +402,6 @@ def find_field(fields, field_index, field_type):
                 field_value = fields[field_index + 3]  # find record type
                 return field_value
             field_index += 1
-    return field_value
 
 
 def menu():
