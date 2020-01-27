@@ -201,7 +201,7 @@ def find_field(fields, field_index, field_type):
 
 def menu():
     """ Prints main menu """
-    print("\nDnscl Menu (pihole version)\n")
+    print("\nDnscl Menu (Pi-hole version)\n")
     print("Enter 0 to exit")
     print("Enter 1 to search ip address")
     print("Enter 2 to search domain name")
