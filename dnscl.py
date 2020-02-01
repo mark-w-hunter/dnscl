@@ -33,7 +33,7 @@ import timeit
 # from pyfiglet import print_figlet
 
 AUTHOR = "Mark W. Hunter"
-VERSION = "0.43"
+VERSION = "0.44"
 FILENAME = "/var/log/syslog"  # path to syslog file
 # FILENAME = "/var/log/messages"  # path to syslog file
 
@@ -49,9 +49,7 @@ def dnscl_ipaddress(ip_address):
             if "named" in line and "query:" in line:
                 fields = line.strip().split(" ")
                 if len(fields) > 12:
-                    domain_list.append(
-                        find_domain_field(fields)
-                    )  # find domain field
+                    domain_list.append(find_domain_field(fields))  # find domain
                     line_count += 1
 
     domain_set = sorted(set(domain_list))
@@ -85,16 +83,10 @@ def dnscl_domain(domain_name):
     for line in open(FILENAME, encoding="ISO-8859-1"):
         if domain_name.lower() in line.lower() and "query:" in line:
             fields = line.strip().split(" ")
-            ip_address = find_ip_field(
-                fields
-            ).split("#")  # find field containing ip address
+            ip_address = find_ip_field(fields).split("#")  # find ip
             ip_list.append(ip_address[0])
-            if domain_name != "" and domain_name.lower() in find_domain_field(
-                    fields
-            ):
-                domain_list.append(
-                    find_domain_field(fields)
-                )  # find field containing domain name
+            if domain_name != "" and domain_name.lower() in find_domain_field(fields):
+                domain_list.append(find_domain_field(fields))  # find domain
             line_count += 1
 
     ip_set = sorted(set(ip_list))
@@ -139,9 +131,7 @@ def dnscl_rpz(ip_address):
             if "QNAME" in line and "SOA" not in line:
                 fields = line.strip().split(" ")
                 if len(fields) > 11:
-                    rpz_list.append(
-                        find_rpz_domain_field(fields)
-                    )  # find field containing rpz domain name
+                    rpz_list.append(find_rpz_domain_field(fields))  # find rpz domain
                     line_count += 1
 
     rpz_set = sorted(set(rpz_list))
@@ -177,14 +167,10 @@ def dnscl_rpz_domain(domain_rpz_name):
             if "QNAME" in line and "SOA" not in line:
                 fields = line.strip().split(" ")
                 if domain_rpz_name.lower() in line.lower() and len(fields) > 11:
-                    ip_address = find_rpz_ip_field(
-                        fields
-                    ).split("#")  # find field containing rpz ip
+                    ip_address = find_rpz_ip_field(fields).split("#")  # find rpz ip
                     rpz_ip_list.append(ip_address[0])
                     if domain_rpz_name != "":
-                        rpz_domain_list.append(
-                            find_rpz_domain_field(fields)
-                        )  # find field containing rpz domain name
+                        rpz_domain_list.append(find_rpz_domain_field(fields))  # find rpz domain
                     line_count += 1
 
     rpz_ip_set = sorted(set(rpz_ip_list))
@@ -228,12 +214,8 @@ def dnscl_record_ip(ip_address):
                 fields = line.strip().split(" ")
                 if len(fields) > 12:
                     record_list.append(
-                        find_record_type_field(
-                            fields
-                        ))  # find field containing record type
-                    domain_list.append(
-                        find_domain_field(fields)
-                    )  # find `field containing domain name
+                        find_record_type_field(fields))  # find record type
+                    domain_list.append(find_domain_field(fields))  # find domain
                     line_count += 1
 
     record_list_final = [
@@ -273,17 +255,11 @@ def dnscl_record_domain(domain_name):
     for line in open(FILENAME, encoding="ISO-8859-1"):
         fields = line.strip().split(" ")
         if domain_name.lower() in line.lower() and "query:" in line:
-            ip_address = find_ip_field(
-                fields
-            ).split("#")  # find field containing ip
+            ip_address = find_ip_field(fields).split("#")  # ip
             ip_list.append(ip_address[0])
-            record_list.append(
-                find_record_type_field(fields)
-            )  # find field containing record type
+            record_list.append(find_record_type_field(fields))  # find record type
             if domain_name != "":
-                domain_list.append(
-                    find_domain_field(fields)
-                )  # find field containing domain name
+                domain_list.append(find_domain_field(fields))  # find domain
             line_count += 1
 
     record_list_final = [
@@ -325,15 +301,9 @@ def dnscl_record_type(record_type):
     for line in open(FILENAME, encoding="ISO-8859-1"):
         if "query:" in line:
             fields = line.strip().split(" ")
-            if record_type.upper() in find_record_type_field(
-                fields
-            ):  # find field containing record type
-                record_domain_list.append(
-                    find_domain_field(fields)
-                )  # find field containing domain name
-                ip_address = find_ip_field(
-                    fields
-                ).split("#")  # find field containing ip
+            if record_type.upper() in find_record_type_field(fields):  # find record type
+                record_domain_list.append(find_domain_field(fields))  # find domain
+                ip_address = find_ip_field(fields).split("#")  # find ip
                 record_ip_list.append(ip_address[0])
                 line_count += 1
 
