@@ -63,28 +63,28 @@ Display help
 
 ## functions
 
-dnscl_domain(domain)
+dnscl_domain(domain)  
     Returns a list of client IP addresses that queried a domain name
 
-dnscl_ipaddress(ip)
+dnscl_ipaddress(ip)  
     Returns a list of domain names queried by a client IP address
 
-dnscl_rpz(ip_address)
+dnscl_rpz(ip_address)  
     Returns rpz names queried by a client IP address
 
-dnscl_rpz_domain(domain_rpz_name)
+dnscl_rpz_domain(domain_rpz_name)  
     Returns client IP addresses that queried a rpz domain name
 
-dnscl_record_ip(ip_address)
+dnscl_record_ip(ip_address)  
     Returns record types queried by a client IP address
 
-dnscl_record_domain(domain_name)
+dnscl_record_domain(domain_name)  
     Returns record types for a queried domain name
 
-dnscl_record_type(record_type)
+dnscl_record_type(record_type)  
     Returns domain names of a particular record type
 
-find_field(fields, field_index, field_type)
+find_field(fields, field_index, field_type)  
     Find and return requested field value
 
 menu()
