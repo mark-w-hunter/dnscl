@@ -45,13 +45,12 @@ def dnscl_ipaddress(ip_address):
     line_count = 0
     ip_address_search = ip_address + "#"
     for line in open(FILENAME, encoding="ISO-8859-1"):
-        field_index = 0
         if ip_address_search in line:
             if "named" in line and "query:" in line:
                 fields = line.strip().split(" ")
                 if len(fields) > 12:
                     domain_list.append(
-                        find_field(fields, field_index, "domain")
+                        find_domain_field(fields)
                     )  # find domain field
                     line_count += 1
 
@@ -84,18 +83,17 @@ def dnscl_domain(domain_name):
     line_count = 0
 
     for line in open(FILENAME, encoding="ISO-8859-1"):
-        field_index = 0
         if domain_name.lower() in line.lower() and "query:" in line:
             fields = line.strip().split(" ")
-            ip_address = find_field(
-                fields, field_index, "ip_address"
+            ip_address = find_ip_field(
+                fields
             ).split("#")  # find field containing ip address
             ip_list.append(ip_address[0])
-            if domain_name != "" and domain_name.lower() in find_field(
-                    fields, field_index, "domain"
+            if domain_name != "" and domain_name.lower() in find_domain_field(
+                    fields
             ):
                 domain_list.append(
-                    find_field(fields, field_index, "domain")
+                    find_domain_field(fields)
                 )  # find field containing domain name
             line_count += 1
 
@@ -137,13 +135,12 @@ def dnscl_rpz(ip_address):
     line_count = 0
     ip_address_search = ip_address + "#"
     for line in open(FILENAME, encoding="ISO-8859-1"):
-        field_index = 0
         if ip_address_search in line:
             if "QNAME" in line and "SOA" not in line:
                 fields = line.strip().split(" ")
                 if len(fields) > 11:
                     rpz_list.append(
-                        find_field(fields, field_index, "rpz_domain")
+                        find_rpz_domain_field(fields)
                     )  # find field containing rpz domain name
                     line_count += 1
 
@@ -176,18 +173,17 @@ def dnscl_rpz_domain(domain_rpz_name):
     line_count = 0
 
     for line in open(FILENAME, encoding="ISO-8859-1"):
-        field_index = 0
         if domain_rpz_name in line:
             if "QNAME" in line and "SOA" not in line:
                 fields = line.strip().split(" ")
                 if domain_rpz_name.lower() in line.lower() and len(fields) > 11:
-                    ip_address = find_field(
-                        fields, field_index, "rpz_ip"
+                    ip_address = find_rpz_ip_field(
+                        fields
                     ).split("#")  # find field containing rpz ip
                     rpz_ip_list.append(ip_address[0])
                     if domain_rpz_name != "":
                         rpz_domain_list.append(
-                            find_field(fields, field_index, "rpz_domain")
+                            find_rpz_domain_field(fields)
                         )  # find field containing rpz domain name
                     line_count += 1
 
@@ -227,17 +223,16 @@ def dnscl_record_ip(ip_address):
     line_count = 0
     ip_address_search = ip_address + "#"
     for line in open(FILENAME, encoding="ISO-8859-1"):
-        field_index = 0
         if ip_address_search in line:
             if "query:" in line:
                 fields = line.strip().split(" ")
                 if len(fields) > 12:
                     record_list.append(
-                        find_field(
-                            fields, field_index, "record_type"
+                        find_record_type_field(
+                            fields
                         ))  # find field containing record type
                     domain_list.append(
-                        find_field(fields, field_index, "domain")
+                        find_domain_field(fields)
                     )  # find `field containing domain name
                     line_count += 1
 
@@ -276,19 +271,18 @@ def dnscl_record_domain(domain_name):
     line_count = 0
 
     for line in open(FILENAME, encoding="ISO-8859-1"):
-        field_index = 0
         fields = line.strip().split(" ")
         if domain_name.lower() in line.lower() and "query:" in line:
-            ip_address = find_field(
-                fields, field_index, "ip_address"
+            ip_address = find_ip_field(
+                fields
             ).split("#")  # find field containing ip
             ip_list.append(ip_address[0])
             record_list.append(
-                find_field(fields, field_index, "record_type")
+                find_record_type_field(fields)
             )  # find field containing record type
             if domain_name != "":
                 domain_list.append(
-                    find_field(fields, field_index, "domain")
+                    find_domain_field(fields)
                 )  # find field containing domain name
             line_count += 1
 
@@ -329,17 +323,16 @@ def dnscl_record_type(record_type):
     line_count = 0
 
     for line in open(FILENAME, encoding="ISO-8859-1"):
-        field_index = 0
         if "query:" in line:
             fields = line.strip().split(" ")
-            if record_type.upper() in find_field(
-                fields, field_index, "record_type"
+            if record_type.upper() in find_record_type_field(
+                fields
             ):  # find field containing record type
                 record_domain_list.append(
-                    find_field(fields, field_index, "domain")
+                    find_domain_field(fields)
                 )  # find field containing domain name
-                ip_address = find_field(
-                    fields, field_index, "ip_address"
+                ip_address = find_ip_field(
+                    fields
                 ).split("#")  # find field containing ip
                 record_ip_list.append(ip_address[0])
                 line_count += 1
@@ -370,38 +363,59 @@ def dnscl_record_type(record_type):
     print("Query time:", str(round(elapsed_time, 2)), "seconds")
 
 
-def find_field(fields, field_index, field_type):
-    """Find and return requested field value"""
-    if field_type == "domain":
-        for field in fields:
-            if field == "query:":
-                field_value = fields[field_index + 1]  # find domain field
-                return field_value.lower()
-            field_index += 1
-    elif field_type == "ip_address":
-        for field in fields:
-            if field == "query:":
-                field_value = fields[field_index - 2]  # find ip field
-                return field_value
-            field_index += 1
-    elif field_type == "rpz_domain":
-        for field in fields:
-            if field == "QNAME":
-                field_value = fields[field_index + 3]  # find rpz domain field
-                return field_value
-            field_index += 1
-    elif field_type == "rpz_ip":
-        for field in fields:
-            if field == "QNAME":
-                field_value = fields[field_index - 3]  # find rpz domain field
-                return field_value
-            field_index += 1
-    elif field_type == "record_type":
-        for field in fields:
-            if field == "query:":
-                field_value = fields[field_index + 3]  # find record type
-                return field_value
-            field_index += 1
+def find_domain_field(fields):
+    """Find and return domain field value"""
+    field_index = 0
+    for field in fields:
+        if field == "query:":
+            field_value = fields[field_index + 1]  # find domain field
+            return field_value.lower()
+        field_index += 1
+    return None
+
+
+def find_ip_field(fields):
+    """Find and return ip field value"""
+    field_index = 0
+    for field in fields:
+        if field == "query:":
+            field_value = fields[field_index - 2]  # find ip field
+            return field_value
+        field_index += 1
+    return None
+
+
+def find_rpz_domain_field(fields):
+    """Find and return rpz domain field"""
+    field_index = 0
+    for field in fields:
+        if field == "QNAME":
+            field_value = fields[field_index + 3]  # find rpz domain field
+            return field_value
+        field_index += 1
+    return None
+
+
+def find_rpz_ip_field(fields):
+    """Find and return rpz ip field value"""
+    field_index = 0
+    for field in fields:
+        if field == "QNAME":
+            field_value = fields[field_index - 3]  # find rpz domain field
+            return field_value
+        field_index += 1
+    return None
+
+
+def find_record_type_field(fields):
+    """Find and return record type field"""
+    field_index = 0
+    for field in fields:
+        if field == "query:":
+            field_value = fields[field_index + 3]  # find record type
+            return field_value
+        field_index += 1
+    return None
 
 
 def menu():
