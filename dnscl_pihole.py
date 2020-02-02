@@ -200,6 +200,7 @@ def find_field(fields, field_index, field_type):
                 field_value = fields[field_index - 2]  # find domain field
                 return field_value
             field_index += 1
+    return None
 
 
 def menu():
