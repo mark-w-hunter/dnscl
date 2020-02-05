@@ -158,6 +158,8 @@ def dnscl_blocklist(ip_address):
 
 def is_valid_ipv4_address(address):
     """Checks input is a valid IPv4 address"""
+    # credit Stack Overflow user tzot
+    # https://stackoverflow.com/questions/319279/how-to-validate-ip-address-in-python/319298#319298
     try:
         socket.inet_pton(socket.AF_INET, address)
     except AttributeError:  # no inet_pton here, sorry
@@ -173,6 +175,8 @@ def is_valid_ipv4_address(address):
 
 def is_valid_ipv6_address(address):
     """Checks input is a valid IPv6 address"""
+    # credit Stack Overflow user tzot
+    # https://stackoverflow.com/questions/319279/how-to-validate-ip-address-in-python/319298#319298
     try:
         socket.inet_pton(socket.AF_INET6, address)
     except socket.error:  # not a valid address
