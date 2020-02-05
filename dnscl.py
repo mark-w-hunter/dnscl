@@ -371,7 +371,7 @@ def find_rpz_ip_field(fields):
     field_index = 0
     for field in fields:
         if field == "QNAME":
-            field_value = fields[field_index - 3]  # find rpz domain field
+            field_value = fields[field_index - 3]  # find rpz ip field
             return field_value
         field_index += 1
     return None
