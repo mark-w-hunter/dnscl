@@ -44,6 +44,7 @@ def dnscl_ipaddress(ip_address):
     domain_list = []
     line_count = 0
     ip_address_search = ip_address + "#"
+
     for line in open(FILENAME, encoding="ISO-8859-1"):
         if ip_address_search in line:
             if "named" in line and "query:" in line:
@@ -126,6 +127,7 @@ def dnscl_rpz(ip_address):
     rpz_list = []
     line_count = 0
     ip_address_search = ip_address + "#"
+
     for line in open(FILENAME, encoding="ISO-8859-1"):
         if ip_address_search in line:
             if "QNAME" in line and "SOA" not in line:
@@ -208,6 +210,7 @@ def dnscl_record_ip(ip_address):
     domain_list = []
     line_count = 0
     ip_address_search = ip_address + "#"
+
     for line in open(FILENAME, encoding="ISO-8859-1"):
         if ip_address_search in line:
             if "query:" in line:
