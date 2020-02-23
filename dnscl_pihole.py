@@ -33,7 +33,7 @@ import timeit
 import socket
 
 AUTHOR = "Mark W. Hunter"
-VERSION = "0.41-pihole"
+VERSION = "0.42-pihole"
 FILENAME = "/var/log/pihole.log"  # path to pihole log file
 
 
@@ -44,9 +44,18 @@ def dnscl_ipaddress(ip_address):
     line_count = 0
     for line in open(FILENAME, encoding="UTF-8"):
         field_index = 0
-        if ip_address in line:
-            if "query[" in line:
-                fields = line.strip().split(" ")
+        if "query[" in line:
+            fields = line.strip().split(" ")
+            if ip_address != "":
+                ip_field = find_field(
+                    fields, field_index, "ip_address"
+                )  # find field containing ip address
+                if ip_field == ip_address:
+                    my_list.append(
+                        find_field(fields, field_index, "domain")
+                    )  # find field containing domain name
+                    line_count += 1
+            else:
                 my_list.append(
                     find_field(fields, field_index, "domain")
                 )  # find field containing domain name
