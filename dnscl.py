@@ -26,7 +26,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""This program analyzes DNS queries from syslog input"""
+"""This program analyzes BIND DNS queries from syslog input"""
 import sys
 from itertools import groupby
 import timeit
