@@ -33,36 +33,45 @@ import timeit
 import socket
 
 AUTHOR = "Mark W. Hunter"
-VERSION = "0.41-pihole"
+VERSION = "0.42-pihole"
 FILENAME = "/var/log/pihole.log"  # path to pihole log file
 
 
 def dnscl_ipaddress(ip_address):
     """Returns domain names queried by a client IP address"""
     start_time = timeit.default_timer()
-    my_list = []
+    domain_list = []
     line_count = 0
     for line in open(FILENAME, encoding="UTF-8"):
         field_index = 0
-        if ip_address in line:
-            if "query[" in line:
-                fields = line.strip().split(" ")
-                my_list.append(
+        if "query[" in line:
+            fields = line.strip().split(" ")
+            if ip_address != "":
+                ip_field = find_field(
+                    fields, field_index, "ip_address"
+                )  # find field containing ip address
+                if ip_field == ip_address:
+                    domain_list.append(
+                        find_field(fields, field_index, "domain")
+                    )  # find field containing domain name
+                    line_count += 1
+            else:
+                domain_list.append(
                     find_field(fields, field_index, "domain")
                 )  # find field containing domain name
                 line_count += 1
 
-    my_list_final = [
-        (len(list(dcount)), dname) for dname, dcount in groupby(sorted(my_list))
+    domain_list_final = [
+        (len(list(dcount)), dname) for dname, dcount in groupby(sorted(domain_list))
     ]
-    my_list_final.sort(reverse=True)
-    unique_domains = len(sorted(set(my_list)))
+    domain_list_final.sort(reverse=True)
+    unique_domains = len(sorted(set(domain_list)))
     elapsed_time = timeit.default_timer() - start_time
 
     print(f"{ip_address} total queries: {line_count}")
     print("queries: ")
 
-    for query_count, domain_name in my_list_final:
+    for query_count, domain_name in domain_list_final:
         print(f"{query_count}\t {domain_name}")
 
     print(
@@ -75,43 +84,43 @@ def dnscl_ipaddress(ip_address):
 def dnscl_domain(domain_name):
     """Returns client IP addresses that queried a domain name"""
     start_time = timeit.default_timer()
-    my_list = []
-    my_domain_list = []
+    ip_list = []
+    domain_list = []
     line_count = 0
 
     for line in open(FILENAME, encoding="UTF-8"):
         field_index = 0
         if domain_name.lower() in line.lower() and "query[" in line:
             fields = line.strip().split(" ")
-            my_list.append(
+            ip_list.append(
                 find_field(fields, field_index, "ip_address")
             )  # find field containing ip address
             if domain_name != "":
-                my_domain_list.append(
+                domain_list.append(
                     find_field(fields, field_index, "domain")
                 )  # find field containing domain name
             line_count += 1
 
-    my_list_final = [
-        (len(list(dcount)), dname) for dname, dcount in groupby(sorted(my_list))
+    ip_list_final = [
+        (len(list(dcount)), dname) for dname, dcount in groupby(sorted(ip_list))
     ]
-    my_list_final.sort(reverse=True)
-    unique_clients = len(sorted(set(my_list)))
+    ip_list_final.sort(reverse=True)
+    unique_clients = len(sorted(set(ip_list)))
     elapsed_time = timeit.default_timer() - start_time
 
     print(f"{domain_name} total queries: {line_count}")
     print("ip addresses: ")
 
-    for query_count, ip_address in my_list_final:
+    for query_count, ip_address in ip_list_final:
         print(f"{query_count}\t {ip_address}")
 
     if domain_name != "":
         print("\ndomain names: ")
-        for domain_names_found in sorted(set(my_domain_list)):
+        for domain_names_found in sorted(set(domain_list)):
             print(domain_names_found)
         print(
             f"\nSummary: Searched {domain_name} and found {line_count}",
-            f"queries for {len(set(my_domain_list))} domain names from {unique_clients} clients.",
+            f"queries for {len(set(domain_list))} domain names from {unique_clients} clients.",
         )
     else:
         print(
@@ -124,29 +133,29 @@ def dnscl_domain(domain_name):
 def dnscl_blocklist(ip_address):
     """Returns blocklist names queried by a client IP address"""
     start_time = timeit.default_timer()
-    my_list = []
+    block_list = []
     line_count = 0
     for line in open(FILENAME, encoding="UTF-8"):
         field_index = 0
         if ip_address in line:
             if "is 0.0.0.0" in line:
                 fields = line.strip().split(" ")
-                my_list.append(
+                block_list.append(
                     find_field(fields, field_index, "block_domain")
                 )  # field containing blocklist domain name
                 line_count += 1
 
-    my_list_final = [
-        (len(list(dcount)), dname) for dname, dcount in groupby(sorted(my_list))
+    block_list_final = [
+        (len(list(dcount)), dname) for dname, dcount in groupby(sorted(block_list))
     ]
-    my_list_final.sort(reverse=True)
-    unique_block_domains = len(sorted(set(my_list)))
+    block_list_final.sort(reverse=True)
+    unique_block_domains = len(sorted(set(block_list)))
     elapsed_time = timeit.default_timer() - start_time
 
     print(f"{ip_address} total queries: {line_count}")
     print("queries: ")
 
-    for query_count, domain_name in my_list_final:
+    for query_count, domain_name in block_list_final:
         print(f"{query_count}\t {domain_name}")
 
     print(
@@ -158,6 +167,8 @@ def dnscl_blocklist(ip_address):
 
 def is_valid_ipv4_address(address):
     """Checks input is a valid IPv4 address"""
+    # credit Stack Overflow user tzot
+    # https://stackoverflow.com/questions/319279/how-to-validate-ip-address-in-python/319298#319298
     try:
         socket.inet_pton(socket.AF_INET, address)
     except AttributeError:  # no inet_pton here, sorry
@@ -173,6 +184,8 @@ def is_valid_ipv4_address(address):
 
 def is_valid_ipv6_address(address):
     """Checks input is a valid IPv6 address"""
+    # credit Stack Overflow user tzot
+    # https://stackoverflow.com/questions/319279/how-to-validate-ip-address-in-python/319298#319298
     try:
         socket.inet_pton(socket.AF_INET6, address)
     except socket.error:  # not a valid address
@@ -200,6 +213,7 @@ def find_field(fields, field_index, field_type):
                 field_value = fields[field_index - 2]  # find domain field
                 return field_value
             field_index += 1
+    return None
 
 
 def menu():
