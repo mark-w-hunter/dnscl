@@ -33,7 +33,7 @@ import timeit
 # from pyfiglet import print_figlet
 
 AUTHOR = "Mark W. Hunter"
-VERSION = "0.46"
+VERSION = "0.47"
 FILENAME = "/var/log/syslog"  # path to syslog file
 # FILENAME = "/var/log/messages"  # path to syslog file
 
@@ -87,7 +87,7 @@ def dnscl_domain(domain_name):
                 fields = line.strip().split(" ")
                 ip_address = find_ip_field(fields).split("#")  # find ip
                 ip_list.append(ip_address[0])
-                if domain_name != "" and domain_name.lower() in find_domain_field(fields):
+                if domain_name and domain_name.lower() in find_domain_field(fields):
                     domain_list.append(find_domain_field(fields))  # find domain
                 line_count += 1
 
@@ -106,7 +106,7 @@ def dnscl_domain(domain_name):
     for query_count, ip_address in ip_list_final:
         print(query_count, "\t", ip_address)
 
-    if domain_name != "":
+    if domain_name:
         print("\ndomain names: ")
         for domain_names_found in domain_set:
             print(domain_names_found)
@@ -173,7 +173,7 @@ def dnscl_rpz_domain(domain_rpz_name):
                     if domain_rpz_name.lower() in line.lower() and len(fields) > 11:
                         ip_address = find_rpz_ip_field(fields).split("#")  # find rpz ip
                         rpz_ip_list.append(ip_address[0])
-                        if domain_rpz_name != "":
+                        if domain_rpz_name:
                             rpz_domain_list.append(find_rpz_domain_field(fields))  # find rpz domain
                         line_count += 1
 
@@ -192,7 +192,7 @@ def dnscl_rpz_domain(domain_rpz_name):
     for query_count, ip_address in rpz_ip_list_final:
         print(query_count, "\t", ip_address)
 
-    if domain_rpz_name != "":
+    if domain_rpz_name:
         print("\nrpz names: ")
 
         for domain_names_found in rpz_domain_set:
@@ -237,7 +237,7 @@ def dnscl_record_ip(ip_address):
     for query_count, record_type in record_list_final:
         print(query_count, "\t", record_type)
 
-    if ip_address != "":
+    if ip_address:
         print("\ndomain names: ")
         for domain_names_found in sorted(set(domain_list)):
             print(domain_names_found)
@@ -265,7 +265,7 @@ def dnscl_record_domain(domain_name):
                 ip_address = find_ip_field(fields).split("#")  # ip
                 ip_list.append(ip_address[0])
                 record_list.append(find_record_type_field(fields))  # find record type
-                if domain_name != "":
+                if domain_name:
                     domain_list.append(find_domain_field(fields))  # find domain
                 line_count += 1
 
@@ -282,7 +282,7 @@ def dnscl_record_domain(domain_name):
     for query_count, record_type in record_list_final:
         print(query_count, "\t", record_type)
 
-    if domain_name != "":
+    if domain_name:
         print("\ndomain names: ")
         for domain_names_found in sorted(set(domain_list)):
             print(domain_names_found)
