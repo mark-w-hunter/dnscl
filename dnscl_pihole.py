@@ -33,7 +33,7 @@ import timeit
 import socket
 
 AUTHOR = "Mark W. Hunter"
-VERSION = "0.42-pihole"
+VERSION = "0.43-pihole"
 FILENAME = "/var/log/pihole.log"  # path to pihole log file
 
 
@@ -46,7 +46,7 @@ def dnscl_ipaddress(ip_address):
         field_index = 0
         if "query[" in line:
             fields = line.strip().split(" ")
-            if ip_address != "":
+            if ip_address:
                 ip_field = find_field(
                     fields, field_index, "ip_address"
                 )  # find field containing ip address
@@ -95,7 +95,7 @@ def dnscl_domain(domain_name):
             ip_list.append(
                 find_field(fields, field_index, "ip_address")
             )  # find field containing ip address
-            if domain_name != "":
+            if domain_name:
                 domain_list.append(
                     find_field(fields, field_index, "domain")
                 )  # find field containing domain name
@@ -114,7 +114,7 @@ def dnscl_domain(domain_name):
     for query_count, ip_address in ip_list_final:
         print(f"{query_count}\t {ip_address}")
 
-    if domain_name != "":
+    if domain_name:
         print("\ndomain names: ")
         for domain_names_found in sorted(set(domain_list)):
             print(domain_names_found)
@@ -241,7 +241,7 @@ if __name__ == "__main__":
                 break
             if int(CHOICE) == 1:
                 IP = input("ip address: ")
-                if IP != "":
+                if IP:
                     while not is_valid_ipv4_address(IP) and not is_valid_ipv6_address(IP):
                         print("Invalid ip address, try again.")
                         IP = input("ip address: ")
