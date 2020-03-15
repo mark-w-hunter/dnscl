@@ -33,7 +33,7 @@ import timeit
 import socket
 
 AUTHOR = "Mark W. Hunter"
-VERSION = "0.43-pihole"
+VERSION = "0.44-pihole"
 FILENAME = "/var/log/pihole.log"  # path to pihole log file
 
 
@@ -42,24 +42,25 @@ def dnscl_ipaddress(ip_address):
     start_time = timeit.default_timer()
     domain_list = []
     line_count = 0
-    for line in open(FILENAME, encoding="UTF-8"):
-        field_index = 0
-        if "query[" in line:
-            fields = line.strip().split(" ")
-            if ip_address:
-                ip_field = find_field(
-                    fields, field_index, "ip_address"
-                )  # find field containing ip address
-                if ip_field == ip_address:
+    with open(FILENAME, encoding="UTF-8") as piholelog:
+        for line in piholelog:
+            field_index = 0
+            if "query[" in line:
+                fields = line.strip().split(" ")
+                if ip_address:
+                    ip_field = find_field(
+                        fields, field_index, "ip_address"
+                    )  # find field containing ip address
+                    if ip_field == ip_address:
+                        domain_list.append(
+                            find_field(fields, field_index, "domain")
+                        )  # find field containing domain name
+                        line_count += 1
+                else:
                     domain_list.append(
                         find_field(fields, field_index, "domain")
                     )  # find field containing domain name
                     line_count += 1
-            else:
-                domain_list.append(
-                    find_field(fields, field_index, "domain")
-                )  # find field containing domain name
-                line_count += 1
 
     domain_list_final = [
         (len(list(dcount)), dname) for dname, dcount in groupby(sorted(domain_list))
@@ -88,18 +89,19 @@ def dnscl_domain(domain_name):
     domain_list = []
     line_count = 0
 
-    for line in open(FILENAME, encoding="UTF-8"):
-        field_index = 0
-        if domain_name.lower() in line.lower() and "query[" in line:
-            fields = line.strip().split(" ")
-            ip_list.append(
-                find_field(fields, field_index, "ip_address")
-            )  # find field containing ip address
-            if domain_name:
-                domain_list.append(
-                    find_field(fields, field_index, "domain")
-                )  # find field containing domain name
-            line_count += 1
+    with open(FILENAME, encoding="UTF-8") as piholelog:
+        for line in piholelog:
+            field_index = 0
+            if domain_name.lower() in line.lower() and "query[" in line:
+                fields = line.strip().split(" ")
+                ip_list.append(
+                    find_field(fields, field_index, "ip_address")
+                )  # find field containing ip address
+                if domain_name:
+                    domain_list.append(
+                        find_field(fields, field_index, "domain")
+                    )  # find field containing domain name
+                line_count += 1
 
     ip_list_final = [
         (len(list(dcount)), dname) for dname, dcount in groupby(sorted(ip_list))
@@ -135,15 +137,17 @@ def dnscl_blocklist(ip_address):
     start_time = timeit.default_timer()
     block_list = []
     line_count = 0
-    for line in open(FILENAME, encoding="UTF-8"):
-        field_index = 0
-        if ip_address in line:
-            if "is 0.0.0.0" in line:
-                fields = line.strip().split(" ")
-                block_list.append(
-                    find_field(fields, field_index, "block_domain")
-                )  # field containing blocklist domain name
-                line_count += 1
+
+    with open(FILENAME, encoding="UTF-8") as piholelog:
+        for line in piholelog:
+            field_index = 0
+            if ip_address in line:
+                if "is 0.0.0.0" in line:
+                    fields = line.strip().split(" ")
+                    block_list.append(
+                        find_field(fields, field_index, "block_domain")
+                    )  # field containing blocklist domain name
+                    line_count += 1
 
     block_list_final = [
         (len(list(dcount)), dname) for dname, dcount in groupby(sorted(block_list))
