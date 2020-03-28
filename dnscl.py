@@ -26,7 +26,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""This program analyzes BIND DNS queries from syslog input"""
+"""This program analyzes BIND DNS queries from syslog input."""
 import sys
 from itertools import groupby
 import timeit
@@ -39,7 +39,7 @@ FILENAME = "/var/log/syslog"  # path to syslog file
 
 
 def dnscl_ipaddress(ip_address):
-    """Returns domain names queried by a client IP address"""
+    """Return a domain name queried by a client IP address."""
     start_time = timeit.default_timer()
     domain_list = []
     line_count = 0
@@ -75,7 +75,7 @@ def dnscl_ipaddress(ip_address):
 
 
 def dnscl_domain(domain_name):
-    """Returns client IP addresses that queried a domain name"""
+    """Return client IP addresses that queried a domain name."""
     start_time = timeit.default_timer()
     ip_list = []
     domain_list = []
@@ -123,7 +123,7 @@ def dnscl_domain(domain_name):
 
 
 def dnscl_rpz(ip_address):
-    """Returns rpz names queried by a client IP address"""
+    """Return rpz names queried by a client IP address."""
     start_time = timeit.default_timer()
     rpz_list = []
     line_count = 0
@@ -159,7 +159,7 @@ def dnscl_rpz(ip_address):
 
 
 def dnscl_rpz_domain(domain_rpz_name):
-    """Returns client IP addresses that queried a rpz domain name"""
+    """Return client IP addresses that queried a rpz domain name."""
     start_time = timeit.default_timer()
     rpz_ip_list = []
     rpz_domain_list = []
@@ -206,7 +206,7 @@ def dnscl_rpz_domain(domain_rpz_name):
 
 
 def dnscl_record_ip(ip_address):
-    """Returns record types queried by a client IP address"""
+    """Return record types queried by a client IP address."""
     start_time = timeit.default_timer()
     record_list = []
     domain_list = []
@@ -251,7 +251,7 @@ def dnscl_record_ip(ip_address):
 
 
 def dnscl_record_domain(domain_name):
-    """Returns record types for a queried domain name"""
+    """Return record types for a queried domain name."""
     start_time = timeit.default_timer()
     ip_list = []
     domain_list = []
@@ -299,7 +299,7 @@ def dnscl_record_domain(domain_name):
 
 
 def dnscl_record_type(record_type):
-    """Returns domain names of a particular record type"""
+    """Return domain names of a particular record type."""
     start_time = timeit.default_timer()
     record_domain_list = []
     record_ip_list = []
@@ -342,7 +342,7 @@ def dnscl_record_type(record_type):
 
 
 def find_domain_field(fields):
-    """Find and return domain field value"""
+    """Find and return domain field value."""
     field_index = 0
     for field in fields:
         if field == "query:":
@@ -353,7 +353,7 @@ def find_domain_field(fields):
 
 
 def find_ip_field(fields):
-    """Find and return ip field value"""
+    """Find and return ip field value."""
     field_index = 0
     for field in fields:
         if field == "query:":
@@ -364,7 +364,7 @@ def find_ip_field(fields):
 
 
 def find_rpz_domain_field(fields):
-    """Find and return rpz domain field"""
+    """Find and return rpz domain field."""
     field_index = 0
     for field in fields:
         if field == "QNAME":
@@ -375,7 +375,7 @@ def find_rpz_domain_field(fields):
 
 
 def find_rpz_ip_field(fields):
-    """Find and return rpz ip field value"""
+    """Find and return rpz ip field value."""
     field_index = 0
     for field in fields:
         if field == "QNAME":
@@ -386,7 +386,7 @@ def find_rpz_ip_field(fields):
 
 
 def find_record_type_field(fields):
-    """Find and return record type field"""
+    """Find and return record type field."""
     field_index = 0
     for field in fields:
         if field == "query:":
@@ -397,7 +397,7 @@ def find_record_type_field(fields):
 
 
 def menu():
-    """Prints main menu"""
+    """Print main menu."""
     print("\nDnscl Menu:\n")
     # print_figlet("Dnscl", font="ogre", colors="BLUE")
     print("Enter 0 to exit")
