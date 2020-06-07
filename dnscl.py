@@ -245,7 +245,7 @@ def dnscl_record_ip(ip_address):
     print(
         f"\nSummary: Searched {ip_address} and found {line_count}",
         f"queries with {len(set(record_list))} record types for {len(set(domain_list))}",
-        f"domains.",
+        "domains.",
     )
     print(f"Query time: {round(elapsed_time, 2)} seconds")
 
