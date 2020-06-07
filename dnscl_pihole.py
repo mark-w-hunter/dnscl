@@ -26,7 +26,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""This program analyzes Pi-hole DNS queries from log input"""
+"""This program analyzes Pi-hole DNS queries from log input."""
 import sys
 from itertools import groupby
 import timeit
@@ -38,7 +38,7 @@ FILENAME = "/var/log/pihole.log"  # path to pihole log file
 
 
 def dnscl_ipaddress(ip_address):
-    """Returns domain names queried by a client IP address"""
+    """Returns domain names queried by a client IP address."""
     start_time = timeit.default_timer()
     domain_list = []
     line_count = 0
@@ -83,7 +83,7 @@ def dnscl_ipaddress(ip_address):
 
 
 def dnscl_domain(domain_name):
-    """Returns client IP addresses that queried a domain name"""
+    """Returns client IP addresses that queried a domain name."""
     start_time = timeit.default_timer()
     ip_list = []
     domain_list = []
@@ -133,7 +133,7 @@ def dnscl_domain(domain_name):
 
 
 def dnscl_blocklist(ip_address):
-    """Returns blocklist names queried by a client IP address"""
+    """Returns blocklist names queried by a client IP address."""
     start_time = timeit.default_timer()
     block_list = []
     line_count = 0
@@ -170,7 +170,7 @@ def dnscl_blocklist(ip_address):
 
 
 def is_valid_ipv4_address(address):
-    """Checks input is a valid IPv4 address"""
+    """Checks input is a valid IPv4 address."""
     # credit Stack Overflow user tzot
     # https://stackoverflow.com/questions/319279/how-to-validate-ip-address-in-python/319298#319298
     try:
@@ -187,7 +187,7 @@ def is_valid_ipv4_address(address):
 
 
 def is_valid_ipv6_address(address):
-    """Checks input is a valid IPv6 address"""
+    """Checks input is a valid IPv6 address."""
     # credit Stack Overflow user tzot
     # https://stackoverflow.com/questions/319279/how-to-validate-ip-address-in-python/319298#319298
     try:
@@ -198,7 +198,7 @@ def is_valid_ipv6_address(address):
 
 
 def find_field(fields, field_index, field_type):
-    """Find and return requested field value"""
+    """Find and return requested field value."""
     if field_type == "domain":
         for field in fields:
             if "query[" in field:
@@ -221,7 +221,7 @@ def find_field(fields, field_index, field_type):
 
 
 def menu():
-    """ Prints main menu """
+    """Prints main menu."""
     print("\nDnscl Menu (Pi-hole version)\n")
     print("Enter 0 to exit")
     print("Enter 1 to search ip address")
