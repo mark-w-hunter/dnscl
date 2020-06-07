@@ -33,7 +33,7 @@ import timeit
 # from pyfiglet import print_figlet
 
 AUTHOR = "Mark W. Hunter"
-VERSION = "0.47"
+VERSION = "0.50"
 FILENAME = "/var/log/syslog"  # path to syslog file
 # FILENAME = "/var/log/messages"  # path to syslog file
 
@@ -41,7 +41,7 @@ FILENAME = "/var/log/syslog"  # path to syslog file
 def dnscl_ipaddress(ip_address):
     """Return a domain name queried by a client IP address."""
     start_time = timeit.default_timer()
-    domain_list = []
+    domain_dict = {}
     line_count = 0
     ip_address_search = ip_address + "#"
     with open(FILENAME, encoding="ISO-8859-1") as syslog:
@@ -50,26 +50,27 @@ def dnscl_ipaddress(ip_address):
                 if "named" in line and "query:" in line:
                     fields = line.strip().split(" ")
                     if len(fields) > 12:
-                        domain_list.append(find_domain_field(fields))  # find domain
+                        domain = find_domain_field(fields)
+                        if domain in domain_dict.keys():
+                            domain_dict[domain] += 1
+                        else:
+                            domain_dict[domain] = 1
                         line_count += 1
 
-    domain_set = sorted(set(domain_list))
-    domain_list_final = [
-        (len(list(dcount)), dname) for dname, dcount in groupby(
-            sorted(domain_list))
-    ]
-    domain_list_final.sort(reverse=True)
+    domain_list_sorted = sorted(
+        domain_dict.items(), key=lambda dict_sort: dict_sort[1], reverse=True
+    )  # Sort dictonary by value in descending order
     elapsed_time = timeit.default_timer() - start_time
 
     print(f"{ip_address} total queries: {line_count}")
     print("queries: ")
 
-    for query_count, domain_name in domain_list_final:
-        print(query_count, "\t", domain_name)
+    for domain_name, query_count in domain_list_sorted:
+        print(f"{query_count} \t {domain_name}")
 
     print(
         f"\nSummary: Searched {ip_address} and found {line_count}",
-        f"queries for {len(domain_set)} domain names.",
+        f"queries for {len(domain_dict)} domain names.",
     )
     print(f"Query time: {round(elapsed_time, 2)} seconds")
 
@@ -77,34 +78,37 @@ def dnscl_ipaddress(ip_address):
 def dnscl_domain(domain_name):
     """Return client IP addresses that queried a domain name."""
     start_time = timeit.default_timer()
-    ip_list = []
+    ip_dict = {}
     domain_list = []
+    # domain_dict = {}
     line_count = 0
 
     with open(FILENAME, encoding="ISO-8859-1") as syslog:
         for line in syslog:
             if domain_name.lower() in line.lower() and "query:" in line:
                 fields = line.strip().split(" ")
-                ip_address = find_ip_field(fields).split("#")  # find ip
-                ip_list.append(ip_address[0])
-                if domain_name and domain_name.lower() in find_domain_field(fields):
-                    domain_list.append(find_domain_field(fields))  # find domain
+                ip_address_field = find_ip_field(fields).split("#")  # find ip
+                ip_address = ip_address_field[0]
+                domain_name_field = find_domain_field(fields)  # find domain
+                if ip_address in ip_dict.keys():
+                    ip_dict[ip_address] += 1
+                else:
+                    ip_dict[ip_address] = 1
+                if domain_name and domain_name.lower() in domain_name_field:
+                    domain_list.append(domain_name_field)
                 line_count += 1
 
-    ip_set = sorted(set(ip_list))
+    ip_list_sorted = sorted(
+        ip_dict.items(), key=lambda dict_sort: dict_sort[1], reverse=True
+    )  # Sort dictonary by value in descending order
     domain_set = sorted(set(domain_list))
-    ip_list_final = [
-        (len(list(dcount)), dname) for dname, dcount in groupby(
-            sorted(ip_list))
-    ]
-    ip_list_final.sort(reverse=True)
     elapsed_time = timeit.default_timer() - start_time
 
     print(f"{domain_name} total queries: {line_count}")
     print("ip addresses: ")
 
-    for query_count, ip_address in ip_list_final:
-        print(query_count, "\t", ip_address)
+    for ip_address, query_count in ip_list_sorted:
+        print(f"{query_count} \t {ip_address}")
 
     if domain_name:
         print("\ndomain names: ")
@@ -112,12 +116,12 @@ def dnscl_domain(domain_name):
             print(domain_names_found)
         print(
             f"\nSummary: Searched {domain_name} and found {line_count}",
-            f"queries for {len(domain_set)} domain names from {len(ip_set)} clients.",
+            f"queries for {len(domain_set)} domain names from {len(ip_dict)} clients.",
         )
     else:
         print(
             f"\nSummary: Searched {domain_name} and found {line_count}",
-            f"queries from {len(ip_set)} clients."
+            f"queries from {len(ip_dict)} clients."
         )
     print(f"Query time: {round(elapsed_time, 2)} seconds")
 
