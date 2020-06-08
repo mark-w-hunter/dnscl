@@ -59,7 +59,7 @@ def dnscl_ipaddress(ip_address):
 
     domain_list_sorted = sorted(
         domain_dict.items(), key=lambda dict_sort: dict_sort[1], reverse=True
-    )  # Sort dictonary by value in descending order
+    )  # Sort dictionary by value in descending order
     elapsed_time = timeit.default_timer() - start_time
 
     print(f"{ip_address} total queries: {line_count}")
@@ -100,7 +100,7 @@ def dnscl_domain(domain_name):
 
     ip_list_sorted = sorted(
         ip_dict.items(), key=lambda dict_sort: dict_sort[1], reverse=True
-    )  # Sort dictonary by value in descending order
+    )  # Sort dictionary by value in descending order
     domain_set = sorted(set(domain_list))
     elapsed_time = timeit.default_timer() - start_time
 
