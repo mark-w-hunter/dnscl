@@ -34,7 +34,7 @@ import timeit
 AUTHOR = "Mark W. Hunter"
 VERSION = "0.51"
 FILENAME = "/var/log/syslog"  # path to syslog file
-# FILENAME = "/var/log/messages"  # path to syslog file
+# FILENAME = "/var/log/messages"  # path to alternate syslog file
 
 
 def dnscl_ipaddress(ip_address):
@@ -83,9 +83,9 @@ def dnscl_domain(domain_name):
         for line in syslog:
             if domain_name.lower() in line.lower() and "query:" in line:
                 fields = line.strip().split(" ")
-                ip_address_field = find_ip_field(fields).split("#")  # find ip
+                ip_address_field = find_ip_field(fields).split("#")
                 ip_address = ip_address_field[0]
-                domain_name_field = find_domain_field(fields)  # find domain
+                domain_name_field = find_domain_field(fields)
                 if ip_address in ip_dict.keys():
                     ip_dict[ip_address] += 1
                 else:
@@ -169,10 +169,9 @@ def dnscl_rpz_domain(domain_rpz_name):
                 if "QNAME" in line and "SOA" not in line:
                     fields = line.strip().split(" ")
                     if domain_rpz_name.lower() in line.lower() and len(fields) > 11:
-                        ip_address_field = find_rpz_ip_field(fields).split("#")  # find rpz ip
+                        ip_address_field = find_rpz_ip_field(fields).split("#")
                         ip_address = ip_address_field[0]
                         rpz_domain_fields = find_rpz_domain_field(fields).split("/")
-                        # find rpz domain
                         rpz_domain = rpz_domain_fields[0]
                         if ip_address in rpz_ip_dict.keys():
                             rpz_ip_dict[ip_address] += 1
@@ -218,13 +217,13 @@ def dnscl_record_ip(ip_address):
             if ip_address_search in line:
                 if "query:" in line:
                     fields = line.strip().split(" ")
-                    record_type = find_record_type_field(fields)  # find record type
+                    record_type = find_record_type_field(fields)
                     if len(fields) > 12:
                         if record_type in record_dict.keys():
                             record_dict[record_type] += 1
                         else:
                             record_dict[record_type] = 1
-                        domain_list.append(find_domain_field(fields))  # find domain
+                        domain_list.append(find_domain_field(fields))
                         line_count += 1
 
     record_list_sorted = sort_dict(record_dict)
@@ -261,15 +260,15 @@ def dnscl_record_domain(domain_name):
         for line in syslog:
             fields = line.strip().split(" ")
             if domain_name.lower() in line.lower() and "query:" in line:
-                ip_address = find_ip_field(fields).split("#")  # find ip
+                ip_address = find_ip_field(fields).split("#")
                 ip_list.append(ip_address[0])
-                record_type = find_record_type_field(fields)  # find record type
+                record_type = find_record_type_field(fields)
                 if record_type in record_dict.keys():
                     record_dict[record_type] += 1
                 else:
                     record_dict[record_type] = 1
                 if domain_name:
-                    domain_list.append(find_domain_field(fields))  # find domain
+                    domain_list.append(find_domain_field(fields))
                 line_count += 1
 
     record_list_sorted = sort_dict(record_dict)
@@ -308,13 +307,13 @@ def dnscl_record_type(record_type):
         for line in syslog:
             if "query:" in line:
                 fields = line.strip().split(" ")
-                if record_type.upper() in find_record_type_field(fields):  # find record type
-                    record_domain = find_domain_field(fields)  # find domain
+                if record_type.upper() in find_record_type_field(fields):
+                    record_domain = find_domain_field(fields)
                     if record_domain in record_domain_dict.keys():
                         record_domain_dict[record_domain] += 1
                     else:
                         record_domain_dict[record_domain] = 1
-                    ip_address = find_ip_field(fields).split("#")  # find ip
+                    ip_address = find_ip_field(fields).split("#")
                     record_ip_list.append(ip_address[0])
                     line_count += 1
 
@@ -345,7 +344,7 @@ def find_domain_field(fields):
     field_index = 0
     for field in fields:
         if field == "query:":
-            field_value = fields[field_index + 1]  # find domain field
+            field_value = fields[field_index + 1]
             return field_value.lower()
         field_index += 1
     return None
@@ -356,7 +355,7 @@ def find_ip_field(fields):
     field_index = 0
     for field in fields:
         if field == "query:":
-            field_value = fields[field_index - 2]  # find ip field
+            field_value = fields[field_index - 2]
             return field_value
         field_index += 1
     return None
@@ -367,7 +366,7 @@ def find_rpz_domain_field(fields):
     field_index = 0
     for field in fields:
         if field == "QNAME":
-            field_value = fields[field_index + 3]  # find rpz domain field
+            field_value = fields[field_index + 3]
             return field_value
         field_index += 1
     return None
@@ -378,7 +377,7 @@ def find_rpz_ip_field(fields):
     field_index = 0
     for field in fields:
         if field == "QNAME":
-            field_value = fields[field_index - 3]  # find rpz domain field
+            field_value = fields[field_index - 3]
             return field_value
         field_index += 1
     return None
@@ -389,7 +388,7 @@ def find_record_type_field(fields):
     field_index = 0
     for field in fields:
         if field == "query:":
-            field_value = fields[field_index + 3]  # find record type
+            field_value = fields[field_index + 3]
             return field_value
         field_index += 1
     return None
