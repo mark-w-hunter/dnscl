@@ -450,6 +450,7 @@ if __name__ == "__main__":
                 print("Invalid choice, try again.")
             elif int(CHOICE) == 0:
                 break
+    # TODO: Replace sys.argv with argparse
     elif sys.argv[1] == "ip" and len(sys.argv) == 3:
         if sys.argv[2] == "--all" or sys.argv[2] == "-a":
             WILDCARD = ""
