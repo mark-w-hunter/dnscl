@@ -404,8 +404,8 @@ def sort_dict(dict_unsorted):
 
 def menu():
     """Print main menu."""
-    print("\nDnscl Menu:\n")
-    # print_figlet("Dnscl", font="ogre", colors="BLUE")
+    print("\ndnscl Menu:\n")
+    # print_figlet("dnscl", font="ogre", colors="BLUE")
     print("Enter 0 to exit")
     print("Enter 1 to search ip")
     print("Enter 2 to search domain")
@@ -470,7 +470,7 @@ if __name__ == "__main__":
         else:
             dnscl_rpz_domain(sys.argv[2])
     elif sys.argv[1] == "--version" or sys.argv[1] == "-v":
-        print(f"Dnscl version: {VERSION}")
+        print(f"dnscl version: {VERSION}")
     elif sys.argv[1] == "--help" or sys.argv[1] == "-h":
         print("Usage: dnscl.py [OPTION] ...")
         print("\nRun without options for interactive menu. Valid options include:")
@@ -488,6 +488,6 @@ if __name__ == "__main__":
         )
         print("  --version, -v\t\t\t Display version information and exit")
         print("  --help, -h\t\t\t Display this help text and exit\n")
-        print(f"Dnscl {VERSION}, {AUTHOR} (c) 2020")
+        print(f"dnscl {VERSION}, {AUTHOR} (c) 2020")
     else:
         print("Error, try again.")
