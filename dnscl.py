@@ -29,6 +29,7 @@
 """This program analyzes BIND DNS queries from syslog input."""
 import sys
 import timeit
+from collections import defaultdict
 # from pyfiglet import print_figlet
 
 AUTHOR = "Mark W. Hunter"
@@ -40,7 +41,7 @@ FILENAME = "/var/log/syslog"  # path to syslog file
 def dnscl_ipaddress(ip_address):
     """Return a domain name queried by a client IP address."""
     start_time = timeit.default_timer()
-    domain_dict = {}
+    domain_dict = defaultdict(int)
     line_count = 0
     ip_address_search = ip_address + "#"
     with open(FILENAME, encoding="ISO-8859-1") as syslog:
@@ -50,10 +51,7 @@ def dnscl_ipaddress(ip_address):
                     fields = line.strip().split(" ")
                     if len(fields) > 12:
                         domain = find_domain_field(fields)
-                        if domain in domain_dict.keys():
-                            domain_dict[domain] += 1
-                        else:
-                            domain_dict[domain] = 1
+                        domain_dict[domain] += 1
                         line_count += 1
 
     domain_list_sorted = sort_dict(domain_dict)
@@ -75,7 +73,7 @@ def dnscl_ipaddress(ip_address):
 def dnscl_domain(domain_name):
     """Return client IP addresses that queried a domain name."""
     start_time = timeit.default_timer()
-    ip_dict = {}
+    ip_dict = defaultdict(int)
     domain_list = []
     line_count = 0
 
@@ -86,10 +84,7 @@ def dnscl_domain(domain_name):
                 ip_address_field = find_ip_field(fields).split("#")
                 ip_address = ip_address_field[0]
                 domain_name_field = find_domain_field(fields)
-                if ip_address in ip_dict.keys():
-                    ip_dict[ip_address] += 1
-                else:
-                    ip_dict[ip_address] = 1
+                ip_dict[ip_address] += 1
                 if domain_name and domain_name.lower() in domain_name_field:
                     domain_list.append(domain_name_field)
                 line_count += 1
@@ -123,7 +118,7 @@ def dnscl_domain(domain_name):
 def dnscl_rpz(ip_address):
     """Return rpz names queried by a client IP address."""
     start_time = timeit.default_timer()
-    rpz_dict = {}
+    rpz_dict = defaultdict(int)
     line_count = 0
     ip_address_search = ip_address + "#"
     with open(FILENAME, encoding="ISO-8859-1") as syslog:
@@ -134,10 +129,7 @@ def dnscl_rpz(ip_address):
                     rpz_domain_fields = find_rpz_domain_field(fields).split("/")
                     rpz_domain = rpz_domain_fields[0]
                     if len(fields) > 11:
-                        if rpz_domain in rpz_dict.keys():
-                            rpz_dict[rpz_domain] += 1
-                        else:
-                            rpz_dict[rpz_domain] = 1
+                        rpz_dict[rpz_domain] += 1
                         line_count += 1
 
     rpz_list_sorted = sort_dict(rpz_dict)
@@ -159,7 +151,7 @@ def dnscl_rpz(ip_address):
 def dnscl_rpz_domain(domain_rpz_name):
     """Return client IP addresses that queried a rpz domain name."""
     start_time = timeit.default_timer()
-    rpz_ip_dict = {}
+    rpz_ip_dict = defaultdict(int)
     rpz_domain_list = []
     line_count = 0
 
@@ -173,10 +165,7 @@ def dnscl_rpz_domain(domain_rpz_name):
                         ip_address = ip_address_field[0]
                         rpz_domain_fields = find_rpz_domain_field(fields).split("/")
                         rpz_domain = rpz_domain_fields[0]
-                        if ip_address in rpz_ip_dict.keys():
-                            rpz_ip_dict[ip_address] += 1
-                        else:
-                            rpz_ip_dict[ip_address] = 1
+                        rpz_ip_dict[ip_address] += 1
                         if domain_rpz_name:
                             rpz_domain_list.append(rpz_domain)
                         line_count += 1
@@ -207,7 +196,7 @@ def dnscl_rpz_domain(domain_rpz_name):
 def dnscl_record_ip(ip_address):
     """Return record types queried by a client IP address."""
     start_time = timeit.default_timer()
-    record_dict = {}
+    record_dict = defaultdict(int)
     domain_list = []
     line_count = 0
     ip_address_search = ip_address + "#"
@@ -219,10 +208,7 @@ def dnscl_record_ip(ip_address):
                     fields = line.strip().split(" ")
                     record_type = find_record_type_field(fields)
                     if len(fields) > 12:
-                        if record_type in record_dict.keys():
-                            record_dict[record_type] += 1
-                        else:
-                            record_dict[record_type] = 1
+                        record_dict[record_type] += 1
                         domain_list.append(find_domain_field(fields))
                         line_count += 1
 
@@ -251,7 +237,7 @@ def dnscl_record_ip(ip_address):
 def dnscl_record_domain(domain_name):
     """Return record types for a queried domain name."""
     start_time = timeit.default_timer()
-    record_dict = {}
+    record_dict = defaultdict(int)
     ip_list = []
     domain_list = []
     line_count = 0
@@ -263,10 +249,7 @@ def dnscl_record_domain(domain_name):
                 ip_address = find_ip_field(fields).split("#")
                 ip_list.append(ip_address[0])
                 record_type = find_record_type_field(fields)
-                if record_type in record_dict.keys():
-                    record_dict[record_type] += 1
-                else:
-                    record_dict[record_type] = 1
+                record_dict[record_type] += 1
                 if domain_name:
                     domain_list.append(find_domain_field(fields))
                 line_count += 1
@@ -299,7 +282,7 @@ def dnscl_record_domain(domain_name):
 def dnscl_record_type(record_type):
     """Return domain names of a particular record type."""
     start_time = timeit.default_timer()
-    record_domain_dict = {}
+    record_domain_dict = defaultdict(int)
     record_ip_list = []
     line_count = 0
 
@@ -309,10 +292,7 @@ def dnscl_record_type(record_type):
                 fields = line.strip().split(" ")
                 if record_type.upper() in find_record_type_field(fields):
                     record_domain = find_domain_field(fields)
-                    if record_domain in record_domain_dict.keys():
-                        record_domain_dict[record_domain] += 1
-                    else:
-                        record_domain_dict[record_domain] = 1
+                    record_domain_dict[record_domain] += 1
                     ip_address = find_ip_field(fields).split("#")
                     record_ip_list.append(ip_address[0])
                     line_count += 1
