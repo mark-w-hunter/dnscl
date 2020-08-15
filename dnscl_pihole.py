@@ -222,7 +222,7 @@ def find_field(fields, field_index, field_type):
 
 def menu():
     """Prints main menu."""
-    print("\nDnscl Menu (Pi-hole version)\n")
+    print("\ndnscl Menu (Pi-hole version)\n")
     print("Enter 0 to exit")
     print("Enter 1 to search ip address")
     print("Enter 2 to search domain name")
@@ -283,7 +283,7 @@ if __name__ == "__main__":
         else:
             dnscl_blocklist(sys.argv[2])
     elif sys.argv[1] == "--version" or sys.argv[1] == "-v":
-        print("Dnscl version:", VERSION)
+        print("dnscl version:", VERSION)
     elif sys.argv[1] == "--help" or sys.argv[1] == "-h":
         print("Usage: dnscl [OPTION] ...")
         print("\nRun without options for interactive menu. Valid options include:")
@@ -306,6 +306,6 @@ if __name__ == "__main__":
         )
         print(" --version, -v\t\t Display version information and exit")
         print(" --help, -h\t\t Display this help text and exit\n")
-        print(f"Dnscl {VERSION}, {AUTHOR} (c) 2020\n")
+        print(f"dnscl {VERSION}, {AUTHOR} (c) 2020\n")
     else:
         print("Error, try again.")
