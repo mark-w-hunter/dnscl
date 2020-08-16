@@ -33,7 +33,7 @@ from collections import defaultdict
 # from pyfiglet import print_figlet
 
 AUTHOR = "Mark W. Hunter"
-VERSION = "0.51"
+VERSION = "0.52"
 FILENAME = "/var/log/syslog"  # path to syslog file
 # FILENAME = "/var/log/messages"  # path to alternate syslog file
 
