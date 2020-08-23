@@ -33,7 +33,7 @@ import timeit
 import socket
 
 AUTHOR = "Mark W. Hunter"
-VERSION = "0.44-pihole"
+VERSION = "0.45-pihole"
 FILENAME = "/var/log/pihole.log"
 
 
