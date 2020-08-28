@@ -30,10 +30,11 @@
 import sys
 import timeit
 from collections import defaultdict
+import re
 # from pyfiglet import print_figlet
 
 AUTHOR = "Mark W. Hunter"
-VERSION = "0.52"
+VERSION = "0.53"
 FILENAME = "/var/log/syslog"  # path to syslog file
 # FILENAME = "/var/log/messages"  # path to alternate syslog file
 
@@ -79,15 +80,15 @@ def dnscl_domain(domain_name):
 
     with open(FILENAME, encoding="ISO-8859-1") as syslog:
         for line in syslog:
-            if domain_name.lower() in line.lower() and "query:" in line:
+            if "query:" in line:
                 fields = line.strip().split(" ")
                 ip_address_field = find_ip_field(fields).split("#")
                 ip_address = ip_address_field[0]
                 domain_name_field = find_domain_field(fields)
-                ip_dict[ip_address] += 1
-                if domain_name and domain_name.lower() in domain_name_field:
+                if re.search(domain_name, domain_name_field, re.IGNORECASE):
+                    ip_dict[ip_address] += 1
                     domain_list.append(domain_name_field)
-                line_count += 1
+                    line_count += 1
 
     ip_list_sorted = sort_dict(ip_dict)
     domain_set = sorted(set(domain_list))
