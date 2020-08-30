@@ -31,10 +31,11 @@ import sys
 import timeit
 from collections import defaultdict
 import re
+import argparse
 # from pyfiglet import print_figlet
 
 AUTHOR = "Mark W. Hunter"
-VERSION = "0.53"
+VERSION = "0.54"
 FILENAME = "/var/log/syslog"  # path to syslog file
 # FILENAME = "/var/log/messages"  # path to alternate syslog file
 
@@ -431,44 +432,55 @@ if __name__ == "__main__":
                 print("Invalid choice, try again.")
             elif int(CHOICE) == 0:
                 break
-    # TODO: Replace sys.argv with argparse
-    elif sys.argv[1] == "ip" and len(sys.argv) == 3:
-        if sys.argv[2] == "--all" or sys.argv[2] == "-a":
-            WILDCARD = ""
-            dnscl_ipaddress(WILDCARD)
-        else:
-            dnscl_ipaddress(sys.argv[2])
-    elif sys.argv[1] == "domain" and len(sys.argv) == 3:
-        if sys.argv[2] == "--all" or sys.argv[2] == "-a":
-            WILDCARD = ""
-            dnscl_domain(WILDCARD)
-        else:
-            dnscl_domain(sys.argv[2])
-    elif sys.argv[1] == "rpz" and len(sys.argv) == 3:
-        if sys.argv[2] == "--all" or sys.argv[2] == "-a":
-            WILDCARD = ""
-            dnscl_rpz(WILDCARD)
-        else:
-            dnscl_rpz_domain(sys.argv[2])
-    elif sys.argv[1] == "--version" or sys.argv[1] == "-v":
-        print(f"dnscl version: {VERSION}")
-    elif sys.argv[1] == "--help" or sys.argv[1] == "-h":
-        print("Usage: dnscl.py [OPTION] ...")
-        print("\nRun without options for interactive menu. Valid options include:")
-        print(
-            "\n  ip <ip_address> or --all, -a\t Returns domains queried by an IP",
-            "address or all domains",
-        )
-        print(
-            "  domain <domain> or --all, -a\t Returns IP addresses that queried",
-            "a domain or all IP addresses",
-        )
-        print(
-            "  rpz <rpz_domain> or --all, -a\t Returns IP addresses that queried",
-            "a RPZ domain or all RPZ domains",
-        )
-        print("  --version, -v\t\t\t Display version information and exit")
-        print("  --help, -h\t\t\t Display this help text and exit\n")
-        print(f"dnscl {VERSION}, {AUTHOR} (c) 2020")
     else:
-        print("Error, try again.")
+        wildcard = ""
+        dnscl_parser = argparse.ArgumentParser(
+            description="Analyze BIND DNS query data from syslog file input"
+        )
+        dnscl_subparser = dnscl_parser.add_subparsers(title="commands", dest="command")
+        parser_ip = dnscl_subparser.add_parser(
+            "ip", help="returns domains queried by an ip address"
+        )
+        parser_domain = dnscl_subparser.add_parser(
+            "domain", help="returns ip addresses that queried a domain"
+        )
+        parser_rpz = dnscl_subparser.add_parser(
+            "rpz", help="returns ip addresses that queried a rpz domain"
+        )
+        parser_type = dnscl_subparser.add_parser(
+            "type", help="returns domains by record type"
+        )
+        parser_ip.add_argument("-i",
+                               "--ip",
+                               help="returns domains queried by an ip address "
+                                    "[default=wildcard]",
+                               default=wildcard)
+        parser_domain.add_argument("-d",
+                                   "--domain",
+                                   help="returns ip addresses that queried a domain "
+                                        "[default=wildcard]",
+                                   default=wildcard)
+        parser_rpz.add_argument("-r",
+                                "--rpz",
+                                help="returns ip addresses that queried a rpz domain "
+                                     "[default=wildcard]",
+                                default=wildcard)
+        parser_type.add_argument("-t",
+                                 "--type",
+                                 help="returns domains by record type "
+                                      "[default=wildcard]",
+                                 default=wildcard)
+        dnscl_parser.add_argument("-v",
+                                  "--version",
+                                  action="version",
+                                  version="%(prog)s " + VERSION + ", " + AUTHOR + " (c) 2020")
+        args = dnscl_parser.parse_args()
+
+        if args.command == "ip":
+            dnscl_ipaddress(args.ip)
+        elif args.command == "domain":
+            dnscl_domain(args.domain)
+        elif args.command == "rpz":
+            dnscl_rpz(args.rpz)
+        elif args.command == "type":
+            dnscl_record_domain(args.type)
