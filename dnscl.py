@@ -439,32 +439,28 @@ if __name__ == "__main__":
         )
         dnscl_subparser = dnscl_parser.add_subparsers(title="commands", dest="command")
         parser_ip = dnscl_subparser.add_parser(
-            "ip", help="returns domains queried by an ip address"
+            "ip", help="domains queried by an ip address"
         )
         parser_domain = dnscl_subparser.add_parser(
-            "domain", help="returns ip addresses that queried a domain"
+            "domain", help="ip addresses that queried a domain"
         )
         parser_rpz = dnscl_subparser.add_parser(
-            "rpz", help="returns ip addresses that queried a rpz domain"
+            "rpz", help="rpz domains queried"
         )
         parser_type = dnscl_subparser.add_parser(
-            "type", help="returns domains by record type"
+            "type", help="record types queried"
         )
         parser_ip.add_argument("-i",
-                               help="returns domains queried by an ip address "
-                                    "[default=wildcard]",
+                               help="ip address",
                                default=wildcard)
         parser_domain.add_argument("-d",
-                                   help="returns ip addresses that queried a domain "
-                                        "[default=wildcard]",
+                                   help="domain",
                                    default=wildcard)
         parser_rpz.add_argument("-r",
-                                help="returns ip addresses that queried a rpz domain "
-                                     "[default=wildcard]",
+                                help="rpz domain",
                                 default=wildcard)
         parser_type.add_argument("-t",
-                                 help="returns domains by record type "
-                                      "[default=wildcard]",
+                                 help="record type",
                                  default=wildcard)
         dnscl_parser.add_argument("-v",
                                   "--version",
@@ -477,6 +473,9 @@ if __name__ == "__main__":
         elif args.command == "domain":
             dnscl_domain(args.d)
         elif args.command == "rpz":
-            dnscl_rpz_domain(args.r)
+            if args.r == wildcard:
+                dnscl_rpz(args.r)
+            else:
+                dnscl_rpz_domain(args.r)
         elif args.command == "type":
             dnscl_record_domain(args.t)
