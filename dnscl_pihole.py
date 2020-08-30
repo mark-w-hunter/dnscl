@@ -33,8 +33,8 @@ import timeit
 import socket
 
 AUTHOR = "Mark W. Hunter"
-VERSION = "0.44-pihole"
-FILENAME = "/var/log/pihole.log"  # path to pihole log file
+VERSION = "0.45-pihole"
+FILENAME = "/var/log/pihole.log"
 
 
 def dnscl_ipaddress(ip_address):
@@ -50,16 +50,16 @@ def dnscl_ipaddress(ip_address):
                 if ip_address:
                     ip_field = find_field(
                         fields, field_index, "ip_address"
-                    )  # find field containing ip address
+                    )
                     if ip_field == ip_address:
                         domain_list.append(
                             find_field(fields, field_index, "domain")
-                        )  # find field containing domain name
+                        )
                         line_count += 1
                 else:
                     domain_list.append(
                         find_field(fields, field_index, "domain")
-                    )  # find field containing domain name
+                    )
                     line_count += 1
 
     domain_list_final = [
@@ -96,11 +96,11 @@ def dnscl_domain(domain_name):
                 fields = line.strip().split(" ")
                 ip_list.append(
                     find_field(fields, field_index, "ip_address")
-                )  # find field containing ip address
+                )
                 if domain_name:
                     domain_list.append(
                         find_field(fields, field_index, "domain")
-                    )  # find field containing domain name
+                    )
                 line_count += 1
 
     ip_list_final = [
@@ -146,7 +146,7 @@ def dnscl_blocklist(ip_address):
                     fields = line.strip().split(" ")
                     block_list.append(
                         find_field(fields, field_index, "block_domain")
-                    )  # field containing blocklist domain name
+                    )
                     line_count += 1
 
     block_list_final = [
@@ -171,28 +171,18 @@ def dnscl_blocklist(ip_address):
 
 def is_valid_ipv4_address(address):
     """Checks input is a valid IPv4 address."""
-    # credit Stack Overflow user tzot
-    # https://stackoverflow.com/questions/319279/how-to-validate-ip-address-in-python/319298#319298
     try:
         socket.inet_pton(socket.AF_INET, address)
-    except AttributeError:  # no inet_pton here, sorry
-        try:
-            socket.inet_aton(address)
-        except socket.error:
-            return False
-        return address.count(".") == 3
-    except socket.error:  # not a valid address
+    except socket.error:
         return False
     return True
 
 
 def is_valid_ipv6_address(address):
     """Checks input is a valid IPv6 address."""
-    # credit Stack Overflow user tzot
-    # https://stackoverflow.com/questions/319279/how-to-validate-ip-address-in-python/319298#319298
     try:
         socket.inet_pton(socket.AF_INET6, address)
-    except socket.error:  # not a valid address
+    except socket.error:
         return False
     return True
 
@@ -202,19 +192,19 @@ def find_field(fields, field_index, field_type):
     if field_type == "domain":
         for field in fields:
             if "query[" in field:
-                field_value = fields[field_index + 1]  # find domain field
+                field_value = fields[field_index + 1]
                 return field_value
             field_index += 1
     elif field_type == "ip_address":
         for field in fields:
             if "query[" in field:
-                field_value = fields[field_index + 3]  # find ip field
+                field_value = fields[field_index + 3]
                 return field_value
             field_index += 1
     elif field_type == "block_domain":
         for field in fields:
             if "0.0.0.0" in field:
-                field_value = fields[field_index - 2]  # find domain field
+                field_value = fields[field_index - 2]
                 return field_value
             field_index += 1
     return None
@@ -259,7 +249,7 @@ if __name__ == "__main__":
             elif int(CHOICE) > 3:
                 print("Invalid choice, try again.")
             elif int(CHOICE) == 0:
-                break  # exit program
+                break
     elif sys.argv[1] == "ip" and len(sys.argv) == 3:
         if sys.argv[2] == "--all" or sys.argv[2] == "-a":
             WILDCARD = ""

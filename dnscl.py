@@ -30,10 +30,12 @@
 import sys
 import timeit
 from collections import defaultdict
+import re
+import argparse
 # from pyfiglet import print_figlet
 
 AUTHOR = "Mark W. Hunter"
-VERSION = "0.51"
+VERSION = "0.55"
 FILENAME = "/var/log/syslog"  # path to syslog file
 # FILENAME = "/var/log/messages"  # path to alternate syslog file
 
@@ -79,15 +81,15 @@ def dnscl_domain(domain_name):
 
     with open(FILENAME, encoding="ISO-8859-1") as syslog:
         for line in syslog:
-            if domain_name.lower() in line.lower() and "query:" in line:
+            if "query:" in line:
                 fields = line.strip().split(" ")
                 ip_address_field = find_ip_field(fields).split("#")
                 ip_address = ip_address_field[0]
                 domain_name_field = find_domain_field(fields)
-                ip_dict[ip_address] += 1
-                if domain_name and domain_name.lower() in domain_name_field:
+                if re.search(domain_name, domain_name_field, re.IGNORECASE):
+                    ip_dict[ip_address] += 1
                     domain_list.append(domain_name_field)
-                line_count += 1
+                    line_count += 1
 
     ip_list_sorted = sort_dict(ip_dict)
     domain_set = sorted(set(domain_list))
@@ -290,7 +292,7 @@ def dnscl_record_type(record_type):
         for line in syslog:
             if "query:" in line:
                 fields = line.strip().split(" ")
-                if record_type.upper() in find_record_type_field(fields):
+                if record_type.upper() == find_record_type_field(fields):
                     record_domain = find_domain_field(fields)
                     record_domain_dict[record_domain] += 1
                     ip_address = find_ip_field(fields).split("#")
@@ -430,44 +432,53 @@ if __name__ == "__main__":
                 print("Invalid choice, try again.")
             elif int(CHOICE) == 0:
                 break
-    # TODO: Replace sys.argv with argparse
-    elif sys.argv[1] == "ip" and len(sys.argv) == 3:
-        if sys.argv[2] == "--all" or sys.argv[2] == "-a":
-            WILDCARD = ""
-            dnscl_ipaddress(WILDCARD)
-        else:
-            dnscl_ipaddress(sys.argv[2])
-    elif sys.argv[1] == "domain" and len(sys.argv) == 3:
-        if sys.argv[2] == "--all" or sys.argv[2] == "-a":
-            WILDCARD = ""
-            dnscl_domain(WILDCARD)
-        else:
-            dnscl_domain(sys.argv[2])
-    elif sys.argv[1] == "rpz" and len(sys.argv) == 3:
-        if sys.argv[2] == "--all" or sys.argv[2] == "-a":
-            WILDCARD = ""
-            dnscl_rpz(WILDCARD)
-        else:
-            dnscl_rpz_domain(sys.argv[2])
-    elif sys.argv[1] == "--version" or sys.argv[1] == "-v":
-        print(f"dnscl version: {VERSION}")
-    elif sys.argv[1] == "--help" or sys.argv[1] == "-h":
-        print("Usage: dnscl.py [OPTION] ...")
-        print("\nRun without options for interactive menu. Valid options include:")
-        print(
-            "\n  ip <ip_address> or --all, -a\t Returns domains queried by an IP",
-            "address or all domains",
-        )
-        print(
-            "  domain <domain> or --all, -a\t Returns IP addresses that queried",
-            "a domain or all IP addresses",
-        )
-        print(
-            "  rpz <rpz_domain> or --all, -a\t Returns IP addresses that queried",
-            "a RPZ domain or all RPZ domains",
-        )
-        print("  --version, -v\t\t\t Display version information and exit")
-        print("  --help, -h\t\t\t Display this help text and exit\n")
-        print(f"dnscl {VERSION}, {AUTHOR} (c) 2020")
     else:
-        print("Error, try again.")
+        wildcard = ""
+        dnscl_parser = argparse.ArgumentParser(
+            description="Analyze BIND DNS query data from syslog file input"
+        )
+        dnscl_subparser = dnscl_parser.add_subparsers(title="commands", dest="command")
+        parser_ip = dnscl_subparser.add_parser(
+            "ip", help="domains queried by an ip address"
+        )
+        parser_domain = dnscl_subparser.add_parser(
+            "domain", help="ip addresses that queried a domain"
+        )
+        parser_rpz = dnscl_subparser.add_parser(
+            "rpz", help="rpz domains queried"
+        )
+        parser_type = dnscl_subparser.add_parser(
+            "type", help="record types queried"
+        )
+        parser_ip.add_argument("-i",
+                               help="ip address",
+                               default=wildcard)
+        parser_domain.add_argument("-d",
+                                   help="domain",
+                                   default=wildcard)
+        parser_rpz.add_argument("-r",
+                                help="rpz domain",
+                                default=wildcard)
+        parser_type.add_argument("-t",
+                                 help="record type",
+                                 default=wildcard)
+        dnscl_parser.add_argument("-v",
+                                  "--version",
+                                  action="version",
+                                  version="%(prog)s " + VERSION + ", " + AUTHOR + " (c) 2020")
+        args = dnscl_parser.parse_args()
+
+        if args.command == "ip":
+            dnscl_ipaddress(args.i)
+        elif args.command == "domain":
+            dnscl_domain(args.d)
+        elif args.command == "rpz":
+            if args.r == wildcard:
+                dnscl_rpz(args.r)
+            else:
+                dnscl_rpz_domain(args.r)
+        elif args.command == "type":
+            if args.t == wildcard:
+                dnscl_record_domain(args.t)
+            else:
+                dnscl_record_type(args.t)
