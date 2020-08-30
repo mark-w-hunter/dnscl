@@ -35,7 +35,7 @@ import argparse
 import re
 
 AUTHOR = "Mark W. Hunter"
-VERSION = "0.45-pihole"
+VERSION = "0.46-pihole"
 FILENAME = "/var/log/pihole.log"
 
 
