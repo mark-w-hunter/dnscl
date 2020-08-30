@@ -31,9 +31,11 @@ import sys
 from itertools import groupby
 import timeit
 import socket
+import argparse
+import re
 
 AUTHOR = "Mark W. Hunter"
-VERSION = "0.45-pihole"
+VERSION = "0.46-pihole"
 FILENAME = "/var/log/pihole.log"
 
 
@@ -47,19 +49,16 @@ def dnscl_ipaddress(ip_address):
             field_index = 0
             if "query[" in line:
                 fields = line.strip().split(" ")
+                domain_name_field = find_field(fields, field_index, "domain")
                 if ip_address:
                     ip_field = find_field(
                         fields, field_index, "ip_address"
                     )
                     if ip_field == ip_address:
-                        domain_list.append(
-                            find_field(fields, field_index, "domain")
-                        )
+                        domain_list.append(domain_name_field)
                         line_count += 1
                 else:
-                    domain_list.append(
-                        find_field(fields, field_index, "domain")
-                    )
+                    domain_list.append(domain_name_field)
                     line_count += 1
 
     domain_list_final = [
@@ -92,16 +91,15 @@ def dnscl_domain(domain_name):
     with open(FILENAME, encoding="UTF-8") as piholelog:
         for line in piholelog:
             field_index = 0
-            if domain_name.lower() in line.lower() and "query[" in line:
+            if "query[" in line:
                 fields = line.strip().split(" ")
-                ip_list.append(
-                    find_field(fields, field_index, "ip_address")
-                )
-                if domain_name:
-                    domain_list.append(
-                        find_field(fields, field_index, "domain")
-                    )
-                line_count += 1
+                domain_name_field = find_field(fields, field_index, "domain")
+                ip_address = find_field(fields, field_index, "ip_address")
+                if re.search(domain_name, domain_name_field, re.IGNORECASE):
+                    ip_list.append(ip_address)
+                    if domain_name:
+                        domain_list.append(domain_name_field)
+                    line_count += 1
 
     ip_list_final = [
         (len(list(dcount)), dname) for dname, dcount in groupby(sorted(ip_list))
@@ -132,7 +130,7 @@ def dnscl_domain(domain_name):
     print(f"Query time: {round(elapsed_time, 2)} seconds")
 
 
-def dnscl_blocklist(ip_address):
+def dnscl_blocklist(block_list_name):
     """Returns blocklist names queried by a client IP address."""
     start_time = timeit.default_timer()
     block_list = []
@@ -141,12 +139,11 @@ def dnscl_blocklist(ip_address):
     with open(FILENAME, encoding="UTF-8") as piholelog:
         for line in piholelog:
             field_index = 0
-            if ip_address in line:
+            if block_list_name in line:
                 if "is 0.0.0.0" in line:
                     fields = line.strip().split(" ")
-                    block_list.append(
-                        find_field(fields, field_index, "block_domain")
-                    )
+                    block_list_field = find_field(fields, field_index, "block_domain")
+                    block_list.append(block_list_field)
                     line_count += 1
 
     block_list_final = [
@@ -156,14 +153,14 @@ def dnscl_blocklist(ip_address):
     unique_block_domains = len(sorted(set(block_list)))
     elapsed_time = timeit.default_timer() - start_time
 
-    print(f"{ip_address} total queries: {line_count}")
+    print(f"{block_list_name} total queries: {line_count}")
     print("queries: ")
 
     for query_count, domain_name in block_list_final:
         print(f"{query_count}\t {domain_name}")
 
     print(
-        f"\nSummary: Searched {ip_address} and found {line_count}",
+        f"\nSummary: Searched {block_list_name} and found {line_count}",
         f"queries for {unique_block_domains} blocklist names.",
     )
     print(f"Query time: {round(elapsed_time, 2)} seconds")
@@ -250,52 +247,42 @@ if __name__ == "__main__":
                 print("Invalid choice, try again.")
             elif int(CHOICE) == 0:
                 break
-    elif sys.argv[1] == "ip" and len(sys.argv) == 3:
-        if sys.argv[2] == "--all" or sys.argv[2] == "-a":
-            WILDCARD = ""
-            dnscl_ipaddress(WILDCARD)
-        elif is_valid_ipv4_address(sys.argv[2]):
-            dnscl_ipaddress(sys.argv[2])
-        elif is_valid_ipv6_address(sys.argv[2]):
-            dnscl_ipaddress(sys.argv[2])
-        else:
-            print("Invalid ip address, try again.")
-    elif sys.argv[1] == "domain" and len(sys.argv) == 3:
-        if sys.argv[2] == "--all" or sys.argv[2] == "-a":
-            WILDCARD = ""
-            dnscl_domain(WILDCARD)
-        else:
-            dnscl_domain(sys.argv[2])
-    elif sys.argv[1] == "blocklist" and len(sys.argv) == 3:
-        if sys.argv[2] == "--all" or sys.argv[2] == "-a":
-            WILDCARD = ""
-            dnscl_blocklist(WILDCARD)
-        else:
-            dnscl_blocklist(sys.argv[2])
-    elif sys.argv[1] == "--version" or sys.argv[1] == "-v":
-        print("dnscl version:", VERSION)
-    elif sys.argv[1] == "--help" or sys.argv[1] == "-h":
-        print("Usage: dnscl [OPTION] ...")
-        print("\nRun without options for interactive menu. Valid options include:")
-        print(
-            "\n ip <ip_address> \t Returns domain names queried by a client IP address"
-        )
-        print(
-            " ip --all, -a \t\t Returns all domain names queried by any client IP address"
-        )
-        print(" domain <domain>\t Returns client IP addresses that queried a domain")
-        print(
-            " domain --all, -a \t Returns all client IP addresses that queried any domain"
-        )
-        print(
-            " blocklist <domain>\t Returns client IP addresses that queried a blocked domain"
-        )
-        print(
-            " blocklist --all, -a \t Returns all client IP addresses that "
-            "queried any blocked domain"
-        )
-        print(" --version, -v\t\t Display version information and exit")
-        print(" --help, -h\t\t Display this help text and exit\n")
-        print(f"dnscl {VERSION}, {AUTHOR} (c) 2020\n")
     else:
-        print("Error, try again.")
+        wildcard = ""
+        dnscl_parser = argparse.ArgumentParser(
+            description="Analyze Pi-hole DNS query data from log file input"
+        )
+        dnscl_subparser = dnscl_parser.add_subparsers(title="commands", dest="command")
+        parser_ip = dnscl_subparser.add_parser(
+            "ip", help="domains queried by an ip address"
+        )
+        parser_domain = dnscl_subparser.add_parser(
+            "domain", help="ip addresses that queried a domain"
+        )
+        parser_blocklist = dnscl_subparser.add_parser(
+            "blocklist", help="blocklist domains queried"
+        )
+        parser_ip.add_argument("-i",
+                               help="ip address",
+                               default=wildcard)
+        parser_domain.add_argument("-d",
+                                   help="domain",
+                                   default=wildcard)
+        parser_blocklist.add_argument("-b",
+                                      help="blocklist name",
+                                      default=wildcard)
+        dnscl_parser.add_argument("-v",
+                                  "--version",
+                                  action="version",
+                                  version="%(prog)s " + VERSION + ", " + AUTHOR + " (c) 2020")
+        args = dnscl_parser.parse_args()
+
+        if args.command == "ip":
+            dnscl_ipaddress(args.i)
+        elif args.command == "domain":
+            dnscl_domain(args.d)
+        elif args.command == "blocklist":
+            if args.b == wildcard:
+                dnscl_blocklist(args.b)
+            else:
+                dnscl_blocklist(args.b)
