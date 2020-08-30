@@ -31,6 +31,8 @@ import sys
 from itertools import groupby
 import timeit
 import socket
+# import argparse
+import re
 
 AUTHOR = "Mark W. Hunter"
 VERSION = "0.45-pihole"
@@ -92,16 +94,15 @@ def dnscl_domain(domain_name):
     with open(FILENAME, encoding="UTF-8") as piholelog:
         for line in piholelog:
             field_index = 0
-            if domain_name.lower() in line.lower() and "query[" in line:
+            if "query[" in line:
                 fields = line.strip().split(" ")
-                ip_list.append(
-                    find_field(fields, field_index, "ip_address")
-                )
-                if domain_name:
-                    domain_list.append(
-                        find_field(fields, field_index, "domain")
-                    )
-                line_count += 1
+                domain_name_field = find_field(fields, field_index, "domain")
+                ip_address = find_field(fields, field_index, "ip_address")
+                if re.search(domain_name, domain_name_field, re.IGNORECASE):
+                    ip_list.append(ip_address)
+                    if domain_name:
+                        domain_list.append(domain_name_field)
+                    line_count += 1
 
     ip_list_final = [
         (len(list(dcount)), dname) for dname, dcount in groupby(sorted(ip_list))
