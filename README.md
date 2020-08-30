@@ -34,7 +34,7 @@ Search for all domain names queried by 10.0.0.45
 Search for all IP addresses that queried www.foo.org
 
 ```bash
-./dnscl.py domain --domain www.foo.org
+./dnscl.py domain -d www.foo.org
 ```
 
 Return a list of all domain names queried by any IP address

@@ -451,22 +451,18 @@ if __name__ == "__main__":
             "type", help="returns domains by record type"
         )
         parser_ip.add_argument("-i",
-                               "--ip",
                                help="returns domains queried by an ip address "
                                     "[default=wildcard]",
                                default=wildcard)
         parser_domain.add_argument("-d",
-                                   "--domain",
                                    help="returns ip addresses that queried a domain "
                                         "[default=wildcard]",
                                    default=wildcard)
         parser_rpz.add_argument("-r",
-                                "--rpz",
                                 help="returns ip addresses that queried a rpz domain "
                                      "[default=wildcard]",
                                 default=wildcard)
         parser_type.add_argument("-t",
-                                 "--type",
                                  help="returns domains by record type "
                                       "[default=wildcard]",
                                  default=wildcard)
@@ -477,10 +473,10 @@ if __name__ == "__main__":
         args = dnscl_parser.parse_args()
 
         if args.command == "ip":
-            dnscl_ipaddress(args.ip)
+            dnscl_ipaddress(args.i)
         elif args.command == "domain":
-            dnscl_domain(args.domain)
+            dnscl_domain(args.d)
         elif args.command == "rpz":
-            dnscl_rpz_domain(args.rpz)
+            dnscl_rpz_domain(args.r)
         elif args.command == "type":
-            dnscl_record_domain(args.type)
+            dnscl_record_domain(args.t)
