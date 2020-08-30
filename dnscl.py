@@ -292,7 +292,7 @@ def dnscl_record_type(record_type):
         for line in syslog:
             if "query:" in line:
                 fields = line.strip().split(" ")
-                if record_type.upper() in find_record_type_field(fields):
+                if record_type.upper() == find_record_type_field(fields):
                     record_domain = find_domain_field(fields)
                     record_domain_dict[record_domain] += 1
                     ip_address = find_ip_field(fields).split("#")
@@ -478,4 +478,7 @@ if __name__ == "__main__":
             else:
                 dnscl_rpz_domain(args.r)
         elif args.command == "type":
-            dnscl_record_domain(args.t)
+            if args.t == wildcard:
+                dnscl_record_domain(args.t)
+            else:
+                dnscl_record_type(args.t)
