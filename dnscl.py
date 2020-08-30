@@ -481,6 +481,6 @@ if __name__ == "__main__":
         elif args.command == "domain":
             dnscl_domain(args.domain)
         elif args.command == "rpz":
-            dnscl_rpz(args.rpz)
+            dnscl_rpz_domain(args.rpz)
         elif args.command == "type":
             dnscl_record_domain(args.type)

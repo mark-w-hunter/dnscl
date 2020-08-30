@@ -28,31 +28,31 @@ Step 4: Run dnscl.py directly using command-line arguments.
 Search for all domain names queried by 10.0.0.45
 
 ```bash
-./dnscl.py ip 10.0.0.45
+./dnscl.py ip -i 10.0.0.45
 ```
 
 Search for all IP addresses that queried www.foo.org
 
 ```bash
-./dnscl.py domain www.foo.org
+./dnscl.py domain --domain www.foo.org
 ```
 
 Return a list of all domain names queried by any IP address
 
 ```bash
-./dnscl.py ip --all
+./dnscl.py ip
 ```
 
 Return a list of all IP addresses that queried any domain name
 
 ```bash
-./dnscl.py domain --all
+./dnscl.py domain
 ```
 
 Search for all rpz names queried
 
 ```bash
-./dnscl.py rpz --all
+./dnscl.py rpz
 ```
 
 Display help
