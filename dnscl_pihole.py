@@ -28,21 +28,21 @@
 
 """This program analyzes Pi-hole DNS queries from log input."""
 import sys
-from itertools import groupby
+from collections import defaultdict
 import timeit
 import socket
 import argparse
 import re
 
 AUTHOR = "Mark W. Hunter"
-VERSION = "0.46-pihole"
+VERSION = "0.47-pihole"
 FILENAME = "/var/log/pihole.log"
 
 
 def dnscl_ipaddress(ip_address):
     """Returns domain names queried by a client IP address."""
     start_time = timeit.default_timer()
-    domain_list = []
+    domain_dict = defaultdict(int)
     line_count = 0
     with open(FILENAME, encoding="UTF-8") as piholelog:
         for line in piholelog:
@@ -55,28 +55,24 @@ def dnscl_ipaddress(ip_address):
                         fields, field_index, "ip_address"
                     )
                     if ip_field == ip_address:
-                        domain_list.append(domain_name_field)
+                        domain_dict[domain_name_field] += 1
                         line_count += 1
                 else:
-                    domain_list.append(domain_name_field)
+                    domain_dict[domain_name_field] += 1
                     line_count += 1
 
-    domain_list_final = [
-        (len(list(dcount)), dname) for dname, dcount in groupby(sorted(domain_list))
-    ]
-    domain_list_final.sort(reverse=True)
-    unique_domains = len(sorted(set(domain_list)))
+    domain_list_sorted = sort_dict(domain_dict)
     elapsed_time = timeit.default_timer() - start_time
 
     print(f"{ip_address} total queries: {line_count}")
     print("queries: ")
 
-    for query_count, domain_name in domain_list_final:
+    for domain_name, query_count in domain_list_sorted:
         print(f"{query_count}\t {domain_name}")
 
     print(
         f"\nSummary: Searched {ip_address} and found {line_count}",
-        f"queries for {unique_domains} domain names.",
+        f"queries for {len(domain_dict)} domain names.",
     )
     print(f"Query time: {round(elapsed_time, 2)} seconds")
 
@@ -84,7 +80,7 @@ def dnscl_ipaddress(ip_address):
 def dnscl_domain(domain_name):
     """Returns client IP addresses that queried a domain name."""
     start_time = timeit.default_timer()
-    ip_list = []
+    ip_dict = defaultdict(int)
     domain_list = []
     line_count = 0
 
@@ -96,22 +92,18 @@ def dnscl_domain(domain_name):
                 domain_name_field = find_field(fields, field_index, "domain")
                 ip_address = find_field(fields, field_index, "ip_address")
                 if re.search(domain_name, domain_name_field, re.IGNORECASE):
-                    ip_list.append(ip_address)
+                    ip_dict[ip_address] += 1
                     if domain_name:
                         domain_list.append(domain_name_field)
                     line_count += 1
 
-    ip_list_final = [
-        (len(list(dcount)), dname) for dname, dcount in groupby(sorted(ip_list))
-    ]
-    ip_list_final.sort(reverse=True)
-    unique_clients = len(sorted(set(ip_list)))
+    ip_list_sorted = sort_dict(ip_dict)
     elapsed_time = timeit.default_timer() - start_time
 
     print(f"{domain_name} total queries: {line_count}")
     print("ip addresses: ")
 
-    for query_count, ip_address in ip_list_final:
+    for ip_address, query_count in ip_list_sorted:
         print(f"{query_count}\t {ip_address}")
 
     if domain_name:
@@ -120,12 +112,12 @@ def dnscl_domain(domain_name):
             print(domain_names_found)
         print(
             f"\nSummary: Searched {domain_name} and found {line_count}",
-            f"queries for {len(set(domain_list))} domain names from {unique_clients} clients.",
+            f"queries for {len(set(domain_list))} domain names from {len(ip_dict)} clients.",
         )
     else:
         print(
             f"\nSummary: Searched {domain_name} and found {line_count}",
-            f"queries from {unique_clients} clients.",
+            f"queries from {len(ip_dict)} clients.",
         )
     print(f"Query time: {round(elapsed_time, 2)} seconds")
 
@@ -133,7 +125,7 @@ def dnscl_domain(domain_name):
 def dnscl_blocklist(block_list_name):
     """Returns blocklist names queried by a client IP address."""
     start_time = timeit.default_timer()
-    block_list = []
+    block_list_dict = defaultdict(int)
     line_count = 0
 
     with open(FILENAME, encoding="UTF-8") as piholelog:
@@ -143,25 +135,21 @@ def dnscl_blocklist(block_list_name):
                 if "is 0.0.0.0" in line:
                     fields = line.strip().split(" ")
                     block_list_field = find_field(fields, field_index, "block_domain")
-                    block_list.append(block_list_field)
+                    block_list_dict[block_list_field] += 1
                     line_count += 1
 
-    block_list_final = [
-        (len(list(dcount)), dname) for dname, dcount in groupby(sorted(block_list))
-    ]
-    block_list_final.sort(reverse=True)
-    unique_block_domains = len(sorted(set(block_list)))
+    block_list_sorted = sort_dict(block_list_dict)
     elapsed_time = timeit.default_timer() - start_time
 
     print(f"{block_list_name} total queries: {line_count}")
     print("queries: ")
 
-    for query_count, domain_name in block_list_final:
+    for domain_name, query_count in block_list_sorted:
         print(f"{query_count}\t {domain_name}")
 
     print(
         f"\nSummary: Searched {block_list_name} and found {line_count}",
-        f"queries for {unique_block_domains} blocklist names.",
+        f"queries for {len(block_list_dict)} blocklist names.",
     )
     print(f"Query time: {round(elapsed_time, 2)} seconds")
 
@@ -205,6 +193,14 @@ def find_field(fields, field_index, field_type):
                 return field_value
             field_index += 1
     return None
+
+
+def sort_dict(dict_unsorted):
+    """Sort dictionary by values in reverse order."""
+    dict_sorted = sorted(
+        dict_unsorted.items(), key=lambda dict_sort: dict_sort[1], reverse=True
+    )
+    return dict_sorted
 
 
 def menu():
