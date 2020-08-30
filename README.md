@@ -55,6 +55,12 @@ Search for all rpz names queried
 ./dnscl.py rpz
 ```
 
+Search for all record types queried
+
+```bash
+./dnscl.py type
+```
+
 Display help
 
 ```bash
