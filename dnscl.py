@@ -433,7 +433,7 @@ if __name__ == "__main__":
             elif int(CHOICE) == 0:
                 break
     else:
-        wildcard = ""
+        WILDCARD = ""
         dnscl_parser = argparse.ArgumentParser(
             description="Analyze BIND DNS query data from syslog file input"
         )
@@ -452,16 +452,16 @@ if __name__ == "__main__":
         )
         parser_ip.add_argument("-i",
                                help="ip address",
-                               default=wildcard)
+                               default=WILDCARD)
         parser_domain.add_argument("-d",
                                    help="domain",
-                                   default=wildcard)
+                                   default=WILDCARD)
         parser_rpz.add_argument("-r",
                                 help="rpz domain",
-                                default=wildcard)
+                                default=WILDCARD)
         parser_type.add_argument("-t",
                                  help="record type",
-                                 default=wildcard)
+                                 default=WILDCARD)
         dnscl_parser.add_argument("-v",
                                   "--version",
                                   action="version",
@@ -473,12 +473,12 @@ if __name__ == "__main__":
         elif args.command == "domain":
             dnscl_domain(args.d)
         elif args.command == "rpz":
-            if args.r == wildcard:
+            if args.r == WILDCARD:
                 dnscl_rpz(args.r)
             else:
                 dnscl_rpz_domain(args.r)
         elif args.command == "type":
-            if args.t == wildcard:
+            if args.t == WILDCARD:
                 dnscl_record_domain(args.t)
             else:
                 dnscl_record_type(args.t)
