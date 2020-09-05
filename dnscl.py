@@ -34,18 +34,19 @@ import re
 import argparse
 # from pyfiglet import print_figlet
 
-AUTHOR = "Mark W. Hunter"
-VERSION = "0.55"
+__author__ = "Mark W. Hunter"
+__version__ = "0.56"
 FILENAME = "/var/log/syslog"  # path to syslog file
 # FILENAME = "/var/log/messages"  # path to alternate syslog file
 
 
-def dnscl_ipaddress(ip_address):
+def dnscl_ipaddress(ip_address, domain_search="", quiet_mode=False):
     """Return a domain name queried by a client IP address."""
     start_time = timeit.default_timer()
     domain_dict = defaultdict(int)
     line_count = 0
     ip_address_search = ip_address + "#"
+
     with open(FILENAME, encoding="ISO-8859-1") as syslog:
         for line in syslog:
             if ip_address_search in line:
@@ -53,8 +54,13 @@ def dnscl_ipaddress(ip_address):
                     fields = line.strip().split(" ")
                     if len(fields) > 12:
                         domain = find_domain_field(fields)
-                        domain_dict[domain] += 1
-                        line_count += 1
+                        if domain_search:
+                            if re.search(domain_search, domain, re.IGNORECASE):
+                                domain_dict[domain] += 1
+                                line_count += 1
+                        else:
+                            domain_dict[domain] += 1
+                            line_count += 1
 
     domain_list_sorted = sort_dict(domain_dict)
     elapsed_time = timeit.default_timer() - start_time
@@ -65,14 +71,15 @@ def dnscl_ipaddress(ip_address):
     for domain_name, query_count in domain_list_sorted:
         print(f"{query_count} \t {domain_name}")
 
-    print(
-        f"\nSummary: Searched {ip_address} and found {line_count}",
-        f"queries for {len(domain_dict)} domain names.",
-    )
-    print(f"Query time: {round(elapsed_time, 2)} seconds")
+    if not quiet_mode:
+        print(
+            f"\nSummary: Searched {ip_address} and found {line_count}",
+            f"queries for {len(domain_dict)} domain names.",
+        )
+        print(f"Query time: {round(elapsed_time, 2)} seconds")
 
 
-def dnscl_domain(domain_name):
+def dnscl_domain(domain_name, ip_search="", quiet_mode=False):
     """Return client IP addresses that queried a domain name."""
     start_time = timeit.default_timer()
     ip_dict = defaultdict(int)
@@ -87,9 +94,15 @@ def dnscl_domain(domain_name):
                 ip_address = ip_address_field[0]
                 domain_name_field = find_domain_field(fields)
                 if re.search(domain_name, domain_name_field, re.IGNORECASE):
-                    ip_dict[ip_address] += 1
-                    domain_list.append(domain_name_field)
-                    line_count += 1
+                    if ip_search:
+                        if ip_search in line:
+                            ip_dict[ip_address] += 1
+                            domain_list.append(domain_name_field)
+                            line_count += 1
+                    else:
+                        ip_dict[ip_address] += 1
+                        domain_list.append(domain_name_field)
+                        line_count += 1
 
     ip_list_sorted = sort_dict(ip_dict)
     domain_set = sorted(set(domain_list))
@@ -105,16 +118,19 @@ def dnscl_domain(domain_name):
         print("\ndomain names: ")
         for domain_names_found in domain_set:
             print(domain_names_found)
-        print(
-            f"\nSummary: Searched {domain_name} and found {line_count}",
-            f"queries for {len(domain_set)} domain names from {len(ip_dict)} clients.",
-        )
+        if not quiet_mode:
+            print(
+                f"\nSummary: Searched {domain_name} and found {line_count}",
+                f"queries for {len(domain_set)} domain names from {len(ip_dict)} clients.",
+            )
+            print(f"Query time: {round(elapsed_time, 2)} seconds")
     else:
-        print(
-            f"\nSummary: Searched {domain_name} and found {line_count}",
-            f"queries from {len(ip_dict)} clients."
-        )
-    print(f"Query time: {round(elapsed_time, 2)} seconds")
+        if not quiet_mode:
+            print(
+                f"\nSummary: Searched {domain_name} and found {line_count}",
+                f"queries from {len(ip_dict)} clients."
+            )
+            print(f"Query time: {round(elapsed_time, 2)} seconds")
 
 
 def dnscl_rpz(ip_address):
@@ -327,7 +343,7 @@ def find_domain_field(fields):
     for field in fields:
         if field == "query:":
             field_value = fields[field_index + 1]
-            return field_value.lower()
+            return field_value
         field_index += 1
     return None
 
@@ -453,9 +469,23 @@ if __name__ == "__main__":
         parser_ip.add_argument("-i",
                                help="ip address",
                                default=WILDCARD)
+        parser_ip.add_argument("-d",
+                               help="domain",
+                               default=WILDCARD)
+        parser_ip.add_argument("-q",
+                               "--quiet",
+                               help="quiet mode",
+                               action="store_true")
         parser_domain.add_argument("-d",
                                    help="domain",
                                    default=WILDCARD)
+        parser_domain.add_argument("-i",
+                                   help="ip address",
+                                   default=WILDCARD)
+        parser_domain.add_argument("-q",
+                                   "--quiet",
+                                   help="quiet mode",
+                                   action="store_true")
         parser_rpz.add_argument("-r",
                                 help="rpz domain",
                                 default=WILDCARD)
@@ -465,13 +495,15 @@ if __name__ == "__main__":
         dnscl_parser.add_argument("-v",
                                   "--version",
                                   action="version",
-                                  version="%(prog)s " + VERSION + ", " + AUTHOR + " (c) 2020")
+                                  version="%(prog)s "
+                                  + __version__ + ", "
+                                  + __author__ + " (c) 2020")
         args = dnscl_parser.parse_args()
 
         if args.command == "ip":
-            dnscl_ipaddress(args.i)
+            dnscl_ipaddress(args.i, args.d, args.quiet)
         elif args.command == "domain":
-            dnscl_domain(args.d)
+            dnscl_domain(args.d, args.i, args.quiet)
         elif args.command == "rpz":
             if args.r == WILDCARD:
                 dnscl_rpz(args.r)
