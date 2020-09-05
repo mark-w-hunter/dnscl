@@ -34,8 +34,8 @@ import socket
 import argparse
 import re
 
-AUTHOR = "Mark W. Hunter"
-VERSION = "0.47-pihole"
+__author__ = "Mark W. Hunter"
+__version__ = "0.48-pihole"
 FILENAME = "/var/log/pihole.log"
 
 
@@ -270,7 +270,9 @@ if __name__ == "__main__":
         dnscl_parser.add_argument("-v",
                                   "--version",
                                   action="version",
-                                  version="%(prog)s " + VERSION + ", " + AUTHOR + " (c) 2020")
+                                  version="%(prog)s "
+                                          + __version__ + ", "
+                                          + __author__ + " (c) 2020")
         args = dnscl_parser.parse_args()
 
         if args.command == "ip":
