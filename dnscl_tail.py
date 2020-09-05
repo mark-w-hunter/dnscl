@@ -21,7 +21,7 @@
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# __author__S OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
@@ -35,9 +35,9 @@ import argparse
 import subprocess
 
 __author__ = "Mark W. Hunter"
-__version__ = "0.55-tail"
-# FILENAME = "/var/log/syslog"  # path to syslog file
-FILENAME = "/var/log/messages.full"  # path to alternate syslog file
+__version__ = "0.56-tail"
+FILENAME = "/var/log/syslog"  # path to syslog file
+# FILENAME = "/var/log/messages"  # path to alternate syslog file
 
 
 def dnscl_ipaddress(ip_address, domain_search="", tail_num=0, quiet_mode=False):
