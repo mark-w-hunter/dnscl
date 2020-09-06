@@ -33,17 +33,21 @@ from collections import defaultdict
 import re
 import argparse
 import subprocess
+from typing import DefaultDict, List
 
 __author__ = "Mark W. Hunter"
-__version__ = "0.56-tail"
+__version__ = "0.57-tail"
 FILENAME = "/var/log/syslog"  # path to syslog file
 # FILENAME = "/var/log/messages"  # path to alternate syslog file
 
 
-def dnscl_ipaddress(ip_address, domain_search="", tail_num=0, quiet_mode=False):
+def dnscl_ipaddress(ip_address: str,
+                    domain_search: str = "",
+                    tail_num: int = 0,
+                    quiet_mode: bool = False) -> int:
     """Return a domain name queried by a client IP address."""
     start_time = timeit.default_timer()
-    domain_dict = defaultdict(int)
+    domain_dict: DefaultDict = defaultdict(int)
     line_count = 0
     ip_address_search = ip_address + "#"
 
@@ -81,12 +85,16 @@ def dnscl_ipaddress(ip_address, domain_search="", tail_num=0, quiet_mode=False):
             f"queries for {len(domain_dict)} domain names.",
         )
         print(f"Query time: {round(elapsed_time, 2)} seconds")
+    return line_count
 
 
-def dnscl_domain(domain_name, ip_search, tail_num=0, quiet_mode=False):
+def dnscl_domain(domain_name: str,
+                 ip_search: str = "",
+                 tail_num: int = 0,
+                 quiet_mode: bool = False) -> int:
     """Return client IP addresses that queried a domain name."""
     start_time = timeit.default_timer()
-    ip_dict = defaultdict(int)
+    ip_dict: DefaultDict = defaultdict(int)
     domain_list = []
     line_count = 0
 
@@ -140,12 +148,13 @@ def dnscl_domain(domain_name, ip_search, tail_num=0, quiet_mode=False):
                 f"queries from {len(ip_dict)} clients."
             )
             print(f"Query time: {round(elapsed_time, 2)} seconds")
+    return line_count
 
 
-def dnscl_rpz(ip_address):
+def dnscl_rpz(ip_address: str) -> int:
     """Return rpz names queried by a client IP address."""
     start_time = timeit.default_timer()
-    rpz_dict = defaultdict(int)
+    rpz_dict: DefaultDict = defaultdict(int)
     line_count = 0
     ip_address_search = ip_address + "#"
     with open(FILENAME, encoding="ISO-8859-1") as syslog:
@@ -173,12 +182,13 @@ def dnscl_rpz(ip_address):
         f"queries for {len(rpz_dict)} rpz names.",
     )
     print(f"Query time: {round(elapsed_time, 2)} seconds")
+    return line_count
 
 
-def dnscl_rpz_domain(domain_rpz_name):
+def dnscl_rpz_domain(domain_rpz_name: str) -> int:
     """Return client IP addresses that queried a rpz domain name."""
     start_time = timeit.default_timer()
-    rpz_ip_dict = defaultdict(int)
+    rpz_ip_dict: DefaultDict = defaultdict(int)
     rpz_domain_list = []
     line_count = 0
 
@@ -218,12 +228,13 @@ def dnscl_rpz_domain(domain_rpz_name):
         f"queries from {len(rpz_ip_dict)} clients.",
     )
     print(f"Query time: {round(elapsed_time, 2)} seconds")
+    return line_count
 
 
-def dnscl_record_ip(ip_address):
+def dnscl_record_ip(ip_address: str) -> int:
     """Return record types queried by a client IP address."""
     start_time = timeit.default_timer()
-    record_dict = defaultdict(int)
+    record_dict: DefaultDict = defaultdict(int)
     domain_list = []
     line_count = 0
     ip_address_search = ip_address + "#"
@@ -259,12 +270,13 @@ def dnscl_record_ip(ip_address):
         "domains.",
     )
     print(f"Query time: {round(elapsed_time, 2)} seconds")
+    return line_count
 
 
-def dnscl_record_domain(domain_name):
+def dnscl_record_domain(domain_name: str) -> int:
     """Return record types for a queried domain name."""
     start_time = timeit.default_timer()
-    record_dict = defaultdict(int)
+    record_dict: DefaultDict = defaultdict(int)
     ip_list = []
     domain_list = []
     line_count = 0
@@ -304,12 +316,13 @@ def dnscl_record_domain(domain_name):
         f"queries for {len(record_dict)} record types from {len(set(ip_list))} clients.",
     )
     print(f"Query time: {round(elapsed_time, 2)} seconds")
+    return line_count
 
 
-def dnscl_record_type(record_type):
+def dnscl_record_type(record_type: str) -> int:
     """Return domain names of a particular record type."""
     start_time = timeit.default_timer()
-    record_domain_dict = defaultdict(int)
+    record_domain_dict: DefaultDict = defaultdict(int)
     record_ip_list = []
     line_count = 0
 
@@ -344,9 +357,10 @@ def dnscl_record_type(record_type):
         f"{len(set(record_ip_list))} clients.",
     )
     print("Query time:", str(round(elapsed_time, 2)), "seconds")
+    return line_count
 
 
-def find_domain_field(fields):
+def find_domain_field(fields: List[str]):
     """Find and return domain field value."""
     field_index = 0
     for field in fields:
@@ -357,7 +371,7 @@ def find_domain_field(fields):
     return None
 
 
-def find_ip_field(fields):
+def find_ip_field(fields: List[str]):
     """Find and return ip field value."""
     field_index = 0
     for field in fields:
@@ -368,7 +382,7 @@ def find_ip_field(fields):
     return None
 
 
-def find_rpz_domain_field(fields):
+def find_rpz_domain_field(fields: List[str]):
     """Find and return rpz domain field."""
     field_index = 0
     for field in fields:
@@ -379,7 +393,7 @@ def find_rpz_domain_field(fields):
     return None
 
 
-def find_rpz_ip_field(fields):
+def find_rpz_ip_field(fields: List[str]):
     """Find and return rpz ip field value."""
     field_index = 0
     for field in fields:
@@ -390,7 +404,7 @@ def find_rpz_ip_field(fields):
     return None
 
 
-def find_record_type_field(fields):
+def find_record_type_field(fields: List[str]):
     """Find and return record type field."""
     field_index = 0
     for field in fields:
@@ -401,17 +415,18 @@ def find_record_type_field(fields):
     return None
 
 
-def sort_dict(dict_unsorted):
+def sort_dict(dict_unsorted: DefaultDict) -> List:
     """Sort dictionary by values in reverse order."""
-    dict_sorted = sorted(
+    list_sorted = sorted(
         dict_unsorted.items(), key=lambda dict_sort: dict_sort[1], reverse=True
     )
-    return dict_sorted
+    return list_sorted
 
 
-def tail(filename, num_lines=60):
+def tail(filename: str, num_lines: int = 60):
     """Returns n number of last lines from input file."""
     proc = subprocess.Popen(['tail', '-n', str(num_lines), filename], stdout=subprocess.PIPE)
+    assert proc.stdout is not None
     lines = proc.stdout.readlines()
     return lines
 
