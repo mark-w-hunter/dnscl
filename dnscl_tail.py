@@ -54,18 +54,17 @@ def dnscl_ipaddress(ip_address, domain_search="", tail_num=0, quiet_mode=False):
 
     for line in syslog:
         line = line.decode("utf-8")
-        if ip_address_search in line:
-            if "named" in line and "query:" in line:
-                fields = line.strip().split(" ")
-                if len(fields) > 12:
-                    domain = find_domain_field(fields)
-                    if domain_search:
-                        if re.search(domain_search, domain, re.IGNORECASE):
-                            domain_dict[domain] += 1
-                            line_count += 1
-                    else:
+        if ip_address_search in line and "named" in line and "query" in line:
+            fields = line.strip().split(" ")
+            if len(fields) > 12:
+                domain = find_domain_field(fields)
+                if domain_search:
+                    if re.search(domain_search, domain, re.IGNORECASE):
                         domain_dict[domain] += 1
                         line_count += 1
+                else:
+                    domain_dict[domain] += 1
+                    line_count += 1
 
     domain_list_sorted = sort_dict(domain_dict)
     elapsed_time = timeit.default_timer() - start_time
