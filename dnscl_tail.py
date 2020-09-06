@@ -418,7 +418,7 @@ def tail(filename, num_lines=60):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("run dnscl_tail.py -h for help.")
+        print("Run dnscl_tail.py -h for help.")
     else:
         WILDCARD = ""
         dnscl_parser = argparse.ArgumentParser(
