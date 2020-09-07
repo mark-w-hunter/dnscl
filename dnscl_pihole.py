@@ -244,7 +244,7 @@ if __name__ == "__main__":
             elif int(CHOICE) == 0:
                 break
     else:
-        wildcard = ""
+        WILDCARD = ""
         dnscl_parser = argparse.ArgumentParser(
             description="Analyze Pi-hole DNS query data from log file input"
         )
@@ -260,13 +260,13 @@ if __name__ == "__main__":
         )
         parser_ip.add_argument("-i",
                                help="ip address",
-                               default=wildcard)
+                               default=WILDCARD)
         parser_domain.add_argument("-d",
                                    help="domain",
-                                   default=wildcard)
+                                   default=WILDCARD)
         parser_blocklist.add_argument("-b",
                                       help="blocklist name",
-                                      default=wildcard)
+                                      default=WILDCARD)
         dnscl_parser.add_argument("-v",
                                   "--version",
                                   action="version",
@@ -276,11 +276,17 @@ if __name__ == "__main__":
         args = dnscl_parser.parse_args()
 
         if args.command == "ip":
-            dnscl_ipaddress(args.i)
+            if args.i:
+                if is_valid_ipv4_address(args.i) or is_valid_ipv6_address(args.i):
+                    dnscl_ipaddress(args.i)
+                else:
+                    print("Invalid ip address, try again.")
+            else:
+                dnscl_ipaddress(args.i)
         elif args.command == "domain":
             dnscl_domain(args.d)
         elif args.command == "blocklist":
-            if args.b == wildcard:
+            if args.b == WILDCARD:
                 dnscl_blocklist(args.b)
             else:
                 dnscl_blocklist(args.b)
