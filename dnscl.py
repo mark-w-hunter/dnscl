@@ -32,18 +32,30 @@ import timeit
 from collections import defaultdict
 import re
 import argparse
+from typing import DefaultDict, List
 # from pyfiglet import print_figlet
 
 __author__ = "Mark W. Hunter"
-__version__ = "0.56"
+__version__ = "0.57"
 FILENAME = "/var/log/syslog"  # path to syslog file
 # FILENAME = "/var/log/messages"  # path to alternate syslog file
 
 
-def dnscl_ipaddress(ip_address, domain_search="", quiet_mode=False):
-    """Return a domain name queried by a client IP address."""
+def dnscl_ipaddress(ip_address: str,
+                    domain_search: str = "",
+                    quiet_mode: bool = False) -> int:
+    """Return a domain name queried by a client IP address.
+
+    Args:
+        ip_address (str): ip address to search.
+        domain_search (str, optional): domain name to search. Defaults to "".
+        quiet_mode (bool, optional): enable quiet mode. Defaults to False.
+
+    Returns:
+        int: number of queries found.
+    """
     start_time = timeit.default_timer()
-    domain_dict = defaultdict(int)
+    domain_dict: DefaultDict = defaultdict(int)
     line_count = 0
     ip_address_search = ip_address + "#"
 
@@ -76,12 +88,24 @@ def dnscl_ipaddress(ip_address, domain_search="", quiet_mode=False):
             f"queries for {len(domain_dict)} domain names.",
         )
         print(f"Query time: {round(elapsed_time, 2)} seconds")
+    return line_count
 
 
-def dnscl_domain(domain_name, ip_search="", quiet_mode=False):
-    """Return client IP addresses that queried a domain name."""
+def dnscl_domain(domain_name: str,
+                 ip_search: str = "",
+                 quiet_mode: bool = False) -> int:
+    """Return client IP addresses that queried a domain name.
+
+    Args:
+        domain_name (str): domain name to search.
+        ip_search (str, optional): ip address to search. Defaults to "".
+        quiet_mode (bool, optional): enable quiet mode. Defaults to False.
+
+    Returns:
+        int: number of queries found.
+    """
     start_time = timeit.default_timer()
-    ip_dict = defaultdict(int)
+    ip_dict: DefaultDict = defaultdict(int)
     domain_list = []
     line_count = 0
 
@@ -130,12 +154,20 @@ def dnscl_domain(domain_name, ip_search="", quiet_mode=False):
                 f"queries from {len(ip_dict)} clients."
             )
             print(f"Query time: {round(elapsed_time, 2)} seconds")
+    return line_count
 
 
-def dnscl_rpz(ip_address):
-    """Return rpz names queried by a client IP address."""
+def dnscl_rpz(ip_address: str) -> int:
+    """Return rpz names queried by a client IP address.
+
+    Args:
+        ip_address (str): ip address to search.
+
+    Returns:
+        int: number of queries found.
+    """
     start_time = timeit.default_timer()
-    rpz_dict = defaultdict(int)
+    rpz_dict: DefaultDict = defaultdict(int)
     line_count = 0
     ip_address_search = ip_address + "#"
     with open(FILENAME, encoding="ISO-8859-1") as syslog:
@@ -163,12 +195,20 @@ def dnscl_rpz(ip_address):
         f"queries for {len(rpz_dict)} rpz names.",
     )
     print(f"Query time: {round(elapsed_time, 2)} seconds")
+    return line_count
 
 
-def dnscl_rpz_domain(domain_rpz_name):
-    """Return client IP addresses that queried a rpz domain name."""
+def dnscl_rpz_domain(domain_rpz_name: str) -> int:
+    """Return client IP addresses that queried a rpz domain name.
+
+    Args:
+        domain_rpz_name (str): rpz domain name to search.
+
+    Returns:
+        int: number of queries found.
+    """
     start_time = timeit.default_timer()
-    rpz_ip_dict = defaultdict(int)
+    rpz_ip_dict: DefaultDict = defaultdict(int)
     rpz_domain_list = []
     line_count = 0
 
@@ -208,12 +248,20 @@ def dnscl_rpz_domain(domain_rpz_name):
         f"queries from {len(rpz_ip_dict)} clients.",
     )
     print(f"Query time: {round(elapsed_time, 2)} seconds")
+    return line_count
 
 
-def dnscl_record_ip(ip_address):
-    """Return record types queried by a client IP address."""
+def dnscl_record_ip(ip_address: str) -> int:
+    """Return record types queried by a client IP address.
+
+    Args:
+        ip_address (str): ip address to search.
+
+    Returns:
+        int: number of queries found.
+    """
     start_time = timeit.default_timer()
-    record_dict = defaultdict(int)
+    record_dict: DefaultDict = defaultdict(int)
     domain_list = []
     line_count = 0
     ip_address_search = ip_address + "#"
@@ -249,12 +297,20 @@ def dnscl_record_ip(ip_address):
         "domains.",
     )
     print(f"Query time: {round(elapsed_time, 2)} seconds")
+    return line_count
 
 
-def dnscl_record_domain(domain_name):
-    """Return record types for a queried domain name."""
+def dnscl_record_domain(domain_name: str) -> int:
+    """Return record types for a queried domain name.
+
+    Args:
+        domain_name (str): domain name to search.
+
+    Returns:
+        int: number of queries found.
+    """
     start_time = timeit.default_timer()
-    record_dict = defaultdict(int)
+    record_dict: DefaultDict = defaultdict(int)
     ip_list = []
     domain_list = []
     line_count = 0
@@ -294,12 +350,20 @@ def dnscl_record_domain(domain_name):
         f"queries for {len(record_dict)} record types from {len(set(ip_list))} clients.",
     )
     print(f"Query time: {round(elapsed_time, 2)} seconds")
+    return line_count
 
 
-def dnscl_record_type(record_type):
-    """Return domain names of a particular record type."""
+def dnscl_record_type(record_type: str) -> int:
+    """Return domain names of a particular record type.
+
+    Args:
+        record_type (str): record type to search.
+
+    Returns:
+        int: number of queries found.
+    """
     start_time = timeit.default_timer()
-    record_domain_dict = defaultdict(int)
+    record_domain_dict: DefaultDict = defaultdict(int)
     record_ip_list = []
     line_count = 0
 
@@ -334,10 +398,18 @@ def dnscl_record_type(record_type):
         f"{len(set(record_ip_list))} clients.",
     )
     print("Query time:", str(round(elapsed_time, 2)), "seconds")
+    return line_count
 
 
-def find_domain_field(fields):
-    """Find and return domain field value."""
+def find_domain_field(fields: List[str]):
+    """Find and return domain field value.
+
+    Args:
+        fields (List[str]): line fields.
+
+    Returns:
+        str: domain name field value.
+    """
     field_index = 0
     for field in fields:
         if field == "query:":
@@ -347,8 +419,15 @@ def find_domain_field(fields):
     return None
 
 
-def find_ip_field(fields):
-    """Find and return ip field value."""
+def find_ip_field(fields: List[str]):
+    """Find and return ip field value.
+
+    Args:
+        fields (List[str]): line fields.
+
+    Returns:
+        str: ip address field value
+    """
     field_index = 0
     for field in fields:
         if field == "query:":
@@ -358,8 +437,15 @@ def find_ip_field(fields):
     return None
 
 
-def find_rpz_domain_field(fields):
-    """Find and return rpz domain field."""
+def find_rpz_domain_field(fields: List[str]):
+    """Find and return rpz domain field.
+
+    Args:
+        fields (List[str]): line fields.
+
+    Returns:
+        str: rpz domain name field value.
+    """
     field_index = 0
     for field in fields:
         if field == "QNAME":
@@ -369,8 +455,15 @@ def find_rpz_domain_field(fields):
     return None
 
 
-def find_rpz_ip_field(fields):
-    """Find and return rpz ip field value."""
+def find_rpz_ip_field(fields: List[str]):
+    """Find and return rpz ip field value.
+
+    Args:
+        fields (List[str]): line fields.
+
+    Returns:
+        str: rpz ip address field value.
+    """
     field_index = 0
     for field in fields:
         if field == "QNAME":
@@ -380,8 +473,15 @@ def find_rpz_ip_field(fields):
     return None
 
 
-def find_record_type_field(fields):
-    """Find and return record type field."""
+def find_record_type_field(fields: List[str]):
+    """Find and return record type field.
+
+    Args:
+        fields (List[str]): line fields.
+
+    Returns:
+        str: record type field value.
+    """
     field_index = 0
     for field in fields:
         if field == "query:":
@@ -391,8 +491,15 @@ def find_record_type_field(fields):
     return None
 
 
-def sort_dict(dict_unsorted):
-    """Sort dictionary by values in reverse order."""
+def sort_dict(dict_unsorted: DefaultDict) -> List:
+    """Sort dictionary by values in reverse order.
+
+    Args:
+        dict_unsorted (DefaultDict): unsorted search reults.
+
+    Returns:
+        List: sorted search results in descending order.
+    """
     dict_sorted = sorted(
         dict_unsorted.items(), key=lambda dict_sort: dict_sort[1], reverse=True
     )
