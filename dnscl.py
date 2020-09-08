@@ -47,12 +47,12 @@ def dnscl_ipaddress(ip_address: str,
     """Return a domain name queried by a client IP address.
 
     Args:
-        ip_address (str): ip address to search.
-        domain_search (str, optional): domain name to search. Defaults to "".
-        quiet_mode (bool, optional): enable quiet mode. Defaults to False.
+        ip_address (str): IP address to search.
+        domain_search (str, optional): Domain name to search. Defaults to "".
+        quiet_mode (bool, optional): Enable quiet mode. Defaults to False.
 
     Returns:
-        int: number of queries found.
+        int: Number of queries found.
     """
     start_time = timeit.default_timer()
     domain_dict: DefaultDict = defaultdict(int)
@@ -97,12 +97,12 @@ def dnscl_domain(domain_name: str,
     """Return client IP addresses that queried a domain name.
 
     Args:
-        domain_name (str): domain name to search.
-        ip_search (str, optional): ip address to search. Defaults to "".
-        quiet_mode (bool, optional): enable quiet mode. Defaults to False.
+        domain_name (str): Domain name to search.
+        ip_search (str, optional): IP address to search. Defaults to "".
+        quiet_mode (bool, optional): Enable quiet mode. Defaults to False.
 
     Returns:
-        int: number of queries found.
+        int: Number of queries found.
     """
     start_time = timeit.default_timer()
     ip_dict: DefaultDict = defaultdict(int)
@@ -158,13 +158,13 @@ def dnscl_domain(domain_name: str,
 
 
 def dnscl_rpz(ip_address: str) -> int:
-    """Return rpz names queried by a client IP address.
+    """Return RPZ names queried by a client IP address.
 
     Args:
-        ip_address (str): ip address to search.
+        ip_address (str): IP address to search.
 
     Returns:
-        int: number of queries found.
+        int: Number of queries found.
     """
     start_time = timeit.default_timer()
     rpz_dict: DefaultDict = defaultdict(int)
@@ -199,13 +199,13 @@ def dnscl_rpz(ip_address: str) -> int:
 
 
 def dnscl_rpz_domain(domain_rpz_name: str) -> int:
-    """Return client IP addresses that queried a rpz domain name.
+    """Return client IP addresses that queried a RPZ domain name.
 
     Args:
-        domain_rpz_name (str): rpz domain name to search.
+        domain_rpz_name (str): RPZ domain name to search.
 
     Returns:
-        int: number of queries found.
+        int: Number of queries found.
     """
     start_time = timeit.default_timer()
     rpz_ip_dict: DefaultDict = defaultdict(int)
@@ -255,10 +255,10 @@ def dnscl_record_ip(ip_address: str) -> int:
     """Return record types queried by a client IP address.
 
     Args:
-        ip_address (str): ip address to search.
+        ip_address (str): IP address to search.
 
     Returns:
-        int: number of queries found.
+        int: Number of queries found.
     """
     start_time = timeit.default_timer()
     record_dict: DefaultDict = defaultdict(int)
@@ -304,10 +304,10 @@ def dnscl_record_domain(domain_name: str) -> int:
     """Return record types for a queried domain name.
 
     Args:
-        domain_name (str): domain name to search.
+        domain_name (str): Domain name to search.
 
     Returns:
-        int: number of queries found.
+        int: Number of queries found.
     """
     start_time = timeit.default_timer()
     record_dict: DefaultDict = defaultdict(int)
@@ -357,10 +357,10 @@ def dnscl_record_type(record_type: str) -> int:
     """Return domain names of a particular record type.
 
     Args:
-        record_type (str): record type to search.
+        record_type (str): Record type to search.
 
     Returns:
-        int: number of queries found.
+        int: Number of queries found.
     """
     start_time = timeit.default_timer()
     record_domain_dict: DefaultDict = defaultdict(int)
@@ -405,10 +405,10 @@ def find_domain_field(fields: List[str]):
     """Find and return domain field value.
 
     Args:
-        fields (List[str]): line fields.
+        fields (List[str]): Fields from line.
 
     Returns:
-        str: domain name field value.
+        str: Domain name field value.
     """
     field_index = 0
     for field in fields:
@@ -420,13 +420,13 @@ def find_domain_field(fields: List[str]):
 
 
 def find_ip_field(fields: List[str]):
-    """Find and return ip field value.
+    """Find and return IP address field value.
 
     Args:
-        fields (List[str]): line fields.
+        fields (List[str]): Fields from line.
 
     Returns:
-        str: ip address field value
+        str: IP address field value.
     """
     field_index = 0
     for field in fields:
@@ -438,13 +438,13 @@ def find_ip_field(fields: List[str]):
 
 
 def find_rpz_domain_field(fields: List[str]):
-    """Find and return rpz domain field.
+    """Find and return RPZ domain field.
 
     Args:
-        fields (List[str]): line fields.
+        fields (List[str]): Fields from line.
 
     Returns:
-        str: rpz domain name field value.
+        str: RPZ domain name field value.
     """
     field_index = 0
     for field in fields:
@@ -456,13 +456,13 @@ def find_rpz_domain_field(fields: List[str]):
 
 
 def find_rpz_ip_field(fields: List[str]):
-    """Find and return rpz ip field value.
+    """Find and return RPZ IP address field value.
 
     Args:
-        fields (List[str]): line fields.
+        fields (List[str]): Fields from line.
 
     Returns:
-        str: rpz ip address field value.
+        str: RPZ IP address field value.
     """
     field_index = 0
     for field in fields:
@@ -477,10 +477,10 @@ def find_record_type_field(fields: List[str]):
     """Find and return record type field.
 
     Args:
-        fields (List[str]): line fields.
+        fields (List[str]): Fields from line.
 
     Returns:
-        str: record type field value.
+        str: Record type field value.
     """
     field_index = 0
     for field in fields:
@@ -495,10 +495,10 @@ def sort_dict(dict_unsorted: DefaultDict) -> List:
     """Sort dictionary by values in reverse order.
 
     Args:
-        dict_unsorted (DefaultDict): unsorted search reults.
+        dict_unsorted (DefaultDict): Unsorted search reults.
 
     Returns:
-        List: sorted search results in descending order.
+        List: Sorted search results in descending order.
     """
     dict_sorted = sorted(
         dict_unsorted.items(), key=lambda dict_sort: dict_sort[1], reverse=True
