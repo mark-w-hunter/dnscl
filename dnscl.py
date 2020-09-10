@@ -61,17 +61,20 @@ def dnscl_ipaddress(ip_address: str,
 
     with open(FILENAME, encoding="ISO-8859-1") as syslog:
         for line in syslog:
-            if ip_address_search in line and "named" in line and "query" in line:
-                fields = line.strip().split(" ")
-                if len(fields) > 12:
-                    domain = find_domain_field(fields)
-                    if domain_search:
-                        if re.search(domain_search, domain, re.IGNORECASE):
+            if ip_address_search in line:
+                if "named" in line and "query:" in line:
+                    fields = line.strip().split(" ")
+                    if len(fields) > 12:
+                        domain = find_domain_field(fields)
+                        # if domain_search and domain != None:
+                        if domain_search:
+                            # print(domain)
+                            if re.search(domain_search, domain, re.IGNORECASE):
+                                domain_dict[domain] += 1
+                                line_count += 1
+                        else:
                             domain_dict[domain] += 1
                             line_count += 1
-                    else:
-                        domain_dict[domain] += 1
-                        line_count += 1
 
     domain_list_sorted = sort_dict(domain_dict)
     elapsed_time = timeit.default_timer() - start_time
