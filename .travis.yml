@@ -4,5 +4,7 @@ python:
   - "3.6"
   - "3.7"
   - "3.8"
-install: "pip install flake8"
-script: "flake8 --max-line-length=100 dnscl.py dnscl_pihole.py"
+install: "pip install flake8 mypy"
+script:
+  - "flake8 --max-line-length=100 dnscl.py dnscl_pihole.py dnscl_tail.py"
+  - "mypy dnscl_tail.py"

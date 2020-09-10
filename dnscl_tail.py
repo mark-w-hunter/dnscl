@@ -33,39 +33,43 @@ from collections import defaultdict
 import re
 import argparse
 import subprocess
+from typing import DefaultDict, List
 
 __author__ = "Mark W. Hunter"
-__version__ = "0.56-tail"
+__version__ = "0.58-tail"
 FILENAME = "/var/log/syslog"  # path to syslog file
 # FILENAME = "/var/log/messages"  # path to alternate syslog file
 
 
-def dnscl_ipaddress(ip_address, domain_search="", tail_num=0, quiet_mode=False):
+def dnscl_ipaddress(ip_address: str,
+                    filename: str = FILENAME,
+                    domain_search: str = "",
+                    tail_num: int = 0,
+                    quiet_mode: bool = False) -> int:
     """Return a domain name queried by a client IP address."""
     start_time = timeit.default_timer()
-    domain_dict = defaultdict(int)
+    domain_dict: DefaultDict = defaultdict(int)
     line_count = 0
     ip_address_search = ip_address + "#"
 
     if tail_num:
-        syslog = tail(FILENAME, tail_num)
+        syslog = tail(filename, tail_num)
     else:
-        syslog = tail(FILENAME)
+        syslog = tail(filename)
 
     for line in syslog:
         line = line.decode("utf-8")
-        if ip_address_search in line:
-            if "named" in line and "query:" in line:
-                fields = line.strip().split(" ")
-                if len(fields) > 12:
-                    domain = find_domain_field(fields)
-                    if domain_search:
-                        if re.search(domain_search, domain, re.IGNORECASE):
-                            domain_dict[domain] += 1
-                            line_count += 1
-                    else:
+        if ip_address_search in line and "named" in line and "query" in line:
+            fields = line.strip().split(" ")
+            if len(fields) > 12:
+                domain = find_domain_field(fields)
+                if domain_search:
+                    if re.search(domain_search, domain, re.IGNORECASE):
                         domain_dict[domain] += 1
                         line_count += 1
+                else:
+                    domain_dict[domain] += 1
+                    line_count += 1
 
     domain_list_sorted = sort_dict(domain_dict)
     elapsed_time = timeit.default_timer() - start_time
@@ -82,19 +86,24 @@ def dnscl_ipaddress(ip_address, domain_search="", tail_num=0, quiet_mode=False):
             f"queries for {len(domain_dict)} domain names.",
         )
         print(f"Query time: {round(elapsed_time, 2)} seconds")
+    return line_count
 
 
-def dnscl_domain(domain_name, ip_search, tail_num=0, quiet_mode=False):
+def dnscl_domain(domain_name: str,
+                 filename: str = FILENAME,
+                 ip_search: str = "",
+                 tail_num: int = 0,
+                 quiet_mode: bool = False) -> int:
     """Return client IP addresses that queried a domain name."""
     start_time = timeit.default_timer()
-    ip_dict = defaultdict(int)
+    ip_dict: DefaultDict = defaultdict(int)
     domain_list = []
     line_count = 0
 
     if tail_num:
-        syslog = tail(FILENAME, tail_num)
+        syslog = tail(filename, tail_num)
     else:
-        syslog = tail(FILENAME)
+        syslog = tail(filename)
 
     for line in syslog:
         line = line.decode("utf-8")
@@ -141,24 +150,34 @@ def dnscl_domain(domain_name, ip_search, tail_num=0, quiet_mode=False):
                 f"queries from {len(ip_dict)} clients."
             )
             print(f"Query time: {round(elapsed_time, 2)} seconds")
+    return line_count
 
 
-def dnscl_rpz(ip_address):
+def dnscl_rpz(ip_address: str,
+              filename: str = FILENAME,
+              tail_num: int = 0,
+              quiet_mode: bool = False) -> int:
     """Return rpz names queried by a client IP address."""
     start_time = timeit.default_timer()
-    rpz_dict = defaultdict(int)
+    rpz_dict: DefaultDict = defaultdict(int)
     line_count = 0
     ip_address_search = ip_address + "#"
-    with open(FILENAME, encoding="ISO-8859-1") as syslog:
-        for line in syslog:
-            if ip_address_search in line:
-                if "QNAME" in line and "SOA" not in line:
-                    fields = line.strip().split(" ")
-                    rpz_domain_fields = find_rpz_domain_field(fields).split("/")
-                    rpz_domain = rpz_domain_fields[0]
-                    if len(fields) > 11:
-                        rpz_dict[rpz_domain] += 1
-                        line_count += 1
+
+    if tail_num:
+        syslog = tail(filename, tail_num)
+    else:
+        syslog = tail(filename)
+
+    for line in syslog:
+        line = line.decode("utf-8")
+        if ip_address_search in line:
+            if "QNAME" in line and "SOA" not in line:
+                fields = line.strip().split(" ")
+                rpz_domain_fields = find_rpz_domain_field(fields).split("/")
+                rpz_domain = rpz_domain_fields[0]
+                if len(fields) > 11:
+                    rpz_dict[rpz_domain] += 1
+                    line_count += 1
 
     rpz_list_sorted = sort_dict(rpz_dict)
     elapsed_time = timeit.default_timer() - start_time
@@ -169,34 +188,44 @@ def dnscl_rpz(ip_address):
     for domain_name, query_count in rpz_list_sorted:
         print(query_count, "\t", domain_name)
 
-    print(
-        f"\nSummary: Searched {ip_address} and found {line_count}",
-        f"queries for {len(rpz_dict)} rpz names.",
-    )
-    print(f"Query time: {round(elapsed_time, 2)} seconds")
+    if not quiet_mode:
+        print(
+            f"\nSummary: Searched {ip_address} and found {line_count}",
+            f"queries for {len(rpz_dict)} rpz names.",
+        )
+        print(f"Query time: {round(elapsed_time, 2)} seconds")
+    return line_count
 
 
-def dnscl_rpz_domain(domain_rpz_name):
+def dnscl_rpz_domain(domain_rpz_name: str,
+                     filename: str = FILENAME,
+                     tail_num: int = 0,
+                     quiet_mode: bool = False) -> int:
     """Return client IP addresses that queried a rpz domain name."""
     start_time = timeit.default_timer()
-    rpz_ip_dict = defaultdict(int)
+    rpz_ip_dict: DefaultDict = defaultdict(int)
     rpz_domain_list = []
     line_count = 0
 
-    with open(FILENAME, encoding="ISO-8859-1") as syslog:
-        for line in syslog:
-            if domain_rpz_name in line:
-                if "QNAME" in line and "SOA" not in line:
-                    fields = line.strip().split(" ")
-                    if domain_rpz_name.lower() in line.lower() and len(fields) > 11:
-                        ip_address_field = find_rpz_ip_field(fields).split("#")
-                        ip_address = ip_address_field[0]
-                        rpz_domain_fields = find_rpz_domain_field(fields).split("/")
-                        rpz_domain = rpz_domain_fields[0]
-                        rpz_ip_dict[ip_address] += 1
-                        if domain_rpz_name:
-                            rpz_domain_list.append(rpz_domain)
-                        line_count += 1
+    if tail_num:
+        syslog = tail(filename, tail_num)
+    else:
+        syslog = tail(filename)
+
+    for line in syslog:
+        line = line.decode("utf-8")
+        if domain_rpz_name in line:
+            if "QNAME" in line and "SOA" not in line:
+                fields = line.strip().split(" ")
+                if domain_rpz_name.lower() in line.lower() and len(fields) > 11:
+                    ip_address_field = find_rpz_ip_field(fields).split("#")
+                    ip_address = ip_address_field[0]
+                    rpz_domain_fields = find_rpz_domain_field(fields).split("/")
+                    rpz_domain = rpz_domain_fields[0]
+                    rpz_ip_dict[ip_address] += 1
+                    if domain_rpz_name:
+                        rpz_domain_list.append(rpz_domain)
+                    line_count += 1
 
     rpz_ip_list_sorted = sort_dict(rpz_ip_dict)
     rpz_domain_set = sorted(set(rpz_domain_list))
@@ -214,31 +243,41 @@ def dnscl_rpz_domain(domain_rpz_name):
         for domain_names_found in rpz_domain_set:
             print(domain_names_found)
 
-    print(
-        f"\nSummary: Searched {domain_rpz_name} and found {line_count}",
-        f"queries from {len(rpz_ip_dict)} clients.",
-    )
-    print(f"Query time: {round(elapsed_time, 2)} seconds")
+    if not quiet_mode:
+        print(
+            f"\nSummary: Searched {domain_rpz_name} and found {line_count}",
+            f"queries from {len(rpz_ip_dict)} clients.",
+        )
+        print(f"Query time: {round(elapsed_time, 2)} seconds")
+    return line_count
 
 
-def dnscl_record_ip(ip_address):
+def dnscl_record_ip(ip_address: str,
+                    filename: str = FILENAME,
+                    tail_num: int = 0,
+                    quiet_mode: bool = False) -> int:
     """Return record types queried by a client IP address."""
     start_time = timeit.default_timer()
-    record_dict = defaultdict(int)
+    record_dict: DefaultDict = defaultdict(int)
     domain_list = []
     line_count = 0
     ip_address_search = ip_address + "#"
 
-    with open(FILENAME, encoding="ISO-8859-1") as syslog:
-        for line in syslog:
-            if ip_address_search in line:
-                if "query:" in line:
-                    fields = line.strip().split(" ")
-                    record_type = find_record_type_field(fields)
-                    if len(fields) > 12:
-                        record_dict[record_type] += 1
-                        domain_list.append(find_domain_field(fields))
-                        line_count += 1
+    if tail_num:
+        syslog = tail(filename, tail_num)
+    else:
+        syslog = tail(filename)
+
+    for line in syslog:
+        line = line.decode("utf-8")
+        if ip_address_search in line:
+            if "query:" in line:
+                fields = line.strip().split(" ")
+                record_type = find_record_type_field(fields)
+                if len(fields) > 12:
+                    record_dict[record_type] += 1
+                    domain_list.append(find_domain_field(fields))
+                    line_count += 1
 
     record_list_sorted = sort_dict(record_dict)
     elapsed_time = timeit.default_timer() - start_time
@@ -254,33 +293,43 @@ def dnscl_record_ip(ip_address):
         for domain_names_found in sorted(set(domain_list)):
             print(domain_names_found)
 
-    print(
-        f"\nSummary: Searched {ip_address} and found {line_count}",
-        f"queries with {len(set(record_dict))} record types for {len(set(domain_list))}",
-        "domains.",
-    )
-    print(f"Query time: {round(elapsed_time, 2)} seconds")
+    if not quiet_mode:
+        print(
+            f"\nSummary: Searched {ip_address} and found {line_count}",
+            f"queries with {len(set(record_dict))} record types for {len(set(domain_list))}",
+            "domains.",
+        )
+        print(f"Query time: {round(elapsed_time, 2)} seconds")
+    return line_count
 
 
-def dnscl_record_domain(domain_name):
+def dnscl_record_domain(domain_name: str,
+                        filename: str = FILENAME,
+                        tail_num: int = 0,
+                        quiet_mode: bool = False) -> int:
     """Return record types for a queried domain name."""
     start_time = timeit.default_timer()
-    record_dict = defaultdict(int)
+    record_dict: DefaultDict = defaultdict(int)
     ip_list = []
     domain_list = []
     line_count = 0
 
-    with open(FILENAME, encoding="ISO-8859-1") as syslog:
-        for line in syslog:
-            fields = line.strip().split(" ")
-            if domain_name.lower() in line.lower() and "query:" in line:
-                ip_address = find_ip_field(fields).split("#")
-                ip_list.append(ip_address[0])
-                record_type = find_record_type_field(fields)
-                record_dict[record_type] += 1
-                if domain_name:
-                    domain_list.append(find_domain_field(fields))
-                line_count += 1
+    if tail_num:
+        syslog = tail(filename, tail_num)
+    else:
+        syslog = tail(filename)
+
+    for line in syslog:
+        line = line.decode("utf-8")
+        fields = line.strip().split(" ")
+        if domain_name.lower() in line.lower() and "query:" in line:
+            ip_address = find_ip_field(fields).split("#")
+            ip_list.append(ip_address[0])
+            record_type = find_record_type_field(fields)
+            record_dict[record_type] += 1
+            if domain_name:
+                domain_list.append(find_domain_field(fields))
+            line_count += 1
 
     record_list_sorted = sort_dict(record_dict)
     elapsed_time = timeit.default_timer() - start_time
@@ -300,30 +349,40 @@ def dnscl_record_domain(domain_name):
         for ip_addresses_found in sorted(set(ip_list)):
             print(ip_addresses_found)
 
-    print(
-        f"\nSummary: Searched {domain_name} and found {line_count}",
-        f"queries for {len(record_dict)} record types from {len(set(ip_list))} clients.",
-    )
-    print(f"Query time: {round(elapsed_time, 2)} seconds")
+    if not quiet_mode:
+        print(
+            f"\nSummary: Searched {domain_name} and found {line_count}",
+            f"queries for {len(record_dict)} record types from {len(set(ip_list))} clients.",
+        )
+        print(f"Query time: {round(elapsed_time, 2)} seconds")
+    return line_count
 
 
-def dnscl_record_type(record_type):
+def dnscl_record_type(record_type: str,
+                      filename: str = FILENAME,
+                      tail_num: int = 0,
+                      quiet_mode: bool = False) -> int:
     """Return domain names of a particular record type."""
     start_time = timeit.default_timer()
-    record_domain_dict = defaultdict(int)
+    record_domain_dict: DefaultDict = defaultdict(int)
     record_ip_list = []
     line_count = 0
 
-    with open(FILENAME, encoding="ISO-8859-1") as syslog:
-        for line in syslog:
-            if "query:" in line:
-                fields = line.strip().split(" ")
-                if record_type.upper() == find_record_type_field(fields):
-                    record_domain = find_domain_field(fields)
-                    record_domain_dict[record_domain] += 1
-                    ip_address = find_ip_field(fields).split("#")
-                    record_ip_list.append(ip_address[0])
-                    line_count += 1
+    if tail_num:
+        syslog = tail(filename, tail_num)
+    else:
+        syslog = tail(filename)
+
+    for line in syslog:
+        line = line.decode("utf-8")
+        if "query:" in line:
+            fields = line.strip().split(" ")
+            if record_type.upper() == find_record_type_field(fields):
+                record_domain = find_domain_field(fields)
+                record_domain_dict[record_domain] += 1
+                ip_address = find_ip_field(fields).split("#")
+                record_ip_list.append(ip_address[0])
+                line_count += 1
 
     record_domain_list_sorted = sort_dict(record_domain_dict)
     elapsed_time = timeit.default_timer() - start_time
@@ -338,16 +397,18 @@ def dnscl_record_type(record_type):
     for ip_addresses_found in set(record_ip_list):
         print(ip_addresses_found)
 
-    print(
-        f"\nSummary: Searched record type {record_type.upper()} and found",
-        f"{line_count} queries for",
-        f"{len(record_domain_dict)} domains from",
-        f"{len(set(record_ip_list))} clients.",
-    )
-    print("Query time:", str(round(elapsed_time, 2)), "seconds")
+    if not quiet_mode:
+        print(
+            f"\nSummary: Searched record type {record_type.upper()} and found",
+            f"{line_count} queries for",
+            f"{len(record_domain_dict)} domains from",
+            f"{len(set(record_ip_list))} clients.",
+        )
+        print("Query time:", str(round(elapsed_time, 2)), "seconds")
+    return line_count
 
 
-def find_domain_field(fields):
+def find_domain_field(fields: List[str]):
     """Find and return domain field value."""
     field_index = 0
     for field in fields:
@@ -358,7 +419,7 @@ def find_domain_field(fields):
     return None
 
 
-def find_ip_field(fields):
+def find_ip_field(fields: List[str]):
     """Find and return ip field value."""
     field_index = 0
     for field in fields:
@@ -369,7 +430,7 @@ def find_ip_field(fields):
     return None
 
 
-def find_rpz_domain_field(fields):
+def find_rpz_domain_field(fields: List[str]):
     """Find and return rpz domain field."""
     field_index = 0
     for field in fields:
@@ -380,7 +441,7 @@ def find_rpz_domain_field(fields):
     return None
 
 
-def find_rpz_ip_field(fields):
+def find_rpz_ip_field(fields: List[str]):
     """Find and return rpz ip field value."""
     field_index = 0
     for field in fields:
@@ -391,7 +452,7 @@ def find_rpz_ip_field(fields):
     return None
 
 
-def find_record_type_field(fields):
+def find_record_type_field(fields: List[str]):
     """Find and return record type field."""
     field_index = 0
     for field in fields:
@@ -402,24 +463,25 @@ def find_record_type_field(fields):
     return None
 
 
-def sort_dict(dict_unsorted):
+def sort_dict(dict_unsorted: DefaultDict) -> List:
     """Sort dictionary by values in reverse order."""
-    dict_sorted = sorted(
+    list_sorted = sorted(
         dict_unsorted.items(), key=lambda dict_sort: dict_sort[1], reverse=True
     )
-    return dict_sorted
+    return list_sorted
 
 
-def tail(filename, num_lines=60):
+def tail(filename: str, num_lines: int = 60):
     """Returns n number of last lines from input file."""
     proc = subprocess.Popen(['tail', '-n', str(num_lines), filename], stdout=subprocess.PIPE)
+    assert proc.stdout is not None
     lines = proc.stdout.readlines()
     return lines
 
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("run dnscl_tail.py -h for help.")
+        print("Run dnscl_tail.py -h for help.")
     else:
         WILDCARD = ""
         dnscl_parser = argparse.ArgumentParser(
@@ -444,6 +506,10 @@ if __name__ == "__main__":
         parser_ip.add_argument("-d",
                                help="domain",
                                default=WILDCARD)
+        parser_ip.add_argument("-f",
+                               "--file",
+                               help="filename",
+                               default=FILENAME)
         parser_ip.add_argument("-n",
                                help="lines to tail",
                                type=int,
@@ -458,6 +524,10 @@ if __name__ == "__main__":
         parser_domain.add_argument("-i",
                                    help="ip address",
                                    default=WILDCARD)
+        parser_domain.add_argument("-f",
+                                   "--file",
+                                   help="filename",
+                                   default=FILENAME)
         parser_domain.add_argument("-n",
                                    help="lines to tail",
                                    default=0)
@@ -468,9 +538,31 @@ if __name__ == "__main__":
         parser_rpz.add_argument("-r",
                                 help="rpz domain",
                                 default=WILDCARD)
+        parser_rpz.add_argument("-f",
+                                "--file",
+                                help="filename",
+                                default=FILENAME)
+        parser_rpz.add_argument("-n",
+                                help="lines to tail",
+                                default=0)
+        parser_rpz.add_argument("-q",
+                                "--quiet",
+                                help="quiet mode",
+                                action="store_true")
         parser_type.add_argument("-t",
                                  help="record type",
                                  default=WILDCARD)
+        parser_type.add_argument("-f",
+                                 "--file",
+                                 help="filename",
+                                 default=FILENAME)
+        parser_type.add_argument("-n",
+                                 help="lines to tail",
+                                 default=0)
+        parser_type.add_argument("-q",
+                                 "--quiet",
+                                 help="quiet mode",
+                                 action="store_true")
         dnscl_parser.add_argument("-v",
                                   "--version",
                                   action="version",
@@ -480,16 +572,16 @@ if __name__ == "__main__":
         args = dnscl_parser.parse_args()
 
         if args.command == "ip":
-            dnscl_ipaddress(args.i, args.d, args.n, args.quiet)
+            dnscl_ipaddress(args.i, args.file, args.d, args.n, args.quiet)
         elif args.command == "domain":
-            dnscl_domain(args.d, args.i, args.n, args.quiet)
+            dnscl_domain(args.d, args.file, args.i, args.n, args.quiet)
         elif args.command == "rpz":
             if args.r == WILDCARD:
-                dnscl_rpz(args.r)
+                dnscl_rpz(args.r, args.file, args.n, args.quiet)
             else:
-                dnscl_rpz_domain(args.r)
+                dnscl_rpz_domain(args.r, args.file, args.n, args.quiet)
         elif args.command == "type":
             if args.t == WILDCARD:
-                dnscl_record_domain(args.t)
+                dnscl_record_domain(args.t, args.file, args.n, args.quiet)
             else:
-                dnscl_record_type(args.t)
+                dnscl_record_type(args.t, args.file, args.n, args.quiet)
