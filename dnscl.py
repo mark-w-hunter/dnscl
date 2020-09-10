@@ -53,6 +53,7 @@ def dnscl_ipaddress(ip_address: str,
 
     Returns:
         int: Number of queries found.
+
     """
     start_time = timeit.default_timer()
     domain_dict: DefaultDict = defaultdict(int)
@@ -106,6 +107,7 @@ def dnscl_domain(domain_name: str,
 
     Returns:
         int: Number of queries found.
+
     """
     start_time = timeit.default_timer()
     ip_dict: DefaultDict = defaultdict(int)
@@ -168,6 +170,7 @@ def dnscl_rpz(ip_address: str) -> int:
 
     Returns:
         int: Number of queries found.
+
     """
     start_time = timeit.default_timer()
     rpz_dict: DefaultDict = defaultdict(int)
@@ -209,6 +212,7 @@ def dnscl_rpz_domain(domain_rpz_name: str) -> int:
 
     Returns:
         int: Number of queries found.
+
     """
     start_time = timeit.default_timer()
     rpz_ip_dict: DefaultDict = defaultdict(int)
@@ -262,6 +266,7 @@ def dnscl_record_ip(ip_address: str) -> int:
 
     Returns:
         int: Number of queries found.
+
     """
     start_time = timeit.default_timer()
     record_dict: DefaultDict = defaultdict(int)
@@ -311,6 +316,7 @@ def dnscl_record_domain(domain_name: str) -> int:
 
     Returns:
         int: Number of queries found.
+
     """
     start_time = timeit.default_timer()
     record_dict: DefaultDict = defaultdict(int)
@@ -364,6 +370,7 @@ def dnscl_record_type(record_type: str) -> int:
 
     Returns:
         int: Number of queries found.
+
     """
     start_time = timeit.default_timer()
     record_domain_dict: DefaultDict = defaultdict(int)
@@ -412,6 +419,7 @@ def find_domain_field(fields: List[str]):
 
     Returns:
         str: Domain name field value.
+
     """
     field_index = 0
     for field in fields:
@@ -430,6 +438,7 @@ def find_ip_field(fields: List[str]):
 
     Returns:
         str: IP address field value.
+
     """
     field_index = 0
     for field in fields:
@@ -448,6 +457,7 @@ def find_rpz_domain_field(fields: List[str]):
 
     Returns:
         str: RPZ domain name field value.
+
     """
     field_index = 0
     for field in fields:
@@ -466,6 +476,7 @@ def find_rpz_ip_field(fields: List[str]):
 
     Returns:
         str: RPZ IP address field value.
+
     """
     field_index = 0
     for field in fields:
@@ -484,6 +495,7 @@ def find_record_type_field(fields: List[str]):
 
     Returns:
         str: Record type field value.
+
     """
     field_index = 0
     for field in fields:
@@ -502,6 +514,7 @@ def sort_dict(dict_unsorted: DefaultDict) -> List:
 
     Returns:
         List: Sorted search results in descending order.
+
     """
     dict_sorted = sorted(
         dict_unsorted.items(), key=lambda dict_sort: dict_sort[1], reverse=True
