@@ -28,7 +28,6 @@
 
 """Flask app to analyze BIND DNS queries from syslog input."""
 
-# import subprocess
 from flask import Flask, request
 import dnscl_api as dnscl
 app = Flask(__name__)
@@ -58,11 +57,6 @@ def convert_to_text(results):
 @app.route("/")
 def dnscl_home_page():
     help_str = ""
-    # cmd = ["python", "dnscl.py", "--help"]
-    # process = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-    # help_bytes = process.stdout.readlines()
-    # for line in help_bytes:
-    #     help_str += line.decode("utf-8")
     help_str += "dnscl - Analyze BIND DNS query data from syslog file input\n"
     help_str += "\nendpoints:\n"
     help_str += "/ip?search=ip&domain=domain\n"
