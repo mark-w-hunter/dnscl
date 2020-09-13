@@ -58,7 +58,7 @@ def convert_to_text(results):
 @app.route("/")
 def dnscl_home_page():
     help_str = ""
-    help_str += "dnscl - Analyze BIND DNS query data from syslog file input\n"
+    help_str += "dnscl API - Analyze BIND DNS query data from Flask app\n"
     help_str += "\nendpoints:\n"
     help_str += "/ip?search=ip&domain=domain\n"
     help_str += "/domain?search=domain&ip=ip\n"
