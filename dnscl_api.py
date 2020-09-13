@@ -80,7 +80,7 @@ def dnscl_ipaddress(ip_address: str, domain_search: str = "") -> str:
 
     results += f"\nSummary: Searched {ip_address} and found {line_count} "
     results += f"queries for {len(domain_dict)} domain names.\n"
-    results += f"Query time: {round(elapsed_time, 2)} seconds"
+    results += f"Query time: {round(elapsed_time, 2)} seconds\n"
     return results
 
 
@@ -135,11 +135,11 @@ def dnscl_domain(domain_name: str, ip_search: str = "") -> str:
             results += f"{domain_names_found}\n"
         results += f"\nSummary: Searched {domain_name} and found {line_count} queries "
         results += f"for {len(domain_set)} domain names from {len(ip_dict)} clients.\n"
-        results += f"Query time: {round(elapsed_time, 2)} seconds"
+        results += f"Query time: {round(elapsed_time, 2)} seconds\n"
     else:
         results += f"\nSummary: Searched {domain_name} and found {line_count} "
         results += f"queries from {len(ip_dict)} clients.\n"
-        results += f"Query time: {round(elapsed_time, 2)} seconds"
+        results += f"Query time: {round(elapsed_time, 2)} seconds\n"
     return results
 
 
@@ -181,7 +181,7 @@ def dnscl_rpz(ip_address: str) -> str:
 
     results += f"\nSummary: Searched {ip_address} and found {line_count} "
     results += f"queries for {len(rpz_dict)} domain names.\n"
-    results += f"Query time: {round(elapsed_time, 2)} seconds"
+    results += f"Query time: {round(elapsed_time, 2)} seconds\n"
     return results
 
 
@@ -234,7 +234,7 @@ def dnscl_rpz_domain(domain_rpz_name: str) -> str:
 
     results += f"\nSummary: Searched {domain_rpz_name} and found {line_count} "
     results += f"queries from {len(rpz_ip_dict)} clients.\n"
-    results += f"Query time: {round(elapsed_time, 2)} seconds"
+    results += f"Query time: {round(elapsed_time, 2)} seconds\n"
     return results
 
 
@@ -283,7 +283,7 @@ def dnscl_record_ip(ip_address: str) -> str:
     results += f"\nSummary: Searched {ip_address} and found {line_count} "
     results += "qqueries with {len(set(record_dict))} record types for {len(set(domain_list))} "
     results += "domains.\n"
-    results += f"Query time: {round(elapsed_time, 2)} seconds"
+    results += f"Query time: {round(elapsed_time, 2)} seconds\n"
     return results
 
 
@@ -336,7 +336,7 @@ def dnscl_record_domain(domain_name: str) -> str:
 
     results += f"\nSummary: Searched {domain_name} and found {line_count} "
     results += f"queries for {len(record_dict)} record types from {len(set(ip_list))} clients.\n"
-    results += f"Query time: {round(elapsed_time, 2)} seconds"
+    results += f"Query time: {round(elapsed_time, 2)} seconds\n"
     return results
 
 
@@ -383,7 +383,7 @@ def dnscl_record_type(record_type: str) -> str:
     results += f"\nSummary: Searched record type {record_type.upper()} and found "
     results += f"{line_count} queries for {len(record_domain_dict)} domains from "
     results += f"{len(set(record_ip_list))} clients.\n"
-    results += f"Query time: {round(elapsed_time, 2)} seconds"
+    results += f"Query time: {round(elapsed_time, 2)} seconds\n"
     return results
 
 
