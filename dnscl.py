@@ -192,7 +192,7 @@ def dnscl_rpz(ip_address: str) -> int:
     print("queries: ")
 
     for domain_name, query_count in rpz_list_sorted:
-        print(query_count, "\t", domain_name)
+        print(f"{query_count} \t {domain_name}")
 
     print(
         f"\nSummary: Searched {ip_address} and found {line_count}",
