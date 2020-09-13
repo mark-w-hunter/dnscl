@@ -28,6 +28,7 @@
 
 """Flask app to analyze BIND DNS queries from syslog input."""
 
+# import subprocess
 from flask import Flask, request
 import dnscl_api as dnscl
 app = Flask(__name__)
