@@ -473,7 +473,7 @@ def sort_dict(dict_unsorted: DefaultDict) -> List:
 
 def tail(filename: str, num_lines: int = 60):
     """Returns n number of last lines from input file."""
-    proc = subprocess.Popen(['tail', '-n', str(num_lines), filename], stdout=subprocess.PIPE)
+    proc = subprocess.Popen(["tail", "-n", str(num_lines), filename], stdout=subprocess.PIPE)
     assert proc.stdout is not None
     lines = proc.stdout.readlines()
     return lines
