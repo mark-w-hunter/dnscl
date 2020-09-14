@@ -73,7 +73,7 @@ def dnscl_ipaddress(ip_address: str, domain_search: str = "") -> str:
     domain_list_sorted = sort_dict(domain_dict)
     elapsed_time = timeit.default_timer() - start_time
     results += f"{ip_address} total queries: {line_count}\n"
-    results += f"queries: \n"
+    results += "queries: \n"
 
     for domain_name, query_count in domain_list_sorted:
         results += f"{query_count} \t {domain_name}\n"
@@ -124,13 +124,13 @@ def dnscl_domain(domain_name: str, ip_search: str = "") -> str:
     elapsed_time = timeit.default_timer() - start_time
 
     results += f"{domain_name} total queries: {line_count}\n"
-    results += f"queries: \n"
+    results += "queries: \n"
 
     for ip_address, query_count in ip_list_sorted:
         results += f"{query_count} \t {ip_address}\n"
 
     if domain_name:
-        results += f"\ndomain names:\n"
+        results += "\ndomain names:\n"
         for domain_names_found in domain_set:
             results += f"{domain_names_found}\n"
         results += f"\nSummary: Searched {domain_name} and found {line_count} queries "
@@ -174,7 +174,7 @@ def dnscl_rpz(ip_address: str) -> str:
     elapsed_time = timeit.default_timer() - start_time
 
     results += f"{ip_address} total queries: {line_count}\n"
-    results += f"queries: \n"
+    results += "queries: \n"
 
     for domain_name, query_count in rpz_list_sorted:
         results += f"{query_count} \t {domain_name}\n"
@@ -221,13 +221,13 @@ def dnscl_rpz_domain(domain_rpz_name: str) -> str:
     elapsed_time = timeit.default_timer() - start_time
 
     results += f"{domain_rpz_name} total queries: {line_count}\n"
-    results += f"ip addresses: \n"
+    results += "ip addresses: \n"
 
     for ip_address, query_count in rpz_ip_list_sorted:
         results += f"{query_count} \t {ip_address}\n"
 
     if domain_rpz_name:
-        results += f"\nrpz names:\n"
+        results += "\nrpz names:\n"
 
         for domain_names_found in rpz_domain_set:
             results += f"{domain_names_found}\n"
@@ -270,18 +270,18 @@ def dnscl_record_ip(ip_address: str) -> str:
     elapsed_time = timeit.default_timer() - start_time
 
     results += f"{ip_address} total queries: {line_count}\n"
-    results += f"queries: \n"
+    results += "queries: \n"
 
     for record_type, query_count in record_list_sorted:
         results += f"{query_count} \t {record_type}\n"
 
     if ip_address:
-        results += f"\ndomain names: \n"
+        results += "\ndomain names: \n"
         for domain_names_found in sorted(set(domain_list)):
             results += f"{domain_names_found}\n"
 
     results += f"\nSummary: Searched {ip_address} and found {line_count} "
-    results += "qqueries with {len(set(record_dict))} record types for {len(set(domain_list))} "
+    results += "queries with {len(set(record_dict))} record types for {len(set(domain_list))} "
     results += "domains.\n"
     results += f"Query time: {round(elapsed_time, 2)} seconds\n"
     return results
@@ -320,17 +320,17 @@ def dnscl_record_domain(domain_name: str) -> str:
     elapsed_time = timeit.default_timer() - start_time
 
     results += f"{domain_name} total queries: {line_count}\n"
-    results += f"record types: \n"
+    results += "record types: \n"
 
     for record_type, query_count in record_list_sorted:
         results += f"{query_count} \t {record_type}\n"
 
     if domain_name:
-        results += f"\ndomain names:\n"
+        results += "\ndomain names:\n"
         for domain_names_found in sorted(set(domain_list)):
             results += f"{domain_names_found}\n"
 
-        results += f"\nip addresses: \n"
+        results += "\nip addresses: \n"
         for ip_addresses_found in sorted(set(ip_list)):
             results += f"{ip_addresses_found}\n"
 
@@ -371,12 +371,12 @@ def dnscl_record_type(record_type: str) -> str:
     elapsed_time = timeit.default_timer() - start_time
 
     results += f"record type {record_type.upper()} total queries: {line_count}\n"
-    results += f"queries: \n"
+    results += "queries: \n"
 
     for domain_name, query_count in record_domain_list_sorted:
         results += f"{query_count} \t {domain_name}\n"
 
-    results += f"\nip addresses: \n"
+    results += "\nip addresses: \n"
     for ip_addresses_found in set(record_ip_list):
         results += f"{ip_addresses_found}\n"
 
