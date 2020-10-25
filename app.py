@@ -28,35 +28,39 @@
 
 """Flask app to analyze BIND DNS queries from syslog input."""
 
-# import subprocess
 from flask import Flask, request
 import dnscl_api as dnscl
 app = Flask(__name__)
 
 
 def get_input():
+    """Get search input."""
     search = request.args.get("search")
     return search
 
 
 def get_ip_input():
-    ip = request.args.get("ip")
-    return ip
+    """Get IP address input."""
+    ip_addr = request.args.get("ip")
+    return ip_addr
 
 
 def get_domain_input():
+    """Get domain name input."""
     domain = request.args.get("domain")
     return domain
 
 
 @app.after_request
 def convert_to_text(results):
+    """Convert results returned into text."""
     results.headers["content-type"] = "text/plain"
     return results
 
 
 @app.route("/")
 def dnscl_home_page():
+    """Display help text on default page."""
     help_str = ""
     help_str += "dnscl API - Analyze BIND DNS query data from Flask app\n"
     help_str += "\nendpoints:\n"
@@ -78,6 +82,7 @@ def dnscl_home_page():
 
 @app.route("/ip")
 def dnscl_ip_page():
+    """Endpoint to return a domain name queried by a client IP address."""
     wildcard = ""
     search = get_input()
     domain = get_domain_input()
@@ -95,16 +100,17 @@ def dnscl_ip_page():
 
 @app.route("/domain")
 def dnscl_domain_page():
+    """Endpoint to return client IP addresses that queried a domain name."""
     wildcard = ""
     search = get_input()
-    ip = get_ip_input()
+    ip_addr = get_ip_input()
     if search:
-        if ip:
-            results = dnscl.dnscl_domain(search, ip)
+        if ip_addr:
+            results = dnscl.dnscl_domain(search, ip_addr)
         else:
             results = dnscl.dnscl_domain(search)
-    elif ip:
-        results = dnscl.dnscl_domain(wildcard, ip)
+    elif ip_addr:
+        results = dnscl.dnscl_domain(wildcard, ip_addr)
     else:
         results = dnscl.dnscl_domain(wildcard)
     return results
@@ -112,6 +118,7 @@ def dnscl_domain_page():
 
 @app.route("/rpz")
 def dnscl_rpz_page():
+    """Endpoint to return RPZ names queried by a client IP address."""
     wildcard = ""
     search = get_input()
     if search:
@@ -123,6 +130,7 @@ def dnscl_rpz_page():
 
 @app.route("/type")
 def dnscl_type_page():
+    """Endpoint to return RPZ names queried by a client IP address."""
     wildcard = ""
     search = get_input()
     if search:
