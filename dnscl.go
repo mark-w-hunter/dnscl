@@ -66,6 +66,7 @@ func dnsclIPaddress(ipAddress string) int {
 	lineCount := 0
 	domainMap := make(map[string]int)
 	ipAddressSearch := ipAddress + "#"
+
 	syslogFile, err := os.Open(filename)
 	if err != nil {
 		log.Fatal(err)
@@ -90,7 +91,6 @@ func dnsclIPaddress(ipAddress string) int {
 			}
 		}
 	}
-
 	domainMapSorted := sortMap(domainMap)
 	elapsedTime := time.Since(startTime).Seconds()
 
@@ -107,6 +107,70 @@ func dnsclIPaddress(ipAddress string) int {
 	return lineCount
 }
 
+func dnsclDomainName(domainName string) int {
+	startTime := time.Now()
+	lineCount := 0
+	ipMap := make(map[string]int)
+	domainMap := make(map[string]int)
+	// var domainSlice []string
+
+	syslogFile, err := os.Open(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer func() {
+		if err = syslogFile.Close(); err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	scanner := bufio.NewScanner(syslogFile)
+	for scanner.Scan() {
+		if strings.Contains(scanner.Text(), "named") && strings.Contains(scanner.Text(), "query:") {
+			if strings.Contains(scanner.Text(), domainName) {
+				fields := strings.Fields(scanner.Text())
+				if len(fields) > 12 {
+					ipAddrFields := strings.Split(fields[5], "#")
+					ipAddr := ipAddrFields[0]
+					domainNameField := fields[8]
+					ipMap[ipAddr]++
+					domainMap[domainNameField]++
+				}
+				lineCount++
+			}
+		}
+	}
+
+	ipMapSorted := sortMap(ipMap)
+	elapsedTime := time.Since(startTime).Seconds()
+
+	fmt.Println()
+	fmt.Println(domainName, "total queries:", lineCount)
+	fmt.Println("ip addresses:")
+
+	for _, ipAddress := range ipMapSorted {
+		fmt.Printf("%v \t %v\n", ipAddress.Value, ipAddress.Key)
+	}
+
+	domainKeys := make([]string, 0, len(domainMap))
+	for k := range domainMap {
+		domainKeys = append(domainKeys, k)
+	}
+	sort.Strings(domainKeys)
+
+	if domainName != "" {
+		fmt.Println("\ndomain names: ")
+		for _, domainKey := range domainKeys {
+			fmt.Println(domainKey)
+		}
+	}
+
+	fmt.Printf("\nSummary: Searched %s and found %d queries for %d domain names from %d clients.\n", domainName, lineCount, len(domainMap), len(ipMap))
+	fmt.Printf("Query time: %.2f seconds\n", elapsedTime)
+	return lineCount
+}
+
 func sortMap(mapUnsorted map[string]int) pairList {
 	pairListSorted := make(pairList, len(mapUnsorted))
 	index := 0
@@ -118,16 +182,40 @@ func sortMap(mapUnsorted map[string]int) pairList {
 	return pairListSorted
 }
 
+func menu() {
+	fmt.Println("\ndnscl Menu:\n")
+	fmt.Println("Enter 0 to exit")
+	fmt.Println("Enter 1 to search ip")
+	fmt.Println("Enter 2 to search domain")
+}
+
 func main() {
-	var ipAddr string
+	var choice int
 
-	if len(os.Args) == 2 {
-		ipAddr = os.Args[1]
-	} else {
-		ipAddr = wildcard
+	if len(os.Args) < 2 {
+		for {
+			menu()
+			input := wildcard
+			fmt.Print("=> ")
+			_, err := fmt.Scanf("%d", &choice)
+			if err != nil {
+				fmt.Println("\nInvalid input, try again.")
+			} else {
+				switch choice {
+				case 0:
+					os.Exit(0)
+				case 1:
+					fmt.Print("ip address: ")
+					fmt.Scanln(&input)
+					dnsclIPaddress(input)
+				case 2:
+					fmt.Print("domain name: ")
+					fmt.Scanln(&input)
+					dnsclDomainName(input)
+				default:
+					fmt.Println("Invalid choice, try again.")
+				}
+			}
+		}
 	}
-
-	fmt.Println("Welcome to the Go version of dnscl!")
-	dnsclIPaddress(ipAddr)
-
 }
