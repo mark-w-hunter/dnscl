@@ -31,6 +31,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+    "regexp"
 	"sort"
 	"strings"
 	"time"
@@ -112,7 +113,7 @@ func dnsclDomainName(domainName string) int {
 	lineCount := 0
 	ipMap := make(map[string]int)
 	domainMap := make(map[string]int)
-	// var domainSlice []string
+    domainRegex := regexp.MustCompile("(?i)" + domainName)
 
 	syslogFile, err := os.Open(filename)
 	if err != nil {
@@ -128,7 +129,8 @@ func dnsclDomainName(domainName string) int {
 	scanner := bufio.NewScanner(syslogFile)
 	for scanner.Scan() {
 		if strings.Contains(scanner.Text(), "named") && strings.Contains(scanner.Text(), "query:") {
-			if strings.Contains(scanner.Text(), domainName) {
+            match := domainRegex.MatchString(scanner.Text())
+			if match == true {
 				fields := strings.Fields(scanner.Text())
 				if len(fields) > 12 {
 					ipAddrFields := strings.Split(fields[5], "#")
@@ -183,7 +185,8 @@ func sortMap(mapUnsorted map[string]int) pairList {
 }
 
 func menu() {
-	fmt.Println("\ndnscl Menu:\n")
+	fmt.Println("\ndnscl Menu:")
+    fmt.Println("")
 	fmt.Println("Enter 0 to exit")
 	fmt.Println("Enter 1 to search ip")
 	fmt.Println("Enter 2 to search domain")
