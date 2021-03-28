@@ -43,23 +43,9 @@ const (
 	wildcard = ""
 )
 
-type pair struct {
+type Count struct {
 	Key   string
 	Value int
-}
-
-type pairList []pair
-
-func (pair pairList) Len() int {
-	return len(pair)
-}
-
-func (pair pairList) Swap(p, q int) {
-	pair[p], pair[q] = pair[q], pair[p]
-}
-
-func (pair pairList) Less(p, q int) bool {
-	return pair[p].Value < pair[q].Value
 }
 
 func dnsclIPaddress(ipAddress string) int {
@@ -92,6 +78,7 @@ func dnsclIPaddress(ipAddress string) int {
 			}
 		}
 	}
+
 	domainMapSorted := sortMap(domainMap)
 	elapsedTime := time.Since(startTime).Seconds()
 
@@ -173,15 +160,16 @@ func dnsclDomainName(domainName string) int {
 	return lineCount
 }
 
-func sortMap(mapUnsorted map[string]int) pairList {
-	pairListSorted := make(pairList, len(mapUnsorted))
-	index := 0
+func sortMap(mapUnsorted map[string]int) []Count {
+	var mapSorted []Count
+
 	for key, value := range mapUnsorted {
-		pairListSorted[index] = pair{key, value}
-		index++
+		mapSorted = append(mapSorted, Count{key, value})
 	}
-	sort.Sort(sort.Reverse(pairListSorted))
-	return pairListSorted
+	sort.Slice(mapSorted, func(k, v int) bool {
+		return mapSorted[k].Value > mapSorted[v].Value
+	})
+	return mapSorted
 }
 
 func menu() {
