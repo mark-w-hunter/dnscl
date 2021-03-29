@@ -43,6 +43,7 @@ const (
 	wildcard = ""
 )
 
+// Count is the number of results from a query
 type Count struct {
 	Key   string
 	Value int
@@ -190,7 +191,7 @@ func main() {
 			fmt.Print("=> ")
 			_, err := fmt.Scanf("%d", &choice)
 			if err != nil {
-				fmt.Println("\nInvalid input, try again.")
+				fmt.Println("Invalid input, try again.")
 			} else {
 				switch choice {
 				case 0:
