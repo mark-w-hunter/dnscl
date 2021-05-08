@@ -31,6 +31,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -42,23 +43,10 @@ const (
 	wildcard = ""
 )
 
-type pair struct {
+// Count is the number of results from a query
+type Count struct {
 	Key   string
 	Value int
-}
-
-type pairList []pair
-
-func (pair pairList) Len() int {
-	return len(pair)
-}
-
-func (pair pairList) Swap(p, q int) {
-	pair[p], pair[q] = pair[q], pair[p]
-}
-
-func (pair pairList) Less(p, q int) bool {
-	return pair[p].Value < pair[q].Value
 }
 
 func dnsclIPaddress(ipAddress string) int {
@@ -66,6 +54,7 @@ func dnsclIPaddress(ipAddress string) int {
 	lineCount := 0
 	domainMap := make(map[string]int)
 	ipAddressSearch := ipAddress + "#"
+
 	syslogFile, err := os.Open(filename)
 	if err != nil {
 		log.Fatal(err)
@@ -107,27 +96,118 @@ func dnsclIPaddress(ipAddress string) int {
 	return lineCount
 }
 
-func sortMap(mapUnsorted map[string]int) pairList {
-	pairListSorted := make(pairList, len(mapUnsorted))
-	index := 0
-	for key, value := range mapUnsorted {
-		pairListSorted[index] = pair{key, value}
-		index++
+func dnsclDomainName(domainName string) int {
+	startTime := time.Now()
+	lineCount := 0
+	ipMap := make(map[string]int)
+	domainMap := make(map[string]int)
+	domainRegex := regexp.MustCompile("(?i)" + domainName)
+
+	syslogFile, err := os.Open(filename)
+	if err != nil {
+		log.Fatal(err)
 	}
-	sort.Sort(sort.Reverse(pairListSorted))
-	return pairListSorted
+
+	defer func() {
+		if err = syslogFile.Close(); err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	scanner := bufio.NewScanner(syslogFile)
+	for scanner.Scan() {
+		if strings.Contains(scanner.Text(), "named") && strings.Contains(scanner.Text(), "query:") {
+			match := domainRegex.MatchString(scanner.Text())
+			if match == true {
+				fields := strings.Fields(scanner.Text())
+				if len(fields) > 12 {
+					ipAddrFields := strings.Split(fields[5], "#")
+					ipAddr := ipAddrFields[0]
+					domainNameField := fields[8]
+					ipMap[ipAddr]++
+					domainMap[domainNameField]++
+				}
+				lineCount++
+			}
+		}
+	}
+
+	ipMapSorted := sortMap(ipMap)
+	elapsedTime := time.Since(startTime).Seconds()
+
+	fmt.Println()
+	fmt.Println(domainName, "total queries:", lineCount)
+	fmt.Println("ip addresses:")
+
+	for _, ipAddress := range ipMapSorted {
+		fmt.Printf("%v \t %v\n", ipAddress.Value, ipAddress.Key)
+	}
+
+	domainKeys := make([]string, 0, len(domainMap))
+	for k := range domainMap {
+		domainKeys = append(domainKeys, k)
+	}
+	sort.Strings(domainKeys)
+
+	if domainName != "" {
+		fmt.Println("\ndomain names: ")
+		for _, domainKey := range domainKeys {
+			fmt.Println(domainKey)
+		}
+	}
+
+	fmt.Printf("\nSummary: Searched %s and found %d queries for %d domain names from %d clients.\n", domainName, lineCount, len(domainMap), len(ipMap))
+	fmt.Printf("Query time: %.2f seconds\n", elapsedTime)
+	return lineCount
+}
+
+func sortMap(mapUnsorted map[string]int) []Count {
+	var mapSorted []Count
+
+	for key, value := range mapUnsorted {
+		mapSorted = append(mapSorted, Count{key, value})
+	}
+	sort.Slice(mapSorted, func(k, v int) bool {
+		return mapSorted[k].Value > mapSorted[v].Value
+	})
+	return mapSorted
+}
+
+func menu() {
+	fmt.Println("\ndnscl Menu:")
+	fmt.Println("")
+	fmt.Println("Enter 0 to exit")
+	fmt.Println("Enter 1 to search ip")
+	fmt.Println("Enter 2 to search domain")
 }
 
 func main() {
-	var ipAddr string
+	var choice int
 
-	if len(os.Args) == 2 {
-		ipAddr = os.Args[1]
-	} else {
-		ipAddr = wildcard
+	if len(os.Args) < 2 {
+		for {
+			menu()
+			input := wildcard
+			fmt.Print("=> ")
+			_, err := fmt.Scanf("%d", &choice)
+			if err != nil {
+				fmt.Println("Invalid input, try again.")
+			} else {
+				switch choice {
+				case 0:
+					os.Exit(0)
+				case 1:
+					fmt.Print("ip address: ")
+					fmt.Scanln(&input)
+					dnsclIPaddress(input)
+				case 2:
+					fmt.Print("domain name: ")
+					fmt.Scanln(&input)
+					dnsclDomainName(input)
+				default:
+					fmt.Println("Invalid choice, try again.")
+				}
+			}
+		}
 	}
-
-	fmt.Println("Welcome to the Go version of dnscl!")
-	dnsclIPaddress(ipAddr)
-
 }
