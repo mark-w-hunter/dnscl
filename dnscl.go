@@ -118,7 +118,7 @@ func dnsclDomainName(domainName string) int {
 	for scanner.Scan() {
 		if strings.Contains(scanner.Text(), "named") && strings.Contains(scanner.Text(), "query:") {
 			match := domainRegex.MatchString(scanner.Text())
-			if match == true {
+			if match {
 				fields := strings.Fields(scanner.Text())
 				if len(fields) > 12 {
 					ipAddrFields := strings.Split(fields[5], "#")
