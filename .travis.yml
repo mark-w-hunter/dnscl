@@ -8,5 +8,5 @@ python:
   - "3.10-dev"
 install: "pip install flake8 mypy"
 script:
-  - "flake8 --max-line-length=100 dnscl.py dnscl_pihole.py dnscl_tail.py"
+  - "flake8 --max-line-length=120 dnscl.py dnscl_pihole.py dnscl_tail.py"
   - "mypy dnscl_tail.py"
