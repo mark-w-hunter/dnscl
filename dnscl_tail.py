@@ -41,11 +41,13 @@ FILENAME = "/var/log/syslog"  # path to syslog file
 # FILENAME = "/var/log/messages"  # path to alternate syslog file
 
 
-def dnscl_ipaddress(ip_address: str,
-                    filename: str = FILENAME,
-                    domain_search: str = "",
-                    tail_num: int = 0,
-                    quiet_mode: bool = False) -> int:
+def dnscl_ipaddress(
+    ip_address: str,
+    filename: str = FILENAME,
+    domain_search: str = "",
+    tail_num: int = 0,
+    quiet_mode: bool = False,
+) -> int:
     """Return a domain name queried by a client IP address."""
     start_time = timeit.default_timer()
     domain_dict: DefaultDict = defaultdict(int)
@@ -89,11 +91,13 @@ def dnscl_ipaddress(ip_address: str,
     return line_count
 
 
-def dnscl_domain(domain_name: str,
-                 filename: str = FILENAME,
-                 ip_search: str = "",
-                 tail_num: int = 0,
-                 quiet_mode: bool = False) -> int:
+def dnscl_domain(
+    domain_name: str,
+    filename: str = FILENAME,
+    ip_search: str = "",
+    tail_num: int = 0,
+    quiet_mode: bool = False,
+) -> int:
     """Return client IP addresses that queried a domain name."""
     start_time = timeit.default_timer()
     ip_dict: DefaultDict = defaultdict(int)
@@ -147,16 +151,18 @@ def dnscl_domain(domain_name: str,
         if not quiet_mode:
             print(
                 f"\nSummary: Searched {domain_name} and found {line_count}",
-                f"queries from {len(ip_dict)} clients."
+                f"queries from {len(ip_dict)} clients.",
             )
             print(f"Query time: {round(elapsed_time, 2)} seconds")
     return line_count
 
 
-def dnscl_rpz(ip_address: str,
-              filename: str = FILENAME,
-              tail_num: int = 0,
-              quiet_mode: bool = False) -> int:
+def dnscl_rpz(
+    ip_address: str,
+    filename: str = FILENAME,
+    tail_num: int = 0,
+    quiet_mode: bool = False,
+) -> int:
     """Return rpz names queried by a client IP address."""
     start_time = timeit.default_timer()
     rpz_dict: DefaultDict = defaultdict(int)
@@ -197,10 +203,12 @@ def dnscl_rpz(ip_address: str,
     return line_count
 
 
-def dnscl_rpz_domain(domain_rpz_name: str,
-                     filename: str = FILENAME,
-                     tail_num: int = 0,
-                     quiet_mode: bool = False) -> int:
+def dnscl_rpz_domain(
+    domain_rpz_name: str,
+    filename: str = FILENAME,
+    tail_num: int = 0,
+    quiet_mode: bool = False,
+) -> int:
     """Return client IP addresses that queried a rpz domain name."""
     start_time = timeit.default_timer()
     rpz_ip_dict: DefaultDict = defaultdict(int)
@@ -252,10 +260,12 @@ def dnscl_rpz_domain(domain_rpz_name: str,
     return line_count
 
 
-def dnscl_record_ip(ip_address: str,
-                    filename: str = FILENAME,
-                    tail_num: int = 0,
-                    quiet_mode: bool = False) -> int:
+def dnscl_record_ip(
+    ip_address: str,
+    filename: str = FILENAME,
+    tail_num: int = 0,
+    quiet_mode: bool = False,
+) -> int:
     """Return record types queried by a client IP address."""
     start_time = timeit.default_timer()
     record_dict: DefaultDict = defaultdict(int)
@@ -303,10 +313,12 @@ def dnscl_record_ip(ip_address: str,
     return line_count
 
 
-def dnscl_record_domain(domain_name: str,
-                        filename: str = FILENAME,
-                        tail_num: int = 0,
-                        quiet_mode: bool = False) -> int:
+def dnscl_record_domain(
+    domain_name: str,
+    filename: str = FILENAME,
+    tail_num: int = 0,
+    quiet_mode: bool = False,
+) -> int:
     """Return record types for a queried domain name."""
     start_time = timeit.default_timer()
     record_dict: DefaultDict = defaultdict(int)
@@ -358,10 +370,12 @@ def dnscl_record_domain(domain_name: str,
     return line_count
 
 
-def dnscl_record_type(record_type: str,
-                      filename: str = FILENAME,
-                      tail_num: int = 0,
-                      quiet_mode: bool = False) -> int:
+def dnscl_record_type(
+    record_type: str,
+    filename: str = FILENAME,
+    tail_num: int = 0,
+    quiet_mode: bool = False,
+) -> int:
     """Return domain names of a particular record type."""
     start_time = timeit.default_timer()
     record_domain_dict: DefaultDict = defaultdict(int)
@@ -473,7 +487,9 @@ def sort_dict(dict_unsorted: DefaultDict) -> List:
 
 def tail(filename: str, num_lines: int = 60):
     """Returns n number of last lines from input file."""
-    proc = subprocess.Popen(["tail", "-n", str(num_lines), filename], stdout=subprocess.PIPE)
+    proc = subprocess.Popen(
+        ["tail", "-n", str(num_lines), filename], stdout=subprocess.PIPE
+    )
     assert proc.stdout is not None
     lines = proc.stdout.readlines()
     return lines
@@ -494,81 +510,36 @@ if __name__ == "__main__":
         parser_domain = dnscl_subparser.add_parser(
             "domain", help="ip addresses that queried a domain"
         )
-        parser_rpz = dnscl_subparser.add_parser(
-            "rpz", help="rpz domains queried"
+        parser_rpz = dnscl_subparser.add_parser("rpz", help="rpz domains queried")
+        parser_type = dnscl_subparser.add_parser("type", help="record types queried")
+        parser_ip.add_argument("-i", help="ip address", default=WILDCARD)
+        parser_ip.add_argument("-d", help="domain", default=WILDCARD)
+        parser_ip.add_argument("-f", "--file", help="filename", default=FILENAME)
+        parser_ip.add_argument("-n", help="lines to tail", type=int, default=0)
+        parser_ip.add_argument("-q", "--quiet", help="quiet mode", action="store_true")
+        parser_domain.add_argument("-d", help="domain", default=WILDCARD)
+        parser_domain.add_argument("-i", help="ip address", default=WILDCARD)
+        parser_domain.add_argument("-f", "--file", help="filename", default=FILENAME)
+        parser_domain.add_argument("-n", help="lines to tail", default=0)
+        parser_domain.add_argument(
+            "-q", "--quiet", help="quiet mode", action="store_true"
         )
-        parser_type = dnscl_subparser.add_parser(
-            "type", help="record types queried"
+        parser_rpz.add_argument("-r", help="rpz domain", default=WILDCARD)
+        parser_rpz.add_argument("-f", "--file", help="filename", default=FILENAME)
+        parser_rpz.add_argument("-n", help="lines to tail", default=0)
+        parser_rpz.add_argument("-q", "--quiet", help="quiet mode", action="store_true")
+        parser_type.add_argument("-t", help="record type", default=WILDCARD)
+        parser_type.add_argument("-f", "--file", help="filename", default=FILENAME)
+        parser_type.add_argument("-n", help="lines to tail", default=0)
+        parser_type.add_argument(
+            "-q", "--quiet", help="quiet mode", action="store_true"
         )
-        parser_ip.add_argument("-i",
-                               help="ip address",
-                               default=WILDCARD)
-        parser_ip.add_argument("-d",
-                               help="domain",
-                               default=WILDCARD)
-        parser_ip.add_argument("-f",
-                               "--file",
-                               help="filename",
-                               default=FILENAME)
-        parser_ip.add_argument("-n",
-                               help="lines to tail",
-                               type=int,
-                               default=0)
-        parser_ip.add_argument("-q",
-                               "--quiet",
-                               help="quiet mode",
-                               action="store_true")
-        parser_domain.add_argument("-d",
-                                   help="domain",
-                                   default=WILDCARD)
-        parser_domain.add_argument("-i",
-                                   help="ip address",
-                                   default=WILDCARD)
-        parser_domain.add_argument("-f",
-                                   "--file",
-                                   help="filename",
-                                   default=FILENAME)
-        parser_domain.add_argument("-n",
-                                   help="lines to tail",
-                                   default=0)
-        parser_domain.add_argument("-q",
-                                   "--quiet",
-                                   help="quiet mode",
-                                   action="store_true")
-        parser_rpz.add_argument("-r",
-                                help="rpz domain",
-                                default=WILDCARD)
-        parser_rpz.add_argument("-f",
-                                "--file",
-                                help="filename",
-                                default=FILENAME)
-        parser_rpz.add_argument("-n",
-                                help="lines to tail",
-                                default=0)
-        parser_rpz.add_argument("-q",
-                                "--quiet",
-                                help="quiet mode",
-                                action="store_true")
-        parser_type.add_argument("-t",
-                                 help="record type",
-                                 default=WILDCARD)
-        parser_type.add_argument("-f",
-                                 "--file",
-                                 help="filename",
-                                 default=FILENAME)
-        parser_type.add_argument("-n",
-                                 help="lines to tail",
-                                 default=0)
-        parser_type.add_argument("-q",
-                                 "--quiet",
-                                 help="quiet mode",
-                                 action="store_true")
-        dnscl_parser.add_argument("-v",
-                                  "--version",
-                                  action="version",
-                                  version="%(prog)s "
-                                  + __version__ + ", "
-                                  + __author__ + " (c) 2020")
+        dnscl_parser.add_argument(
+            "-v",
+            "--version",
+            action="version",
+            version="%(prog)s " + __version__ + ", " + __author__ + " (c) 2020",
+        )
         args = dnscl_parser.parse_args()
 
         if args.command == "ip":

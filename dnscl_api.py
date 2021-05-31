@@ -281,7 +281,9 @@ def dnscl_record_ip(ip_address: str) -> str:
             results += f"{domain_names_found}\n"
 
     results += f"\nSummary: Searched {ip_address} and found {line_count} "
-    results += "queries with {len(set(record_dict))} record types for {len(set(domain_list))} "
+    results += (
+        "queries with {len(set(record_dict))} record types for {len(set(domain_list))} "
+    )
     results += "domains.\n"
     results += f"Query time: {round(elapsed_time, 2)} seconds\n"
     return results
