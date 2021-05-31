@@ -51,9 +51,7 @@ def dnscl_ipaddress(ip_address):
                 fields = line.strip().split(" ")
                 domain_name_field = find_field(fields, field_index, "domain")
                 if ip_address:
-                    ip_field = find_field(
-                        fields, field_index, "ip_address"
-                    )
+                    ip_field = find_field(fields, field_index, "ip_address")
                     if ip_field == ip_address:
                         domain_dict[domain_name_field] += 1
                         line_count += 1
@@ -229,7 +227,9 @@ if __name__ == "__main__":
             if int(CHOICE) == 1:
                 IP = input("ip address: ")
                 if IP:
-                    while not is_valid_ipv4_address(IP) and not is_valid_ipv6_address(IP):
+                    while not is_valid_ipv4_address(IP) and not is_valid_ipv6_address(
+                        IP
+                    ):
                         print("Invalid ip address, try again.")
                         IP = input("ip address: ")
                 dnscl_ipaddress(IP)
@@ -258,21 +258,15 @@ if __name__ == "__main__":
         parser_blocklist = dnscl_subparser.add_parser(
             "blocklist", help="blocklist domains queried"
         )
-        parser_ip.add_argument("-i",
-                               help="ip address",
-                               default=WILDCARD)
-        parser_domain.add_argument("-d",
-                                   help="domain",
-                                   default=WILDCARD)
-        parser_blocklist.add_argument("-b",
-                                      help="blocklist name",
-                                      default=WILDCARD)
-        dnscl_parser.add_argument("-v",
-                                  "--version",
-                                  action="version",
-                                  version="%(prog)s "
-                                          + __version__ + ", "
-                                          + __author__ + " (c) 2020")
+        parser_ip.add_argument("-i", help="ip address", default=WILDCARD)
+        parser_domain.add_argument("-d", help="domain", default=WILDCARD)
+        parser_blocklist.add_argument("-b", help="blocklist name", default=WILDCARD)
+        dnscl_parser.add_argument(
+            "-v",
+            "--version",
+            action="version",
+            version="%(prog)s " + __version__ + ", " + __author__ + " (c) 2020",
+        )
         args = dnscl_parser.parse_args()
 
         if args.command == "ip":

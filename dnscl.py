@@ -42,7 +42,9 @@ FILENAME = "/var/log/syslog"  # path to syslog file
 # FILENAME = "/var/log/messages"  # path to alternate syslog file
 
 
-def dnscl_ipaddress(ip_address: str, domain_search: str = "", quiet_mode: bool = False) -> int:
+def dnscl_ipaddress(
+    ip_address: str, domain_search: str = "", quiet_mode: bool = False
+) -> int:
     """Return a domain name queried by a client IP address.
 
     Args:
@@ -92,7 +94,9 @@ def dnscl_ipaddress(ip_address: str, domain_search: str = "", quiet_mode: bool =
     return line_count
 
 
-def dnscl_domain(domain_name: str, ip_search: str = "", quiet_mode: bool = False) -> int:
+def dnscl_domain(
+    domain_name: str, ip_search: str = "", quiet_mode: bool = False
+) -> int:
     """Return client IP addresses that queried a domain name.
 
     Args:
@@ -511,7 +515,9 @@ def sort_dict(dict_unsorted: DefaultDict) -> List:
         List: Sorted search results in descending order.
 
     """
-    dict_sorted = sorted(dict_unsorted.items(), key=lambda dict_sort: dict_sort[1], reverse=True)
+    dict_sorted = sorted(
+        dict_unsorted.items(), key=lambda dict_sort: dict_sort[1], reverse=True
+    )
     return dict_sorted
 
 
@@ -569,7 +575,9 @@ if __name__ == "__main__":
             description="Analyze BIND DNS query data from syslog file input"
         )
         dnscl_subparser = dnscl_parser.add_subparsers(title="commands", dest="command")
-        parser_ip = dnscl_subparser.add_parser("ip", help="domains queried by an ip address")
+        parser_ip = dnscl_subparser.add_parser(
+            "ip", help="domains queried by an ip address"
+        )
         parser_domain = dnscl_subparser.add_parser(
             "domain", help="ip addresses that queried a domain"
         )
@@ -580,7 +588,9 @@ if __name__ == "__main__":
         parser_ip.add_argument("-q", "--quiet", help="quiet mode", action="store_true")
         parser_domain.add_argument("-d", help="domain", default=WILDCARD)
         parser_domain.add_argument("-i", help="ip address", default=WILDCARD)
-        parser_domain.add_argument("-q", "--quiet", help="quiet mode", action="store_true")
+        parser_domain.add_argument(
+            "-q", "--quiet", help="quiet mode", action="store_true"
+        )
         parser_rpz.add_argument("-r", help="rpz domain", default=WILDCARD)
         parser_type.add_argument("-t", help="record type", default=WILDCARD)
         dnscl_parser.add_argument(
