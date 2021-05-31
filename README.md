@@ -7,7 +7,9 @@ Analyze BIND DNS query data from syslog file input
 
 ## usage
 
-Step 1: Set path and filename to local Python 3 interpreter. Python 3.6 or higher required.
+Step 1: Set path and filename to local Python 3 interpreter.
+
+*Note:* Python 3.6 or higher is requirePython 3.6 or higher required.
 
 Step 2: Set path and filename to local syslog file.
 
@@ -71,35 +73,35 @@ Display help
 
 dnscl_domain(domain)
 
-- Returns a list of client IP addresses that queried a domain name  
+- Returns a list of client IP addresses that queried a domain name
 
 dnscl_ipaddress(ip)
 
-- Returns a list of domain names queried by a client IP address  
+- Returns a list of domain names queried by a client IP address
 
 dnscl_rpz(ip_address)
 
-- Returns rpz names queried by a client IP address  
+- Returns rpz names queried by a client IP address
 
 dnscl_rpz_domain(domain_rpz_name)
 
-- Returns client IP addresses that queried a rpz domain name  
+- Returns client IP addresses that queried a rpz domain name
 
 dnscl_record_ip(ip_address)
 
-- Returns record types queried by a client IP address  
+- Returns record types queried by a client IP address
 
 dnscl_record_domain(domain_name)
 
-- Returns record types for a queried domain name  
+- Returns record types for a queried domain name
 
 dnscl_record_type(record_type)
 
-- Returns domain names of a particular record type  
+- Returns domain names of a particular record type
 
 find_field(fields, field_index, field_type)
 
-- Find and return requested field value  
+- Find and return requested field value
 
 menu()
 
