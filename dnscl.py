@@ -6,7 +6,7 @@
 #
 # The MIT License (MIT)
 #
-# Copyright (c) 2020 Mark W. Hunter
+# Copyright (c) 2021 Mark W. Hunter
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -37,7 +37,7 @@ from typing import DefaultDict, List
 # from pyfiglet import print_figlet
 
 __author__ = "Mark W. Hunter"
-__version__ = "0.57"
+__version__ = "0.58"
 FILENAME = "/var/log/syslog"  # path to syslog file
 # FILENAME = "/var/log/messages"  # path to alternate syslog file
 
@@ -83,7 +83,7 @@ def dnscl_ipaddress(
     print("queries: ")
 
     for domain_name, query_count in domain_list_sorted:
-        print(f"{query_count} \t {domain_name}")
+        print(f"{query_count:<5} \t {domain_name}")
 
     if not quiet_mode:
         print(
@@ -139,7 +139,7 @@ def dnscl_domain(
     print("ip addresses: ")
 
     for ip_address, query_count in ip_list_sorted:
-        print(f"{query_count} \t {ip_address}")
+        print(f"{query_count:<5} \t {ip_address}")
 
     if domain_name:
         print("\ndomain names: ")
@@ -193,7 +193,7 @@ def dnscl_rpz(ip_address: str) -> int:
     print("queries: ")
 
     for domain_name, query_count in rpz_list_sorted:
-        print(f"{query_count} \t {domain_name}")
+        print(f"{query_count:<5} \t {domain_name}")
 
     print(
         f"\nSummary: Searched {ip_address} and found {line_count}",
@@ -241,7 +241,7 @@ def dnscl_rpz_domain(domain_rpz_name: str) -> int:
     print("ip addresses: ")
 
     for ip_address, query_count in rpz_ip_list_sorted:
-        print(query_count, "\t", ip_address)
+        print(f"{query_count:<5} \t {ip_address}")
 
     if domain_rpz_name:
         print("\nrpz names: ")
@@ -291,7 +291,7 @@ def dnscl_record_ip(ip_address: str) -> int:
     print("queries: ")
 
     for record_type, query_count in record_list_sorted:
-        print(query_count, "\t", record_type)
+        print(f"{query_count:<5} \t {record_type}")
 
     if ip_address:
         print("\ndomain names: ")
@@ -342,7 +342,7 @@ def dnscl_record_domain(domain_name: str) -> int:
     print("record types: ")
 
     for record_type, query_count in record_list_sorted:
-        print(query_count, "\t", record_type)
+        print(f"{query_count:<5} \t {record_type}")
 
     if domain_name:
         print("\ndomain names: ")
@@ -394,7 +394,7 @@ def dnscl_record_type(record_type: str) -> int:
     print("queries: ")
 
     for domain_name, query_count in record_domain_list_sorted:
-        print(query_count, "\t", domain_name)
+        print(f"{query_count:<5} \t {domain_name}")
 
     print("\nip addresses: ")
     for ip_addresses_found in set(record_ip_list):
