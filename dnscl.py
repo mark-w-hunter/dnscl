@@ -516,8 +516,11 @@ def print_results(results_sorted: List, search: str, count: int):
         col_width = len(str(max_query[1]))
         print(f"{search} total queries: {count}")
         print("results:")
-        for domain_name, query_count in results_sorted:
-            print(f"{query_count:<{col_width}}    {domain_name}")
+        try:
+            for domain_name, query_count in results_sorted:
+                print(f"{query_count:<{col_width}}    {domain_name}")
+        except BrokenPipeError:
+            sys.exit(1)
     else:
         print("No results found.")
 
