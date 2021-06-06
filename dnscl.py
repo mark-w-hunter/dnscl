@@ -517,7 +517,7 @@ def print_results(results_sorted: List, search: str, count: int):
         print(f"{search} total queries: {count}")
         print("results:")
         for domain_name, query_count in results_sorted:
-            print(f"{query_count:<{col_width}} \t {domain_name}")
+            print(f"{query_count:<{col_width}}    {domain_name}")
     else:
         print("No results found.")
 
