@@ -78,12 +78,7 @@ def dnscl_ipaddress(
 
     domain_list_sorted = sort_dict(domain_dict)
     elapsed_time = timeit.default_timer() - start_time
-
-    print(f"{ip_address} total queries: {line_count}")
-    print("queries: ")
-
-    for domain_name, query_count in domain_list_sorted:
-        print(f"{query_count:<5} \t {domain_name}")
+    print_results(domain_list_sorted, ip_address, line_count)
 
     if not quiet_mode:
         print(
@@ -134,12 +129,7 @@ def dnscl_domain(
     ip_list_sorted = sort_dict(ip_dict)
     domain_set = sorted(set(domain_list))
     elapsed_time = timeit.default_timer() - start_time
-
-    print(f"{domain_name} total queries: {line_count}")
-    print("ip addresses: ")
-
-    for ip_address, query_count in ip_list_sorted:
-        print(f"{query_count:<5} \t {ip_address}")
+    print_results(ip_list_sorted, domain_name, line_count)
 
     if domain_name:
         print("\ndomain names: ")
@@ -188,12 +178,7 @@ def dnscl_rpz(ip_address: str) -> int:
 
     rpz_list_sorted = sort_dict(rpz_dict)
     elapsed_time = timeit.default_timer() - start_time
-
-    print(f"{ip_address} total queries: {line_count}")
-    print("queries: ")
-
-    for domain_name, query_count in rpz_list_sorted:
-        print(f"{query_count:<5} \t {domain_name}")
+    print_results(rpz_list_sorted, ip_address, line_count)
 
     print(
         f"\nSummary: Searched {ip_address} and found {line_count}",
@@ -236,12 +221,7 @@ def dnscl_rpz_domain(domain_rpz_name: str) -> int:
     rpz_ip_list_sorted = sort_dict(rpz_ip_dict)
     rpz_domain_set = sorted(set(rpz_domain_list))
     elapsed_time = timeit.default_timer() - start_time
-
-    print(f"{domain_rpz_name} total queries: {line_count}")
-    print("ip addresses: ")
-
-    for ip_address, query_count in rpz_ip_list_sorted:
-        print(f"{query_count:<5} \t {ip_address}")
+    print_results(rpz_ip_list_sorted, domain_rpz_name, line_count)
 
     if domain_rpz_name:
         print("\nrpz names: ")
@@ -286,12 +266,7 @@ def dnscl_record_ip(ip_address: str) -> int:
 
     record_list_sorted = sort_dict(record_dict)
     elapsed_time = timeit.default_timer() - start_time
-
-    print(f"{ip_address} total queries: {line_count}")
-    print("queries: ")
-
-    for record_type, query_count in record_list_sorted:
-        print(f"{query_count:<5} \t {record_type}")
+    print_results(record_list_sorted, ip_address, line_count)
 
     if ip_address:
         print("\ndomain names: ")
@@ -337,12 +312,7 @@ def dnscl_record_domain(domain_name: str) -> int:
 
     record_list_sorted = sort_dict(record_dict)
     elapsed_time = timeit.default_timer() - start_time
-
-    print(f"{domain_name} total queries: {line_count}")
-    print("record types: ")
-
-    for record_type, query_count in record_list_sorted:
-        print(f"{query_count:<5} \t {record_type}")
+    print_results(record_list_sorted, domain_name, line_count)
 
     if domain_name:
         print("\ndomain names: ")
@@ -389,12 +359,7 @@ def dnscl_record_type(record_type: str) -> int:
 
     record_domain_list_sorted = sort_dict(record_domain_dict)
     elapsed_time = timeit.default_timer() - start_time
-
-    print(f"record type {record_type.upper()} total queries: {line_count}")
-    print("queries: ")
-
-    for domain_name, query_count in record_domain_list_sorted:
-        print(f"{query_count:<5} \t {domain_name}")
+    print_results(record_domain_list_sorted, record_type.upper(), line_count)
 
     print("\nip addresses: ")
     for ip_addresses_found in set(record_ip_list):
@@ -521,6 +486,29 @@ def sort_dict(dict_unsorted: DefaultDict) -> List:
     return dict_sorted
 
 
+def print_results(results_sorted: List, search: str, count: int):
+    """Print formatted results from search.
+
+    Args:
+        results_sorted (List): Sorted search results.
+        search (str): Term searched.
+        count (int): Number of results found.
+
+    Returns:
+        None
+
+    """
+    if results_sorted:
+        max_query = max(results_sorted, key=lambda item: item[1])
+        col_width = len(str(max_query[1]))
+        print(f"{search} total queries: {count}")
+        print("results:")
+        for domain_name, query_count in results_sorted:
+            print(f"{query_count:<{col_width}} \t {domain_name}")
+    else:
+        print("No results found.")
+
+
 def menu():
     """Print main menu."""
     print("\ndnscl Menu:\n")
@@ -597,7 +585,7 @@ if __name__ == "__main__":
             "-v",
             "--version",
             action="version",
-            version="%(prog)s " + __version__ + ", " + __author__ + " (c) 2020",
+            version="%(prog)s " + __version__ + ", " + __author__ + " (c) 2021",
         )
         args = dnscl_parser.parse_args()
 
