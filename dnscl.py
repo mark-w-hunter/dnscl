@@ -82,7 +82,7 @@ def dnscl_ipaddress(
 
     domain_list_sorted = sort_dict(domain_dict)
     elapsed_time = timeit.default_timer() - start_time
-    print_results(domain_list_sorted, ip_address, line_count)
+    print_results(ip_address, line_count, domain_list_sorted)
 
     if not quiet_mode:
         print(
@@ -113,7 +113,7 @@ def dnscl_domain(
     """
     start_time = timeit.default_timer()
     ip_dict: DefaultDict = defaultdict(int)
-    domain_list = []
+    domain_dict: DefaultDict = defaultdict(int)
     line_count = 0
 
     with open(filename, encoding="ISO-8859-1") as syslog:
@@ -127,35 +127,35 @@ def dnscl_domain(
                     if ip_search:
                         if ip_search in line:
                             ip_dict[ip_address] += 1
-                            domain_list.append(domain_name_field)
+                            domain_dict[domain_name_field] += 1
                             line_count += 1
                     else:
                         ip_dict[ip_address] += 1
-                        domain_list.append(domain_name_field)
+                        domain_dict[domain_name_field] += 1
                         line_count += 1
 
     ip_list_sorted = sort_dict(ip_dict)
-    domain_set = sorted(set(domain_list))
+    domain_list_sorted = sort_dict(domain_dict)
     elapsed_time = timeit.default_timer() - start_time
-    print_results(ip_list_sorted, domain_name, line_count)
 
     if domain_name:
-        print("\ndomain names: ")
-        for domain_names_found in domain_set:
-            print(domain_names_found)
-        if not quiet_mode:
+        print_results(domain_name, line_count, ip_list_sorted, domain_list_sorted)
+    else:
+        print_results(domain_name, line_count, ip_list_sorted)
+
+    if not quiet_mode:
+        if domain_name:
             print(
                 f"\nSummary: Searched {domain_name} and found {line_count}",
-                f"queries for {len(domain_set)} domain names from {len(ip_dict)} clients.",
+                f"queries for {len(domain_dict)} domain names",
+                f"from {len(ip_dict)} clients.",
             )
-            print(f"Query time: {round(elapsed_time, 2)} seconds")
-    else:
-        if not quiet_mode:
+        else:
             print(
                 f"\nSummary: Searched {domain_name} and found {line_count}",
                 f"queries from {len(ip_dict)} clients.",
             )
-            print(f"Query time: {round(elapsed_time, 2)} seconds")
+        print(f"Query time: {round(elapsed_time, 2)} seconds")
     return line_count
 
 
@@ -187,7 +187,7 @@ def dnscl_rpz(ip_address: str, filename: str = FILENAME) -> int:
 
     rpz_list_sorted = sort_dict(rpz_dict)
     elapsed_time = timeit.default_timer() - start_time
-    print_results(rpz_list_sorted, ip_address, line_count)
+    print_results(ip_address, line_count, rpz_list_sorted)
 
     print(
         f"\nSummary: Searched {ip_address} and found {line_count}",
@@ -231,7 +231,7 @@ def dnscl_rpz_domain(domain_rpz_name: str, filename: str = FILENAME) -> int:
     rpz_ip_list_sorted = sort_dict(rpz_ip_dict)
     rpz_domain_set = sorted(set(rpz_domain_list))
     elapsed_time = timeit.default_timer() - start_time
-    print_results(rpz_ip_list_sorted, domain_rpz_name, line_count)
+    print_results(domain_rpz_name, line_count, rpz_ip_list_sorted)
 
     if domain_rpz_name:
         print("\nrpz names: ")
@@ -277,7 +277,7 @@ def dnscl_record_ip(ip_address: str, filename: str = FILENAME) -> int:
 
     record_list_sorted = sort_dict(record_dict)
     elapsed_time = timeit.default_timer() - start_time
-    print_results(record_list_sorted, ip_address, line_count)
+    print_results(ip_address, line_count, record_list_sorted)
 
     if ip_address:
         print("\ndomain names: ")
@@ -324,7 +324,7 @@ def dnscl_record_domain(domain_name: str, filename: str = FILENAME) -> int:
 
     record_list_sorted = sort_dict(record_dict)
     elapsed_time = timeit.default_timer() - start_time
-    print_results(record_list_sorted, domain_name, line_count)
+    print_results(domain_name, line_count, record_list_sorted)
 
     if domain_name:
         print("\ndomain names: ")
@@ -372,7 +372,7 @@ def dnscl_record_type(record_type: str, filename: str = FILENAME) -> int:
 
     record_domain_list_sorted = sort_dict(record_domain_dict)
     elapsed_time = timeit.default_timer() - start_time
-    print_results(record_domain_list_sorted, record_type.upper(), line_count)
+    print_results(record_type.upper(), line_count, record_domain_list_sorted)
 
     print("\nip addresses: ")
     for ip_addresses_found in set(record_ip_list):
@@ -499,7 +499,7 @@ def sort_dict(dict_unsorted: DefaultDict) -> List:
     return dict_sorted
 
 
-def print_results(results_sorted: List, search: str, count: int):
+def print_results(search: str, count: int, *results_arg: List):
     """Print formatted results from search.
 
     Args:
@@ -511,18 +511,24 @@ def print_results(results_sorted: List, search: str, count: int):
         None
 
     """
-    if results_sorted:
-        max_query = max(results_sorted, key=lambda item: item[1])
-        col_width = len(str(max_query[1]))
-        print(f"{search} total queries: {count}")
-        print("results:")
-        try:
-            for domain_name, query_count in results_sorted:
-                print(f"{query_count:>{col_width}}    {domain_name}")
-        except BrokenPipeError:
-            sys.exit(1)
-    else:
-        print("No results found.")
+    arg_count = 0
+    print(f"{search} total queries: {count}")
+    print("results:")
+
+    for results_sorted in results_arg:
+        arg_count += 1
+        if results_sorted:
+            max_query = max(results_sorted, key=lambda item: item[1])
+            col_width = len(str(max_query[1]))
+            try:
+                for domain_name, query_count in results_sorted:
+                    print(f"{query_count:>{col_width}}    {domain_name}")
+            except BrokenPipeError:
+                sys.exit(1)
+        else:
+            print("No results found.")
+        if arg_count < len(results_arg) > 1:
+            print("")
 
 
 def menu():
