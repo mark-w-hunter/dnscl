@@ -37,7 +37,7 @@ from typing import DefaultDict, List
 # from pyfiglet import print_figlet
 
 __author__ = "Mark W. Hunter"
-__version__ = "0.60"
+__version__ = "0.62"
 FILENAME = "/var/log/syslog"  # default path to syslog file
 # FILENAME = "/var/log/messages"  # path to alternate syslog file
 
@@ -527,7 +527,7 @@ def print_results(search: str, count: int, *results_arg: List):
                 sys.exit(1)
         else:
             print("No results found.")
-        if arg_count < len(results_arg) > 1:
+        if arg_count < len(results_arg):
             print("")
 
 
