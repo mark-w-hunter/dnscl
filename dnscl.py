@@ -512,14 +512,21 @@ def print_results(search: str, count: int, *results_arg: List):
 
     """
     arg_count = 0
+    col_width = 0
+
+    for results_sorted in results_arg:
+        if results_sorted:
+            max_query = max(results_sorted, key=lambda item: item[1])
+            col_width_temp = len(str(max_query[1]))
+            if col_width_temp > col_width:
+                col_width = col_width_temp
+
     print(f"{search} total queries: {count}")
     print("results:")
 
     for results_sorted in results_arg:
         arg_count += 1
         if results_sorted:
-            max_query = max(results_sorted, key=lambda item: item[1])
-            col_width = len(str(max_query[1]))
             try:
                 for domain_name, query_count in results_sorted:
                     print(f"{query_count:>{col_width}}    {domain_name}")
