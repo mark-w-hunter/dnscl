@@ -10,7 +10,7 @@ Analyze BIND DNS query data from syslog file input
 
 Step 1: Set path and filename to local Python 3 interpreter.
 
-*Note:* Python 3.6 or higher is requirePython 3.6 or higher required.
+*Note:* Python 3.6 or higher is required.
 
 Step 2: Set path and filename to local syslog file.
 

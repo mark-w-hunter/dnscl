@@ -37,7 +37,7 @@ from typing import DefaultDict, List
 # from pyfiglet import print_figlet
 
 __author__ = "Mark W. Hunter"
-__version__ = "0.60"
+__version__ = "0.62"
 FILENAME = "/var/log/syslog"  # default path to syslog file
 # FILENAME = "/var/log/messages"  # path to alternate syslog file
 
@@ -503,23 +503,30 @@ def print_results(search: str, count: int, *results_arg: List):
     """Print formatted results from search.
 
     Args:
-        results_sorted (List): Sorted search results.
         search (str): Term searched.
         count (int): Number of results found.
+        results_sorted (List): Sorted search results.
 
     Returns:
-        None
+        None: Print search results.
 
     """
     arg_count = 0
+    col_width = 0
+
+    for results_sorted in results_arg:
+        if results_sorted:
+            max_query = max(results_sorted, key=lambda item: item[1])
+            col_width_temp = len(str(max_query[1]))
+            if col_width_temp > col_width:
+                col_width = col_width_temp
+
     print(f"{search} total queries: {count}")
     print("results:")
 
     for results_sorted in results_arg:
         arg_count += 1
         if results_sorted:
-            max_query = max(results_sorted, key=lambda item: item[1])
-            col_width = len(str(max_query[1]))
             try:
                 for domain_name, query_count in results_sorted:
                     print(f"{query_count:>{col_width}}    {domain_name}")
@@ -527,7 +534,7 @@ def print_results(search: str, count: int, *results_arg: List):
                 sys.exit(1)
         else:
             print("No results found.")
-        if arg_count < len(results_arg) > 1:
+        if arg_count < len(results_arg):
             print("")
 
 
@@ -545,42 +552,43 @@ def menu():
     print("Enter 7 to search record type details")
 
 
-if __name__ == "__main__":
+def main():
+    """Main program."""
     if len(sys.argv) < 2:
         while True:
             menu()
-            CHOICE = input("=> ")
-            while not CHOICE.isdigit():
+            choice = input("=> ")
+            while not choice.isdigit():
                 print("Invalid input, try again.")
                 menu()
-                CHOICE = input("=> ")
-            if int(CHOICE) == 1:
-                IP = input("ip address: ")
-                dnscl_ipaddress(IP)
-            elif int(CHOICE) == 2:
-                DOMAIN = input("domain name: ")
-                dnscl_domain(DOMAIN)
-            elif int(CHOICE) == 3:
-                IP = input("rpz ip: ")
-                dnscl_rpz(IP)
-            elif int(CHOICE) == 4:
-                DOMAIN = input("rpz domain name: ")
-                dnscl_rpz_domain(DOMAIN)
-            elif int(CHOICE) == 5:
-                IP = input("ip address: ")
-                dnscl_record_ip(IP)
-            elif int(CHOICE) == 6:
-                DOMAIN = input("domain: ")
-                dnscl_record_domain(DOMAIN)
-            elif int(CHOICE) == 7:
-                TYPE = input("record type: ")
-                dnscl_record_type(TYPE)
-            elif int(CHOICE) > 7:
+                choice = input("=> ")
+            if int(choice) == 1:
+                ip = input("ip address: ")
+                dnscl_ipaddress(ip)
+            elif int(choice) == 2:
+                domain = input("domain name: ")
+                dnscl_domain(domain)
+            elif int(choice) == 3:
+                ip = input("rpz ip: ")
+                dnscl_rpz(ip)
+            elif int(choice) == 4:
+                domain = input("rpz domain name: ")
+                dnscl_rpz_domain(domain)
+            elif int(choice) == 5:
+                ip = input("ip address: ")
+                dnscl_record_ip(ip)
+            elif int(choice) == 6:
+                domain = input("domain: ")
+                dnscl_record_domain(domain)
+            elif int(choice) == 7:
+                type = input("record type: ")
+                dnscl_record_type(type)
+            elif int(choice) > 7:
                 print("Invalid choice, try again.")
-            elif int(CHOICE) == 0:
+            elif int(choice) == 0:
                 break
     else:
-        WILDCARD = ""
+        wildcard = ""
         dnscl_parser = argparse.ArgumentParser(
             description="Analyze BIND DNS query data from syslog file input"
         )
@@ -593,19 +601,19 @@ if __name__ == "__main__":
         )
         parser_rpz = dnscl_subparser.add_parser("rpz", help="rpz domains queried")
         parser_type = dnscl_subparser.add_parser("type", help="record types queried")
-        parser_ip.add_argument("-i", help="ip address", default=WILDCARD)
+        parser_ip.add_argument("-i", help="ip address", default=wildcard)
         parser_ip.add_argument("-f", help="syslog file", default=FILENAME)
-        parser_ip.add_argument("-d", help="domain", default=WILDCARD)
+        parser_ip.add_argument("-d", help="domain", default=wildcard)
         parser_ip.add_argument("-q", "--quiet", help="quiet mode", action="store_true")
-        parser_domain.add_argument("-d", help="domain", default=WILDCARD)
+        parser_domain.add_argument("-d", help="domain", default=wildcard)
         parser_domain.add_argument("-f", help="syslog file", default=FILENAME)
-        parser_domain.add_argument("-i", help="ip address", default=WILDCARD)
+        parser_domain.add_argument("-i", help="ip address", default=wildcard)
         parser_domain.add_argument(
             "-q", "--quiet", help="quiet mode", action="store_true"
         )
-        parser_rpz.add_argument("-r", help="rpz domain", default=WILDCARD)
+        parser_rpz.add_argument("-r", help="rpz domain", default=wildcard)
         parser_rpz.add_argument("-f", help="syslog file", default=FILENAME)
-        parser_type.add_argument("-t", help="record type", default=WILDCARD)
+        parser_type.add_argument("-t", help="record type", default=wildcard)
         parser_type.add_argument("-f", help="syslog file", default=FILENAME)
         dnscl_parser.add_argument(
             "-v",
@@ -620,12 +628,16 @@ if __name__ == "__main__":
         elif args.command == "domain":
             dnscl_domain(args.d, args.f, args.i, args.quiet)
         elif args.command == "rpz":
-            if args.r == WILDCARD:
+            if args.r == wildcard:
                 dnscl_rpz(args.r, args.f)
             else:
                 dnscl_rpz_domain(args.r, args.f)
         elif args.command == "type":
-            if args.t == WILDCARD:
+            if args.t == wildcard:
                 dnscl_record_domain(args.t, args.f)
             else:
                 dnscl_record_type(args.t, args.f)
+
+
+if __name__ == "__main__":
+    main()
