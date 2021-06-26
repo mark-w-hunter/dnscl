@@ -505,7 +505,7 @@ def print_results(search: str, count: int, *results_arg: List):
     Args:
         search (str): Term searched.
         count (int): Number of results found.
-        results_sorted (List): Sorted search results.
+        results_arg (List): Sorted search results.
 
     Returns:
         None: Print search results.
@@ -553,7 +553,7 @@ def menu():
 
 
 def main():
-    """Main program."""
+    """Run main program."""
     if len(sys.argv) < 2:
         while True:
             menu()
@@ -581,8 +581,8 @@ def main():
                 domain = input("domain: ")
                 dnscl_record_domain(domain)
             elif int(choice) == 7:
-                type = input("record type: ")
-                dnscl_record_type(type)
+                rec_type = input("record type: ")
+                dnscl_record_type(rec_type)
             elif int(choice) > 7:
                 print("Invalid choice, try again.")
             elif int(choice) == 0:
