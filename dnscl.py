@@ -90,7 +90,7 @@ def dnscl_ipaddress(
             f"\nSummary: Searched {ip_address} and found {line_count}",
             f"queries for {len(domain_dict)} domain names.",
         )
-        print(f"Query time: {round(elapsed_time, 2)} seconds")
+        print(f"Search time: {round(elapsed_time, 2)} seconds")
     return line_count
 
 
@@ -156,7 +156,7 @@ def dnscl_domain(
                 f"\nSummary: Searched {domain_name} and found {line_count}",
                 f"queries from {len(ip_dict)} clients.",
             )
-        print(f"Query time: {round(elapsed_time, 2)} seconds")
+        print(f"Search time: {round(elapsed_time, 2)} seconds")
     return line_count
 
 
@@ -194,7 +194,7 @@ def dnscl_rpz(ip_address: str, filename: str) -> int:
         f"\nSummary: Searched {ip_address} and found {line_count}",
         f"queries for {len(rpz_dict)} rpz names.",
     )
-    print(f"Query time: {round(elapsed_time, 2)} seconds")
+    print(f"Search time: {round(elapsed_time, 2)} seconds")
     return line_count
 
 
@@ -244,7 +244,7 @@ def dnscl_rpz_domain(domain_rpz_name: str, filename: str) -> int:
         f"\nSummary: Searched {domain_rpz_name} and found {line_count}",
         f"queries from {len(rpz_ip_dict)} clients.",
     )
-    print(f"Query time: {round(elapsed_time, 2)} seconds")
+    print(f"Search time: {round(elapsed_time, 2)} seconds")
     return line_count
 
 
@@ -290,7 +290,7 @@ def dnscl_record_ip(ip_address: str, filename) -> int:
         f"queries with {len(set(record_dict))} record types for {len(set(domain_list))}",
         "domains.",
     )
-    print(f"Query time: {round(elapsed_time, 2)} seconds")
+    print(f"Search time: {round(elapsed_time, 2)} seconds")
     return line_count
 
 
@@ -340,7 +340,7 @@ def dnscl_record_domain(domain_name: str, filename: str) -> int:
         f"\nSummary: Searched {domain_name} and found {line_count}",
         f"queries for {len(record_dict)} record types from {len(set(ip_list))} clients.",
     )
-    print(f"Query time: {round(elapsed_time, 2)} seconds")
+    print(f"Search time: {round(elapsed_time, 2)} seconds")
     return line_count
 
 
@@ -385,7 +385,7 @@ def dnscl_record_type(record_type: str, filename: str) -> int:
         f"{len(record_domain_dict)} domains from",
         f"{len(set(record_ip_list))} clients.",
     )
-    print("Query time:", str(round(elapsed_time, 2)), "seconds")
+    print("Search time:", str(round(elapsed_time, 2)), "seconds")
     return line_count
 
 
