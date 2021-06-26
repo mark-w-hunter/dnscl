@@ -1,6 +1,6 @@
 # dnscl
 
-[![Build Status](https://travis-ci.com/mark-w-hunter/dnscl.svg?branch=master)](https://travis-ci.com/mark-w-hunter/dnscl)
+[![Build Status](https://travis-ci.com/mark-w-hunter/dnscl.svg?branch=devel)](https://travis-ci.com/mark-w-hunter/dnscl)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
