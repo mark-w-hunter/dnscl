@@ -37,7 +37,7 @@ from typing import DefaultDict, List
 # from pyfiglet import print_figlet
 
 __author__ = "Mark W. Hunter"
-__version__ = "0.63"
+__version__ = "0.62"
 FILENAME = "/var/log/syslog"  # default path to syslog file
 # FILENAME = "/var/log/messages"  # path to alternate syslog file
 
@@ -452,7 +452,7 @@ def find_rpz_ip_field(fields: List[str]):
         fields (List[str]): Fields from line.
 
     Returns:
-        str: RPZ ip address field value.
+        str: RPZ IP address field value.
 
     """
     field_index = 0
@@ -503,12 +503,12 @@ def print_results(search: str, count: int, *results_arg: List):
     """Print formatted results from search.
 
     Args:
-        results_sorted (List): Sorted search results.
         search (str): Term searched.
         count (int): Number of results found.
+        results_sorted (List): Sorted search results.
 
     Returns:
-        None
+        None: Print search results.
 
     """
     arg_count = 0
