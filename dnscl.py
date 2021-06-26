@@ -28,6 +28,7 @@
 
 """This program analyzes BIND DNS queries from syslog input."""
 import sys
+import pathlib
 import timeit
 from collections import defaultdict
 import re
@@ -37,14 +38,14 @@ from typing import DefaultDict, List
 # from pyfiglet import print_figlet
 
 __author__ = "Mark W. Hunter"
-__version__ = "0.62"
+__version__ = "0.63"
 FILENAME = "/var/log/syslog"  # default path to syslog file
 # FILENAME = "/var/log/messages"  # path to alternate syslog file
 
 
 def dnscl_ipaddress(
     ip_address: str,
-    filename: str = FILENAME,
+    filename: str,
     domain_search: str = "",
     quiet_mode: bool = False,
 ) -> int:
@@ -95,7 +96,7 @@ def dnscl_ipaddress(
 
 def dnscl_domain(
     domain_name: str,
-    filename: str = FILENAME,
+    filename: str,
     ip_search: str = "",
     quiet_mode: bool = False,
 ) -> int:
@@ -159,7 +160,7 @@ def dnscl_domain(
     return line_count
 
 
-def dnscl_rpz(ip_address: str, filename: str = FILENAME) -> int:
+def dnscl_rpz(ip_address: str, filename: str) -> int:
     """Return RPZ names queried by a client IP address.
 
     Args:
@@ -197,7 +198,7 @@ def dnscl_rpz(ip_address: str, filename: str = FILENAME) -> int:
     return line_count
 
 
-def dnscl_rpz_domain(domain_rpz_name: str, filename: str = FILENAME) -> int:
+def dnscl_rpz_domain(domain_rpz_name: str, filename: str) -> int:
     """Return client IP addresses that queried a RPZ domain name.
 
     Args:
@@ -247,7 +248,7 @@ def dnscl_rpz_domain(domain_rpz_name: str, filename: str = FILENAME) -> int:
     return line_count
 
 
-def dnscl_record_ip(ip_address: str, filename: str = FILENAME) -> int:
+def dnscl_record_ip(ip_address: str, filename) -> int:
     """Return record types queried by a client IP address.
 
     Args:
@@ -293,7 +294,7 @@ def dnscl_record_ip(ip_address: str, filename: str = FILENAME) -> int:
     return line_count
 
 
-def dnscl_record_domain(domain_name: str, filename: str = FILENAME) -> int:
+def dnscl_record_domain(domain_name: str, filename: str) -> int:
     """Return record types for a queried domain name.
 
     Args:
@@ -343,7 +344,7 @@ def dnscl_record_domain(domain_name: str, filename: str = FILENAME) -> int:
     return line_count
 
 
-def dnscl_record_type(record_type: str, filename: str = FILENAME) -> int:
+def dnscl_record_type(record_type: str, filename: str) -> int:
     """Return domain names of a particular record type.
 
     Args:
@@ -555,6 +556,22 @@ def menu():
 def main():
     """Run main program."""
     if len(sys.argv) < 2:
+        filename = input("Enter syslog file (ENTER for default): ")
+        if filename:
+            check_file = pathlib.Path(filename)
+            is_valid_file = check_file.is_file()
+            while not is_valid_file:
+                filename = input("Invalid file or directory, try again: ")
+                if not filename:
+                    filename = FILENAME
+                    check_file = pathlib.Path(filename)
+                    is_valid_file = check_file.is_file()
+                else:
+                    check_file = pathlib.Path(filename)
+                    is_valid_file = check_file.is_file()
+        else:
+            filename = FILENAME
+        print(f"Syslog file to search: {filename}")
         while True:
             menu()
             choice = input("=> ")
@@ -564,25 +581,25 @@ def main():
                 choice = input("=> ")
             if int(choice) == 1:
                 ip = input("ip address: ")
-                dnscl_ipaddress(ip)
+                dnscl_ipaddress(ip, filename)
             elif int(choice) == 2:
                 domain = input("domain name: ")
-                dnscl_domain(domain)
+                dnscl_domain(domain, filename)
             elif int(choice) == 3:
                 ip = input("rpz ip: ")
-                dnscl_rpz(ip)
+                dnscl_rpz(ip, filename)
             elif int(choice) == 4:
                 domain = input("rpz domain name: ")
-                dnscl_rpz_domain(domain)
+                dnscl_rpz_domain(domain, filename)
             elif int(choice) == 5:
                 ip = input("ip address: ")
-                dnscl_record_ip(ip)
+                dnscl_record_ip(ip, filename)
             elif int(choice) == 6:
                 domain = input("domain: ")
-                dnscl_record_domain(domain)
+                dnscl_record_domain(domain, filename)
             elif int(choice) == 7:
                 rec_type = input("record type: ")
-                dnscl_record_type(rec_type)
+                dnscl_record_type(rec_type, filename)
             elif int(choice) > 7:
                 print("Invalid choice, try again.")
             elif int(choice) == 0:
