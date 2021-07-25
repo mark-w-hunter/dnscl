@@ -580,20 +580,20 @@ def main():
                 menu()
                 choice = input("=> ")
             if int(choice) == 1:
-                ip = input("ip address: ")
-                dnscl_ipaddress(ip, filename)
+                ip_addr = input("ip address: ")
+                dnscl_ipaddress(ip_addr, filename)
             elif int(choice) == 2:
                 domain = input("domain name: ")
                 dnscl_domain(domain, filename)
             elif int(choice) == 3:
-                ip = input("rpz ip: ")
-                dnscl_rpz(ip, filename)
+                ip_addr = input("rpz ip: ")
+                dnscl_rpz(ip_addr, filename)
             elif int(choice) == 4:
                 domain = input("rpz domain name: ")
                 dnscl_rpz_domain(domain, filename)
             elif int(choice) == 5:
-                ip = input("ip address: ")
-                dnscl_record_ip(ip, filename)
+                ip_addr = input("ip address: ")
+                dnscl_record_ip(ip_addr, filename)
             elif int(choice) == 6:
                 domain = input("domain: ")
                 dnscl_record_domain(domain, filename)
